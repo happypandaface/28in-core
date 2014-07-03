@@ -166,7 +166,12 @@ public class EndlessInches extends SheepGame
 	{
 		//removeTile(startPen);
 		startPen = endPen;
-		oldPath = new Array<Vector2>(sheepPath.toArray());
+		oldPath = new Array<Vector2>();
+		for (int i = 0; i < sheepPath.size; ++i)
+		{
+			oldPath.add(sheepPath.get(i);
+		}
+		//oldPath = new Array<Vector2>(sheepPath.toArray());
 		oldPathFade = oldPathFadeMax;
 		sheepPath.clear();
 		endPen = new Pen();

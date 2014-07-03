@@ -313,7 +313,7 @@ public class SheepGame implements InputProcessor
 			if (overlayOffset > 1)
 				overlayOffset -= 1;
 			for (int x = startGreenOverlay(); x < endGreenOverlay(); ++x)
-				batch.draw(assetHolder.startOverlay, x*tileW, greenOverlayY(), tileW, tileH, overlayOffset, 0, overlayOffset+1.0f, 1.0f);
+				batch.draw(assetHolder.startOverlay, x*getTileWidth()+getStartX(), greenOverlayY()+getStartY(), getTileWidth(), getTileHeight(), overlayOffset, 0, overlayOffset+1.0f, 1.0f);
 		}else
 		if (!doneWithPath())
 		{
@@ -321,7 +321,7 @@ public class SheepGame implements InputProcessor
 			if (overlayOffset > 1)
 				overlayOffset -= 1;
 			for (int x = startRedOverlay(); x < endRedOverlay(); ++x)
-				batch.draw(assetHolder.endOverlay, x*tileW, redOverlayY(), tileW, tileH, overlayOffset, 0, overlayOffset+1.0f, 1.0f);
+				batch.draw(assetHolder.endOverlay, x*getTileWidth()+getStartX(), redOverlayY()+getStartY(), getTileWidth(), getTileHeight(), overlayOffset, 0, overlayOffset+1.0f, 1.0f);
 		}
 		batch.end();
 		gameOverlay.render(realDelta);
