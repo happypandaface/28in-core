@@ -169,7 +169,7 @@ public class EndlessInches extends SheepGame
 		oldPath = new Array<Vector2>();
 		for (int i = 0; i < sheepPath.size; ++i)
 		{
-			oldPath.add(sheepPath.get(i);
+			oldPath.add(sheepPath.get(i));
 		}
 		//oldPath = new Array<Vector2>(sheepPath.toArray());
 		oldPathFade = oldPathFadeMax;
