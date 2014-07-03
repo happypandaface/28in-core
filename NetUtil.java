@@ -19,6 +19,7 @@ public class NetUtil
 	public static int PLAY_RAND = 4;
 	public static int GET_USR_LVL = 5;
 	public static int CHANGE_PASS = 6;
+	public static int GET_LEVEL = 7;
 	
 	public static String bytesToHex(byte[] b) {
 		char hexDigit[] = {'0', '1', '2', '3', '4', '5', '6', '7',
@@ -56,6 +57,8 @@ public class NetUtil
 			contentString += "type=getUsersLevels&";
 		else if (type == CHANGE_PASS)
 			contentString += "type=changePassword&";
+		else if (type == GET_LEVEL)
+			contentString += "type=getLevel&";
 		contentString += data;
 		httpGet.setContent(contentString);
 		//httpGet.setContent(HttpParametersUtils.convertHttpParameters(parameters));

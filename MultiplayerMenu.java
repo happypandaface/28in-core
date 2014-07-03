@@ -27,6 +27,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.utils.JsonWriter;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.Array;
 
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
@@ -78,7 +83,7 @@ public class MultiplayerMenu implements ButtonListener
 	private String currentLogin = "";
 	private String currentPassHash = "";
 	private String successStr = "success";
-	private String[] levelNames;
+	private Array<MenuLevelInfo> levels;
 	private int levelsPerPage = 4;
 	private final static int CHANGE_PASS_MENU_BUTTON = 1;
 	private final static int CHANGE_PASS = 2;
@@ -99,6 +104,7 @@ public class MultiplayerMenu implements ButtonListener
 	public void load()
 	{
 		stage = new Stage();
+		levels = new Array<MenuLevelInfo>();
 		
 		bottomTable = new Table();
 		bottomTable.setFillParent(true);
@@ -450,9 +456,19 @@ public class MultiplayerMenu implements ButtonListener
 			public void handleHttpResponse(HttpResponse httpResponse) {
 				String str = httpResponse.getResultAsString();
 				Gdx.app.log("usrlvls res", str);
-				String[] parts = str.split(",");
-				setLevels(parts);
-				makeLevelButtons(0);
+				//String[] parts = str.split(",");
+				clearLevels();
+				Json json = new Json();
+				Array<Object> lvlArr = json.fromJson(Array.class, str);
+				for (int i = 0; i < lvlArr.size; ++i)
+				{
+					MenuLevelInfo mli = new MenuLevelInfo();
+
+//					String[] levelParts = parts[i].split(":");
+					//mli.username = 
+				}
+//				setLevels(parts);
+				//makeLevelButtons(0);
 				//do stuff here based on response
 			}
 			
@@ -469,10 +485,14 @@ public class MultiplayerMenu implements ButtonListener
 			}
 		});
 	}
-	
-	public void setLevels(String[] levelNames)
+	public void clearLevels()
 	{
-		this.levelNames = levelNames;
+		levels.clear();
+		
+	}
+	public void setLevels(Array<MenuLevelInfo> levels)
+	{
+		this.levels = levels;
 	}
 	
 	// this shows the level buttons
@@ -482,37 +502,68 @@ public class MultiplayerMenu implements ButtonListener
 	{
 		clearTables();
 		loginTable.center();
-		for (int i = 0; i < levelNames.length; ++i)
+		for (int i = 0; i < levels.size; ++i)
 		{
-			String levelName = levelNames[i];
+			MenuLevelInfo mli = levels.get(i);
+			String levelName = mli.levelName;
+			String username = mli.username;
+//			String rating = mli.rating;
 			//String username = levelNames[i];
-			TextButton lvl1 = new TextButton(levelName/*"Level "+(i+1)*/, assetHolder.buttonStyle);
-			loginTable.add(lvl1).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(10);
+			float padding = 0;//assetHolder.getPercentHeight(0.02f);
+			TextButton lvl1 = new TextButton(levelName/*"Level "+(i+1)*/, assetHolder.newButtonStyle);
+			loginTable.add(lvl1).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(padding);
 			loginTable.row();
 			lvl1.addListener(new InputListener(){
 				private String levelName;
+				private String username;
 				public boolean touchDown(InputEvent event, float x, float y, int pointer, int button)
 				{
 					return true;
 				}
 				public void touchUp(InputEvent event, float x, float y, int pointer, int button)
 				{
-					doLevel(this.levelName);
+					doLevel(this.username, this.levelName);
 				}
-				public InputListener setLevelInfo(String s)
+				public InputListener setLevelInfo(String un, String s)
 				{
+					this.username = un;
 					this.levelName = s;
 					return this;
 				}
-			}.setLevelInfo(levelName));
+			}.setLevelInfo(username, levelName));
 			loginTable.add(lvl1).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(10);
 			loginTable.row();
 		}
 	}
 	
-	public void doLevel(String level)
+	public void doLevel(String userName, String levelName)
 	{
-		Gdx.app.log("levelName", level);
+		showMessage("Loading level...", MULTI_MENU);
+		String command = "username="+userName+"&levelName="+levelName;
+		NetUtil.sendRequest(NetUtil.GET_LEVEL, "", new HttpResponseListener()
+		{
+			public void handleHttpResponse(HttpResponse httpResponse) {
+				String str = httpResponse.getResultAsString();
+				assetHolder.levelLoader.loadFromString(sheep.getPuzzleMode(), str);
+				sheep.gotoMenu("game");
+				goBackInternal();
+				Gdx.app.log("login res", str);
+				//do stuff here based on response
+			}
+
+			public void failed(Throwable t)
+			{
+				showMessage("Failed:\n"+t.getMessage(), LOGIN_MENU);
+				//do stuff here based on the failed attempt
+			}
+
+			public void cancelled()
+			{
+				showMessage("Request cancelled", LOGIN_MENU);
+				//do stuff here based on the failed attempt
+			}
+		});
+
 	}
 	
 	
