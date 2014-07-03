@@ -62,6 +62,7 @@ public class sheep extends ApplicationAdapter implements ButtonListener
 	private float percentTabWidth = 1.0f/3.0f;
 	private TabMenu tabMenu;
 	private InputMultiplexer inMux;
+	private InputMultiplexer overInMux;
 	private TopMenu topMenu;
 	private Preferences prefs;
 	
@@ -106,6 +107,7 @@ public class sheep extends ApplicationAdapter implements ButtonListener
 	{
 		prefs = Gdx.app.getPreferences("My Preferences");
 		inMux = new InputMultiplexer();
+		overInMux = new InputMultiplexer();
 		// this has to come first
 		assetHolder.finishLoad();
 		
@@ -236,8 +238,6 @@ public class sheep extends ApplicationAdapter implements ButtonListener
 		return true;
 	}
 	
-
-	
 	public MultiplayerMenu getMultiplayerMenu()
 	{
 		return multiMenu;
@@ -334,8 +334,19 @@ public class sheep extends ApplicationAdapter implements ButtonListener
 	public void populateInMux()
 	{
 		inMux.clear();
+		overInMux.clear();
 		inMux.addProcessor(topMenu.getInput());
+		overInMux.addProcessor(topMenu.getInput());
 		inMux.addProcessor(tabMenu.getInput());
+		overInMux.addProcessor(tabMenu.getInput());
+		Gdx.input.setInputProcessor(inMux);
+	}
+	public void onlyTopAndTabs()
+	{
+		Gdx.input.setInputProcessor(overInMux);
+	}
+	public void restoreInput()
+	{
 		Gdx.input.setInputProcessor(inMux);
 	}
 

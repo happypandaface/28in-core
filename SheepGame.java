@@ -394,18 +394,25 @@ public class SheepGame implements InputProcessor
 		
 	}
 	
+	public String getLoseText()
+	{
+		return "You Lose!";
+	}
+	public String getWinText()
+	{
+		return "You Win!";
+	}
 	public void loseTheGame()
 	{
 		losing = true;
 		gameOverlay.newMessage();
-		messages.add(new SheepMessage("You Lose!", .5f));
+		messages.add(new SheepMessage(getLoseText(), .5f));
 	}
-	
 	public void winTheGame()
 	{
 		winning = true;
 		gameOverlay.newMessage();
-		messages.add(new SheepMessage("You Win!", .5f).setColor("green"));
+		messages.add(new SheepMessage(getWinText(), .5f).setColor("green"));
 	}
 	
 	public boolean doneWithPath()

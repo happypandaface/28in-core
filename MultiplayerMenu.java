@@ -79,6 +79,7 @@ public class MultiplayerMenu implements ButtonListener
 	private static int LEVEL_EDIT = 4;
 	private static int NAME_LEVEL = 5;
 	private static int CHANGE_PASS_MENU = 5;
+	public static int TOP_MENU = 6;
 	private int currBackMenu;
 	private String currentLogin = "";
 	private String currentPassHash = "";
@@ -400,6 +401,10 @@ public class MultiplayerMenu implements ButtonListener
 		if (currBackMenu == CHANGE_PASS_MENU)
 		{
 			changePass();
+		}else
+		if (currBackMenu == TOP_MENU)
+		{
+			loginScreen();
 		}
 	}
 	
@@ -635,55 +640,60 @@ public class MultiplayerMenu implements ButtonListener
 	
 	public void doLogin()
 	{
-		String un = loginUN.getText();
-		String pass1 = loginPW.getText();
-		Gdx.app.log("username", un);
 		try
 		{
-			showMessage("Logging in...", CREATE_MENU);
+			String un = loginUN.getText();
+			String pass1 = loginPW.getText();
 			String hash = NetUtil.encode(pass1);
-			
-			NetUtil.sendRequest(NetUtil.LOGIN, "username="+un+"&password="+hash, new HttpResponseListener()
-			{
-				private String hash;
-				private String login;
-				public void handleHttpResponse(HttpResponse httpResponse) {
-					String str = httpResponse.getResultAsString();
-					if (str.equals(successStr))
-					{
-						sheep.setSaved("username", login);
-						currentLogin = login;
-						currentPassHash = hash;
-						showMessage(str, MULTI_MENU, "continue");
-					}else
-						showMessage(str, LOGIN_MENU);
-					Gdx.app.log("login res", str);
-					//do stuff here based on response
-				}
-
-				public void failed(Throwable t)
-				{
-					showMessage("Failed:\n"+t.getMessage(), LOGIN_MENU);
-					//do stuff here based on the failed attempt
-				}
-
-				public void cancelled()
-				{
-					showMessage("Request cancelled", LOGIN_MENU);
-					//do stuff here based on the failed attempt
-				}
-				public HttpResponseListener setHashAndLogin(String p, String l)
-				{
-					hash = p;
-					login = l;
-					return this;
-				}
-			}.setHashAndLogin(hash, un));
+			doLogin(CREATE_MENU, un, hash);
 		}catch (Exception e)
 		{
 			showMessage("hash error", CREATE_MENU);
 			Gdx.app.log("error", e.toString());
 		}
+	}
+	
+	public void doLogin(int backMenu, String un, String hash)
+	{
+		Gdx.app.log("username", un);
+		showMessage("Logging in...", backMenu);
+		
+		NetUtil.sendRequest(NetUtil.LOGIN, "username="+un+"&password="+hash, new HttpResponseListener()
+		{
+			private String hash;
+			private String login;
+			public void handleHttpResponse(HttpResponse httpResponse) {
+				String str = httpResponse.getResultAsString();
+				if (str.equals(successStr))
+				{
+					sheep.setSaved("username", login);
+					currentLogin = login;
+					currentPassHash = hash;
+					showMessage(str, MULTI_MENU, "continue");
+				}else
+					showMessage(str, LOGIN_MENU);
+				Gdx.app.log("login res", str);
+				//do stuff here based on response
+			}
+
+			public void failed(Throwable t)
+			{
+				showMessage("Failed:\n"+t.getMessage(), LOGIN_MENU);
+				//do stuff here based on the failed attempt
+			}
+
+			public void cancelled()
+			{
+				showMessage("Request cancelled", LOGIN_MENU);
+				//do stuff here based on the failed attempt
+			}
+			public HttpResponseListener setHashAndLogin(String p, String l)
+			{
+				hash = p;
+				login = l;
+				return this;
+			}
+		}.setHashAndLogin(hash, un));
 	}
 	
 	public void createUser()

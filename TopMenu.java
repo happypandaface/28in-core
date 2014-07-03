@@ -29,6 +29,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 
 import com.mygdx.sheep.ui.ButtonListener;
 import com.mygdx.sheep.ui.ButtonListenBridge;
@@ -41,14 +44,23 @@ public class TopMenu implements ButtonListener
 	private static final int MAIN_MENU = 1;
 	private static final int CLOSE = 2;
 	private static final int PROFILE = 3;
+	private static final int LOGIN_BUTTON = 4;
 	private InputMultiplexer inMux;
 	private AssetHolder assetHolder;
 	private sheep sheep;
 	private ShapeRenderer shapeRenderer;
 	private float animationPercent;
+	private float animationSpeed = 3f;
 	private boolean inProfileMenu = false;
 	private ImageButton profileIcon;
 	private ImageButton closeIcon;
+	private TextField usernameField;
+	private TextField passwordField;
+	private TextButton loginButton;
+	private float profileIconBigSize;
+	private float iconBigPadding;
+	private float profileIconSize;
+	private float iconPadding;
 
 	public TopMenu()
 	{
@@ -86,30 +98,46 @@ public class TopMenu implements ButtonListener
 		topStage.addActor(topRightTable);
 		topStage.addActor(centerTable);
 		cornerIcon();
+		
+		usernameField = new TextField("", assetHolder.textFieldStyle);
+		passwordField = new TextField("", assetHolder.textFieldStyle);
+		passwordField.setPasswordMode(true);
+		passwordField.setPasswordCharacter((char)42);
+		
+		loginButton = new TextButton("login", assetHolder.buttonStyle);
+		loginButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(LOGIN_BUTTON));
+	}
+	public void updateVals()
+	{
+		profileIconBigSize = assetHolder.getPercentWidth(.3f);
+		iconBigPadding = assetHolder.getPercentWidth(.1f);
+		profileIconSize = assetHolder.getPercentWidth(.13f);
+		iconPadding = assetHolder.getPercentWidth(.02f);
 	}
 
 	public void cornerIcon()
 	{
+		sheep.restoreInput();
 		inProfileMenu = false;
 		topRightTable.clearChildren();
 		centerTable.clearChildren();
-		float profileIconBigSize = assetHolder.getPercentWidth(.3f);
-		float iconBigPadding = assetHolder.getPercentWidth(.1f);
-		float profileIconSize = assetHolder.getPercentWidth(.15f);
-		float iconPadding = assetHolder.getPercentWidth(.05f);
+		updateVals();
 		//centerTable.add(closeIcon).size(profileIconBigSize, profileIconBigSize).pad(iconBigPadding);
 		topRightTable.add(profileIcon).size(profileIconSize, profileIconSize).pad(iconPadding);
 	}
 	public void centerIcon()
 	{
+		sheep.onlyTopAndTabs();
 		inProfileMenu = true;
 		topRightTable.clearChildren();
 		centerTable.clearChildren();
-		float profileIconBigSize = assetHolder.getPercentWidth(.3f);
-		float iconBigPadding = assetHolder.getPercentWidth(.1f);
-		float profileIconSize = assetHolder.getPercentWidth(.15f);
-		float iconPadding = assetHolder.getPercentWidth(.05f);
 		centerTable.add(profileIcon).size(profileIconBigSize, profileIconBigSize).pad(iconBigPadding);
+		centerTable.row();
+		centerTable.add(usernameField).size(profileIconBigSize, profileIconSize).pad(iconPadding);
+		centerTable.row();
+		centerTable.add(passwordField).size(profileIconBigSize, profileIconSize).pad(iconPadding);
+		centerTable.row();
+		centerTable.add(loginButton).size(profileIconBigSize, profileIconSize).pad(iconPadding);
 		topRightTable.add(closeIcon).size(profileIconSize, profileIconSize).pad(iconPadding);
 	}
 
@@ -130,15 +158,29 @@ public class TopMenu implements ButtonListener
 					cornerIcon();
 				}
 				break;
+			case LOGIN_BUTTON:
+				if (inProfileMenu)
+				{
+					cornerIcon();
+					sheep.gotoMenu("multi");
+					try
+					{
+						sheep.getMultiplayerMenu().doLogin(MultiplayerMenu.TOP_MENU, usernameField.getText(), NetUtil.encode(passwordField.getText()));
+					}catch(Exception e)
+					{
+						Gdx.app.log("error in top menu", e.toString());
+					}
+				}
+				break;
 		}
 	}
 
 	public void render()
 	{
 		if (inProfileMenu)
-			animationPercent += Gdx.graphics.getDeltaTime();
+			animationPercent += Gdx.graphics.getDeltaTime()*animationSpeed;
 		else
-			animationPercent -= Gdx.graphics.getDeltaTime();
+			animationPercent -= Gdx.graphics.getDeltaTime()*animationSpeed;
 		if (animationPercent > 1)
 			animationPercent = 1;
 		else if (animationPercent < 0)
