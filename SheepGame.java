@@ -427,18 +427,6 @@ public class SheepGame implements InputProcessor
 		return sheepVel;
 	}
 	
-	public float getStartX()
-	{
-		float stretchedTileSizeX = assetHolder.getPercentWidth(1f/numTilesX);
-		float stretchedTileSizeY = assetHolder.getPercentHeight(1f/numTilesY);
-		return 0;
-	}
-	
-	public float getStartY()
-	{
-		return 0;
-	}
-	
 	public float getNumTilesX()
 	{
 		return numTilesX;
@@ -449,14 +437,44 @@ public class SheepGame implements InputProcessor
 		return numTilesY;
 	}
 	
-	public float getTileWidth()
+	public float getStretchedTileWidth()
 	{
 		return Gdx.graphics.getWidth()/numTilesX;
 	}
 	
-	public float getTileHeight()
+	public float getStretchedTileHeight()
 	{
 		return Gdx.graphics.getHeight()/(numTilesY+1);
+	}
+	
+	public float getStartX()
+	{
+		return (Gdx.graphics.getWidth()-(numTilesX)*getTileWidth())/2f;
+	}
+	
+	public float getStartY()
+	{
+		return (Gdx.graphics.getHeight()-(numTilesY+1)*getTileHeight())/2f;
+	}
+	
+	public float getTileWidth()
+	{
+		float w = getStretchedTileWidth();
+		float h = getStretchedTileHeight();
+		float ratio = w/h;
+		if (ratio > 1)
+			w = h;
+		return w;
+	}
+	
+	public float getTileHeight()
+	{
+		float w = getStretchedTileWidth();
+		float h = getStretchedTileHeight();
+		float ratio = w/h;
+		if (ratio < 1)
+			h = w;
+		return h;
 	}
 	
 	public boolean keyDown(int keycode)
@@ -492,6 +510,15 @@ public class SheepGame implements InputProcessor
 		return add.x < numTilesX && add.x >= 0 &&
 			add.y < numTilesY && add.y >= 0;
 	}
+	public Vector2 getTouch(int screenX, int screenY)
+	{
+		float x = (float)screenX-getStartX();
+		float y = (float)(Gdx.graphics.getHeight()-screenY)-getStartY();
+		int tileX = (int)Math.floor((float)x/(float)getTileWidth()-getOffsetTileX());
+		int tileY = (int)Math.floor((float)y/(float)getTileHeight()-getOffsetTileY());
+		Vector2 add = new Vector2(tileX, tileY);
+		return add;
+	}
 	public boolean touchDown(int screenX, int screenY, int pointer, int button)
 	{
 		if (losing || winning || messages.size > 0)
@@ -500,11 +527,7 @@ public class SheepGame implements InputProcessor
 		}
 		if (!gameOverlay.isPaused())
 		{
-			int x = screenX;
-			int y = (Gdx.graphics.getHeight()-screenY);
-			int tileX = (int)Math.floor((float)x/(float)getTileWidth()-getOffsetTileX());
-			int tileY = (int)Math.floor((float)y/(float)getTileHeight()-getOffsetTileY());
-			Vector2 add = new Vector2(tileX, tileY);
+			Vector2 add = getTouch(screenX, screenY);
 			startDrag(add);
 		}
 		return touchDragged(screenX, screenY, pointer);
@@ -543,13 +566,7 @@ public class SheepGame implements InputProcessor
 		{
 			if (!doneWithPath() && messages.size == 0)
 			{
-				int x = screenX;
-				int y = (Gdx.graphics.getHeight()-screenY);
-				float tileX = (float)x/(float)getTileWidth()-getOffsetTileX();
-				float tileY = (float)y/(float)getTileHeight()-getOffsetTileY();
-				int tileXFlr = (int)Math.floor(tileX);
-				int tileYFlr = (int)Math.floor(tileY);
-				Vector2 add = new Vector2(tileXFlr, tileYFlr);
+				Vector2 add = getTouch(screenX, screenY);
 				doDrag(add);
 			}else
 			{
@@ -636,11 +653,7 @@ public class SheepGame implements InputProcessor
 		skipTap = false;
 		if (!gameOverlay.isPaused())
 		{
-			int x = screenX;
-			int y = (Gdx.graphics.getHeight()-screenY);
-			int tileX = (int)Math.floor((float)x/(float)getTileWidth()-getOffsetTileX());
-			int tileY = (int)Math.floor((float)y/(float)getTileHeight()-getOffsetTileY());
-			Vector2 add = new Vector2(tileX, tileY);
+			Vector2 add = getTouch(screenX, screenY);
 			touchReleased(add);
 		}
 		return false;
