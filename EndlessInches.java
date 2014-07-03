@@ -39,9 +39,11 @@ public class EndlessInches extends SheepGame
 	private float oldPathFade = 0f;
 	private float oldPathFadeMax = 1f;
 	
+	private int numLevels;
+	
 	protected float scrollHeight;
 	protected float scrollWidth;
-	protected float scrollSpeed = 0.6f;
+	protected float scrollSpeed = 0.35f;
 	protected float fastScrollSpeed = 2.4f;
 	
 	public void playEndless()
@@ -61,6 +63,7 @@ public class EndlessInches extends SheepGame
 		scrollHeight = 0;
 		startPen = null;
 		endPen = null;
+		numLevels = 0;
 		super.reset();
 	}
 	public void render()
@@ -164,6 +167,7 @@ public class EndlessInches extends SheepGame
 	}
 	public void winTheGame()
 	{
+		numLevels++;
 		//removeTile(startPen);
 		startPen = endPen;
 		oldPath = new Array<Vector2>();
@@ -175,25 +179,18 @@ public class EndlessInches extends SheepGame
 		oldPathFade = oldPathFadeMax;
 		sheepPath.clear();
 		endPen = new Pen();
-		float tileW = getTileWidth();
-		float tileH = getTileHeight();
-		endPen.set((int)Math.floor(Math.random()*getNumTilesX()), startPen.getPos().y+(Math.random()<.5?4:5));
-		addTile(endPen);
-		for (int y = (int)startPen.getPos().y+1; y < (int)endPen.getPos().y; ++y)
+		if (numLevels < 2) {
+			pattern1(startPen, endPen);
+		}else if (numLevels < 3)
 		{
-			if (y != startPen.getPos().y+3)
-				addTile(new Boulder().set((float)Math.floor(Math.random()*getNumTilesX()), y));
+			pattern2(startPen, endPen);
+		}else// if (numLevels < 5)
+		{
+			float chance = (float)Math.random();
+			if (chance < .25f)
+				pattern2(startPen, endPen);
 			else
-			{
-				int startX = (int)Math.floor(Math.random()*3);
-				int offset = (int)Math.floor(Math.random()*4);
-				WalkPath path = new WalkPath();
-				path.add(new Vector2(startX, y));
-				path.add(new Vector2(startX+1, y));
-				path.add(new Vector2(startX+2, y));
-				path.add(new Vector2(startX+1, y));
-				addTile(new Guard().setPath(path).setOffset(offset));
-			}
+				pattern3(startPen, endPen);
 		}
 		for (int i = 0; i < tiles.size; ++i)
 		{
@@ -206,6 +203,84 @@ public class EndlessInches extends SheepGame
 		//winning = true;
 		//gameOverlay.newMessage();
 		//messages.add(new SheepMessage("You Win!", .5f).setColor("green"));
+	}
+	public void pattern1(Pen startPen, Pen endPen)
+	{
+		float tileW = getTileWidth();
+		float tileH = getTileHeight();
+		endPen.set((int)Math.floor(Math.random()*getNumTilesX()), startPen.getPos().y+(4));
+		addTile(endPen);
+		for (int y = (int)startPen.getPos().y+1; y < (int)endPen.getPos().y; ++y)
+		{
+			int rndX1 = (int)Math.floor(Math.random()*getNumTilesX());
+			addTile(new Boulder().set(rndX1, y));
+			// generate a second one that's not on the same tile:
+			int rndX2 = rndX1+(int)Math.floor(Math.random()*(getNumTilesX()-2)+1);
+			Gdx.app.log("rndX1, rndX2", ""+rndX1+", "+rndX2);
+			rndX2 = rndX2%(int)getNumTilesX();
+			addTile(new Boulder().set(rndX2, y));
+		}
+	}
+	public void pattern2(Pen startPen, Pen endPen)
+	{
+		float tileW = getTileWidth();
+		float tileH = getTileHeight();
+		int totY = (int)Math.random()<.5?4:5;
+		endPen.set((int)Math.floor(Math.random()*getNumTilesX()), startPen.getPos().y+(totY));
+		addTile(endPen);
+		int guardY = (int)Math.floor(Math.random()*(totY-2))+1;
+		for (int y = (int)startPen.getPos().y+1; y < (int)endPen.getPos().y; ++y)
+		{
+			if (y != startPen.getPos().y+guardY)
+			{
+				int rndX1 = (int)Math.floor(Math.random()*getNumTilesX());
+				addTile(new Boulder().set(rndX1, y));
+				// generate a second one that's not on the same tile:
+				int rndX2 = rndX1+(int)Math.floor(Math.random()*(getNumTilesX()-2)+1);
+				rndX2 = rndX2%(int)getNumTilesX();
+				addTile(new Boulder().set(rndX2, y));
+			}else
+			{
+				int startX = (int)Math.floor(Math.random()*3);
+				int offset = (int)Math.floor(Math.random()*4);
+				WalkPath path = new WalkPath();
+				path.add(new Vector2(startX, y));
+				path.add(new Vector2(startX+1, y));
+				path.add(new Vector2(startX+2, y));
+				path.add(new Vector2(startX+1, y));
+				addTile(new Guard().setPath(path).setOffset(offset));
+			}
+		}
+	}
+	public void pattern3(Pen startPen, Pen endPen)
+	{
+		float tileW = getTileWidth();
+		float tileH = getTileHeight();
+		endPen.set((int)Math.floor(Math.random()*getNumTilesX()), startPen.getPos().y+(Math.random()<.5?4:5));
+		addTile(endPen);
+		for (int y = (int)startPen.getPos().y+1; y < (int)endPen.getPos().y; ++y)
+		{
+			if (y != startPen.getPos().y+3 && y != startPen.getPos().y+1)
+			{
+				int rndX1 = (int)Math.floor(Math.random()*getNumTilesX());
+				addTile(new Boulder().set(rndX1, y));
+				// generate a second one that's not on the same tile:
+				int rndX2 = rndX1+(int)Math.floor(Math.random()*(getNumTilesX()-2)+1);
+				Gdx.app.log("rndX1, rndX2", ""+rndX1+", "+rndX2);
+				rndX2 = rndX2%(int)getNumTilesX();
+				addTile(new Boulder().set(rndX2, y));
+			}else
+			{
+				int startX = (int)Math.floor(Math.random()*3);
+				int offset = (int)Math.floor(Math.random()*4);
+				WalkPath path = new WalkPath();
+				path.add(new Vector2(startX, y));
+				path.add(new Vector2(startX+1, y));
+				path.add(new Vector2(startX+2, y));
+				path.add(new Vector2(startX+1, y));
+				addTile(new Guard().setPath(path).setOffset(offset));
+			}
+		}
 	}
 	public int greenOverlayY()
 	{

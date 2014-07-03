@@ -239,7 +239,7 @@ public class SheepGame implements InputProcessor
 		if (playingEndless)
 		{
 			batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-			for (int x = -1; x <= getNumTilesX()+1; ++x)
+			for (int x = 0; x < getNumTilesX(); ++x)
 				for (int y = -1; y <= getNumTilesY()+1; ++y)
 				{
 					batch.draw(texLink.get("grass"), startX+x*tileW+getOffsetX()%getTileWidth(), startY+y*tileH+getOffsetY()%getTileHeight(), tileW, tileH);
