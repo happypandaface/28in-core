@@ -29,6 +29,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Preferences;
 
 import com.mygdx.sheep.ui.ButtonListener;
 import com.mygdx.sheep.ui.ButtonListenBridge;
@@ -62,6 +63,7 @@ public class sheep extends ApplicationAdapter implements ButtonListener
 	private TabMenu tabMenu;
 	private InputMultiplexer inMux;
 	private TopMenu topMenu;
+	private Preferences prefs;
 	
 	public sheep()
 	{
@@ -102,6 +104,7 @@ public class sheep extends ApplicationAdapter implements ButtonListener
 	
 	public void load ()
 	{
+		prefs = Gdx.app.getPreferences("My Preferences");
 		inMux = new InputMultiplexer();
 		// this has to come first
 		assetHolder.finishLoad();
@@ -172,6 +175,15 @@ public class sheep extends ApplicationAdapter implements ButtonListener
 		gotoMenu("main");
 		
 		loaded = true;
+	}
+	public void setSaved(String s, String put)
+	{
+		prefs.putString(s, put);
+		prefs.flush();
+	}
+	public String getSaved(String s, String def)
+	{
+		return prefs.getString(s, def);
 	}
 	
 	public void buttonPressed(int id)

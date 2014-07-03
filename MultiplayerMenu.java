@@ -113,6 +113,8 @@ public class MultiplayerMenu implements ButtonListener
 		
 		nameLabelLogin = new Label("username:", assetHolder.labelStyle);
 		loginUN = new TextField("", assetHolder.textFieldStyle);
+		String un = sheep.getSaved("username", "");
+		loginUN.setText(un);
 		
 		passLabelLogin = new Label("password:", assetHolder.labelStyle);
 		newPassLabelLogin = new Label("new password:", assetHolder.labelStyle);
@@ -598,6 +600,7 @@ public class MultiplayerMenu implements ButtonListener
 					String str = httpResponse.getResultAsString();
 					if (str.equals(successStr))
 					{
+						sheep.setSaved("username", login);
 						currentLogin = login;
 						currentPassHash = hash;
 						showMessage(str, MULTI_MENU, "continue");
