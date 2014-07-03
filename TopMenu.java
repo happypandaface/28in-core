@@ -100,6 +100,7 @@ public class TopMenu implements ButtonListener
 		cornerIcon();
 		
 		usernameField = new TextField("", assetHolder.textFieldStyle);
+		usernameField.setRightAligned(false);
 		passwordField = new TextField("", assetHolder.textFieldStyle);
 		passwordField.setPasswordMode(true);
 		passwordField.setPasswordCharacter((char)42);

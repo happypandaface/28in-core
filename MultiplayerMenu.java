@@ -464,16 +464,19 @@ public class MultiplayerMenu implements ButtonListener
 				//String[] parts = str.split(",");
 				clearLevels();
 				Json json = new Json();
-				Array<Object> lvlArr = json.fromJson(Array.class, str);
+				json.addClassTag("levelInfo", MenuLevelInfo.class);
+				Array<MenuLevelInfo> lvlArr = json.fromJson(Array.class, str);
+				levels.clear();
 				for (int i = 0; i < lvlArr.size; ++i)
 				{
-					MenuLevelInfo mli = new MenuLevelInfo();
+					MenuLevelInfo mli = lvlArr.get(i);
 
+					levels.add(mli);
 //					String[] levelParts = parts[i].split(":");
 					//mli.username = 
 				}
 //				setLevels(parts);
-				//makeLevelButtons(0);
+				makeLevelButtons(0);
 				//do stuff here based on response
 			}
 			
@@ -545,20 +548,24 @@ public class MultiplayerMenu implements ButtonListener
 	{
 		showMessage("Loading level...", MULTI_MENU);
 		String command = "username="+userName+"&levelName="+levelName;
-		NetUtil.sendRequest(NetUtil.GET_LEVEL, "", new HttpResponseListener()
+		Gdx.app.log("command", command);
+		NetUtil.sendRequest(NetUtil.GET_LEVEL, command, new HttpResponseListener()
 		{
 			public void handleHttpResponse(HttpResponse httpResponse) {
 				String str = httpResponse.getResultAsString();
+				Gdx.app.log("getlvl res", str);
+
 				assetHolder.levelLoader.loadFromString(sheep.getPuzzleMode(), str);
 				sheep.gotoMenu("game");
 				goBackInternal();
-				Gdx.app.log("login res", str);
 				//do stuff here based on response
 			}
 
 			public void failed(Throwable t)
 			{
-				showMessage("Failed:\n"+t.getMessage(), LOGIN_MENU);
+				String str = t.getMessage();
+				showMessage("Failed:\n"+str, LOGIN_MENU);
+				Gdx.app.log("Failed", str);
 				//do stuff here based on the failed attempt
 			}
 
