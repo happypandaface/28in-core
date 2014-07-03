@@ -429,6 +429,8 @@ public class SheepGame implements InputProcessor
 	
 	public float getStartX()
 	{
+		float stretchedTileSizeX = assetHolder.getPercentWidth(1f/numTilesX);
+		float stretchedTileSizeY = assetHolder.getPercentHeight(1f/numTilesY);
 		return 0;
 	}
 	
