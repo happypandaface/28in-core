@@ -33,7 +33,6 @@ import com.mygdx.sheep.tiles.*;
 public class EndlessInches extends SheepGame
 {
 	private Pen startPen;
-	private Pen endPen;
 	private Array<Vector2> oldPath = null;
 	
 	private float oldPathFade = 0f;
@@ -52,11 +51,16 @@ public class EndlessInches extends SheepGame
 	{
 		startPen = new Pen();
 		startPen.set((int)Math.floor(getNumTilesX()*Math.random()), 1);
-		endPen = new Pen();
-		pattern1(startPen, endPen);
-		//endPen.set(3, 7);
 		addTile(startPen);
-		addTile(endPen);
+		Pen startPenTemp = startPen;
+		int penBuf = 2;
+		for (int i = 0; i < 2; ++i)
+		{
+			Pen nextPen = new Pen();
+			pattern1(startPenTemp, nextPen);
+			addTile(nextPen);
+			startPenTemp = nextPen;
+		}
 		addTile(new SheepObj().setOffset(0));
 		addTile(new SheepObj().setOffset(-4));
 		playingEndless = true;
@@ -66,7 +70,6 @@ public class EndlessInches extends SheepGame
 		scrollHeight = 0;
 		madeFirstPath = false;
 		startPen = null;
-		endPen = null;
 		numLevels = 0;
 		super.reset();
 	}
@@ -109,13 +112,62 @@ public class EndlessInches extends SheepGame
 			sheepVel = 0;
 			canDirectSheep = false;
 			sheepGo = false;
-		}else
+		}
+		if (canDirectSheep)
 			madeFirstPath = true;
-		if (madeFirstPath && endPen.getPos().y > -getOffsetTileY()+getNumTilesY())
+		
+		// if they've already made one path and the next
+		// pen is off screen, speed up a bit.
+		if (madeFirstPath && nextPen().getPos().y > -getOffsetTileY()+getNumTilesY())
 			scrollHeight += delta*fastScrollSpeed;
 		else if (madeFirstPath)
 			scrollHeight += delta*scrollSpeed;
 		super.render();
+	}
+	public Pen lastPen()
+	{
+		// find the last pen,
+		// which is the pen with the highest y
+		// value that isn't the startPen
+		Pen lastPen = null;
+		int highestY = -1;
+		for (int i = 0; i < tiles.size; ++i)
+		{
+			Tile t = tiles.get(i);
+			if (t instanceof Pen && t != startPen)
+			{
+				int y = (int)t.getPos().y;
+				if (highestY < y)
+				{
+					lastPen = (Pen)t;
+					highestY = y;
+				}
+			}
+		}
+		return lastPen;
+	}
+	public Pen nextPen()
+	{
+		// find the next pen,
+		// which is the pen with the lowest y
+		// value that isn't the startPen
+		// and isn't lower than the startPen
+		Pen nextPen = null;
+		int lowestY = -1;
+		for (int i = 0; i < tiles.size; ++i)
+		{
+			Tile t = tiles.get(i);
+			if (t instanceof Pen && t != startPen)
+			{
+				int y = (int)t.getPos().y;
+				if (y > startPen.getPos().y && (lowestY == -1 || lowestY > y))
+				{
+					nextPen = (Pen)t;
+					lowestY = y;
+				}
+			}
+		}
+		return nextPen;
 	}
 	public boolean checkInBounds(Vector2 add)
 	{
@@ -155,15 +207,30 @@ public class EndlessInches extends SheepGame
 		}
 		super.drawSheepPath(batch, delta);
 	}
-	
+	public Pen getPenAt(Vector2 pos, Pen exclude)
+	{
+		for (int i = 0; i < tiles.size; ++i)
+		{
+			Tile t = tiles.get(i);
+			if (t instanceof Pen && t != exclude)
+			{
+				if (t.getPos().x == pos.x &&
+					t.getPos().y == pos.y)
+					return (Pen)t;
+			}
+		}
+		return null;
+	}
 	public boolean doneWithPath()
 	{
 		if (sheepPath.size == 0)
 			return false;
 		Vector2 pos = sheepPath.get(sheepPath.size-1);
-		if (endPen.getPos().x == pos.x &&
-			endPen.getPos().y == pos.y)
+		if (getPenAt(pos, startPen) != null)
 			return true;
+		//if (endPen.getPos().x == pos.x &&
+		//	endPen.getPos().y == pos.y)
+		//	return true;
 		return false;
 	}
 	public void removeTile(Tile t)
@@ -174,7 +241,8 @@ public class EndlessInches extends SheepGame
 	{
 		numLevels++;
 		//removeTile(startPen);
-		startPen = endPen;
+		Pen nextPen = getPenAt(sheepPath.get(sheepPath.size-1), startPen);
+		startPen = nextPen;
 		oldPath = new Array<Vector2>();
 		for (int i = 0; i < sheepPath.size; ++i)
 		{
@@ -183,8 +251,8 @@ public class EndlessInches extends SheepGame
 		//oldPath = new Array<Vector2>(sheepPath.toArray());
 		oldPathFade = oldPathFadeMax;
 		sheepPath.clear();
-		endPen = new Pen();
-		pattern1(startPen, endPen);
+		Pen endPen = new Pen();
+		pattern1(lastPen(), endPen);
 		/*
 		if (numLevels < 2) {
 			pattern2(startPen, endPen);
@@ -298,18 +366,11 @@ public class EndlessInches extends SheepGame
 				Vector2 startGuardPos = i==0?new Vector2(getRndX(), getRndY(startY, range)):guardPath.peek();
 				int plusX = 0;
 				int plusY = 0;
-				int timesTried = 0;// prevent endless loop
 				do
-				{
-					timesTried++;
-					if (timesTried == 40)
-					{
-						retry = true;
-						break;
-					}
+				{	
 					int distribution = (int)Math.floor(Math.random()*(float)linkDist);
-					plusX = (int)Math.floor(Math.random()*(float)(linkDist-distribution))*Math.random()<.5?1:-1;
-					plusY = (int)Math.floor(Math.random()*(float)(-linkDist+distribution))*Math.random()<.5?1:-1;
+					plusX = (int)(linkDist-distribution)*(Math.random()<.5?1:-1);
+					plusY = (int)(distribution)*(Math.random()<.5?1:-1);
 				}while(
 					!(
 						(plusX != 0 || plusY != 0) && // make sure it's a different tile
@@ -387,15 +448,18 @@ public class EndlessInches extends SheepGame
 		}
 		int numGuards = 1+(int)Math.floor(Math.random()*(float)numLevels/5f);
 		int maxDist = 5;
+		int distRange = 2;
+		int numLinks = 2;
 		for (int i = 0; i < numGuards; ++i)
 		{
-			Array<Vector2> guardPath = makeFullPath(3, (int)startPen.getPos().y+1, dist-1, maxDist, winPaths);
+			int currDist = maxDist-(int)Math.floor(Math.random()*(float)maxDist);
+			Array<Vector2> guardPath = makeFullPath(numLinks, (int)startPen.getPos().y+1, dist-1, maxDist, winPaths);
 			addTile(new Guard().setPath(guardPath));
 			paths.add(guardPath);
 		}
 		// fill all tiles that aren't on the path with boulders
 		for (int x = 0; x < getNumTilesX(); ++x)
-			for (int y = (int)startPen.getPos().y; y < endPen.getPos().y; ++y)
+			for (int y = (int)startPen.getPos().y+1; y < endPen.getPos().y; ++y)
 			{
 				boolean notInPath = true;
 				if (Math.random() < 0)//.3f)
@@ -528,15 +592,18 @@ public class EndlessInches extends SheepGame
 	public int redOverlayY()
 	{
 		float tileH = getTileHeight();
-		return (int)(endPen.getPos().y*tileH+getOffsetY());
+		// TODO:
+		// change endPen to nextPen
+		// use code from render
+		return (int)(nextPen().getPos().y*tileH+getOffsetY());
 	}
 	public int startRedOverlay()
 	{
-		return (int)(endPen.getPos().x+getOffsetTileX());
+		return (int)(nextPen().getPos().x+getOffsetTileX());
 	}
 	public int endRedOverlay()
 	{
-		return (int)(endPen.getPos().x+getOffsetTileX()+1);
+		return (int)(nextPen().getPos().x+getOffsetTileX()+1);
 	}
 	
 	public void retryLevel()
