@@ -113,10 +113,12 @@ public class SheepGame implements InputProcessor
 			pixmap.fill();
 			texLink.put("light", new Texture(pixmap));
 		}
-		
-		
 	}
 	
+	public void setLevelName(String s)
+	{
+		gameOverlay.setLevelName(s);
+	}
 	public void reset()
 	{
 		playingEndless = false;

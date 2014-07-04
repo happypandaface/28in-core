@@ -30,6 +30,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+import com.mygdx.sheep.ui.ButtonListener;
+import com.mygdx.sheep.ui.ButtonListenBridge;
+
 public class GameOverlay
 {
 	protected boolean usingOverlay;
@@ -45,6 +48,7 @@ public class GameOverlay
 	protected boolean paused;
 	protected SpriteBatch batch;
 	protected Table topMenu;
+	protected String levelName;
 	protected Array<OverlayExtension> extensions;
 	
 	protected float resultTime = -1;
@@ -128,6 +132,7 @@ public class GameOverlay
 	
 	public void reset()
 	{
+		levelName = "";
 		bottomMenu.clearChildren();
 		unpauseOverlay();
 		inOverlay = false;
@@ -345,13 +350,41 @@ public class GameOverlay
 		bottomMenu.clearChildren();
 		sheepGame.retryLevelWithHelp();
 	}
-	
+	public void setLevelName(String s)
+	{
+		levelName = s;
+	}
 	public void nextLevel()
 	{
 		bottomMenu.clearChildren();
 		sheepGame.nextLevel();
 	}
-	
+	public void addLevelName(Table table)
+	{
+		Label levelNameLabel = new Label(levelName, assetHolder.labelStyle);
+		table.add(levelNameLabel).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(10).row();
+	}
+	public void rateLevel(int r)
+	{
+		Gdx.app.log("rating", ""+r);
+	}
+	public void addRate(Table table)
+	{
+		Table starTable = new Table();
+		for (int i = 0; i < 5; ++i)
+		{
+			TextButton star = new TextButton("s", assetHolder.smallButtonStyle);
+			star.addListener(new ButtonListenBridge().setButtonListener(new ButtonListener()
+			{
+				public void buttonPressed(int id)
+				{
+					rateLevel(id);
+				}
+			}).setId(i));
+			starTable.add(star).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).pad(1);
+		}
+		table.add(starTable).row();
+	}
 	public void addResumeButton(Table table)
 	{
 		TextButton resume = new TextButton("Resume", assetHolder.buttonStyle);
@@ -456,6 +489,8 @@ public class GameOverlay
 			overlayMenu.clearChildren();
 			inOverlay = true;
 			paused = true;
+			addLevelName(overlayMenu);
+			addRate(overlayMenu);
 			addResumeButton(overlayMenu);
 			addRetryButtons(overlayMenu);
 			inMux.addProcessor(overlayStage);

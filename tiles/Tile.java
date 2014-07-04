@@ -86,6 +86,11 @@ public class Tile
 		pos = new Vector2();
 	}
 	
+	public Tile set(Vector2 pos)
+	{
+		return set(pos.x, pos.y);
+	}
+	
 	public Tile set(float x, float y)
 	{
 		pos.x = x;

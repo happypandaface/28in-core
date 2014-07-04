@@ -163,6 +163,7 @@ public class LevelLoader
 	{
 		currentLevelStr = levelName;
 		sheepGame.reset();
+		sheepGame.setLevelName(levelName);
 		LevelInfo levelInfo = new LevelInfo();
 		if (levelName.equals("Roundabout"))
 		{

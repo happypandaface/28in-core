@@ -444,6 +444,14 @@ public class EndlessInches extends SheepGame
 		for (int i = 0; i < numPaths; ++i)
 		{
 			Array<Vector2> path = getPath(startPen.getPos(), endPen.getPos(), .75f);
+			// put some grass on the path (except pens)
+			for (int c = 1; c < path.size-1; ++c)
+			{
+				if (Math.random() < .025f)
+					addTile(new Cut().set(path.get(c)));
+				else if (Math.random() < .05f)
+					addTile(new TallGrass().set(path.get(c)));
+			}
 			winPaths.add(path);// add to win path for guards
 			paths.add(path);
 		}
@@ -463,7 +471,7 @@ public class EndlessInches extends SheepGame
 			for (int y = (int)startPen.getPos().y+1; y < endPen.getPos().y; ++y)
 			{
 				boolean notInPath = true;
-				if (Math.random() < 0)//.3f)
+				if (Math.random() < .1f)
 					notInPath = false;
 				else
 					pathsloop:// make sure the tile isn't a boulder already

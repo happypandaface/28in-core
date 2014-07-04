@@ -25,8 +25,18 @@ import com.badlogic.gdx.utils.Array;
 
 import com.mygdx.sheep.*;
 
-public class Cut extends Collectable
+public class Collectable extends Tile
 {
+	protected boolean collected;
+	public Collectable()
+	{
+		super();
+		collected = false;
+	}
+	public boolean isCollected()
+	{
+		return collected;
+	}
 	public static Texture getTex(AssetHolder assetHolder)
 	{
 		return assetHolder.white;
@@ -34,5 +44,32 @@ public class Cut extends Collectable
 	public Texture getTex()
 	{
 		return this.getTex(assetHolder);
+	}
+	public void update(float delta)
+	{
+		if (getExists())
+		{
+			for (int i = 0; i < sheepGame.tiles.size; ++i)
+			{
+				Tile t = sheepGame.tiles.get(i);
+				if (t instanceof SheepObj)
+				{
+					SheepObj so = ((SheepObj)t);
+					if (so.getOnField() && so.checkOverlap(this) &&
+						so.getExists())
+					{
+						setCollected(true);
+					}
+				}
+			}
+		}
+	}
+	public void setCollected(boolean b)
+	{
+		if (b)
+		{
+			exists = false;
+		}
+		collected = b;
 	}
 }

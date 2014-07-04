@@ -25,7 +25,7 @@ import com.badlogic.gdx.utils.Array;
 
 import com.mygdx.sheep.*;
 
-public class Cut extends Collectable
+public class Invis extends Collectable
 {
 	public static Texture getTex(AssetHolder assetHolder)
 	{
