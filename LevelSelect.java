@@ -322,6 +322,7 @@ public class LevelSelect implements ButtonListener
 	
 	public void switchTo()
 	{
+		setLevelPanel(1);
 	//	Gdx.input.setInputProcessor(stage);
 	}
 	public InputProcessor getInput()
