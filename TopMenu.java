@@ -156,6 +156,7 @@ public class TopMenu implements ButtonListener
 		inProfileMenu = false;
 		topRightTable.clearChildren();
 		centerTable.clearChildren();
+		bottomTable.clearChildren();
 		updateVals();
 		//centerTable.add(closeIcon).size(profileIconBigSize, profileIconBigSize).pad(iconBigPadding);
 		topRightTable.add(profileIcon).size(profileIconSize, profileIconSize).pad(iconPadding);
