@@ -211,7 +211,8 @@ public class SheepGame implements InputProcessor
 	}
 	public void render(float realDelta, float delta)
 	{
-		Gdx.gl.glClearColor(1, 0, 0, 1);
+		Color bgColor = assetHolder.getBgColor();
+		Gdx.gl.glClearColor(bgColor.r, bgColor.g, bgColor.b, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		if (sheepGo)
