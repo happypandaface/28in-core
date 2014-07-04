@@ -915,7 +915,8 @@ public class MultiplayerMenu implements ButtonListener
 	
 	public void render()
 	{
-		Gdx.gl.glClearColor(1, 0, 0, 1);
+		Color bgColor = assetHolder.getBgColor();
+		Gdx.gl.glClearColor(bgColor.r, bgColor.g, bgColor.b, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();

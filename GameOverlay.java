@@ -14,6 +14,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -50,6 +52,7 @@ public class GameOverlay
 	protected Table topMenu;
 	protected String levelName;
 	protected Array<OverlayExtension> extensions;
+	private ShapeRenderer shapeRenderer;
 	
 	protected float resultTime = -1;
 	protected float resultFadeDelay = 1.5f;
@@ -65,7 +68,7 @@ public class GameOverlay
 		inMux = new InputMultiplexer();
 		inMux.addProcessor(stage);
 		overlayStage = new Stage();
-		
+		shapeRenderer = new ShapeRenderer();
 		topMenu = new Table();
 		topMenu.setFillParent(true);
 		topMenu.top();
@@ -157,6 +160,10 @@ public class GameOverlay
 			drawSheepMessage(sheepGame.getMessage());
 			batch.end();
 		}
+		shapeRenderer.begin(ShapeType.Filled);
+		shapeRenderer.setColor(assetHolder.getBgColor().r, assetHolder.getBgColor().g, assetHolder.getBgColor().b, 1f);
+		shapeRenderer.rect(0, assetHolder.getPercentHeight(1f)-sheepGame.getTileHeight(), assetHolder.getPercentWidth(1f), (sheepGame.getTileHeight()));
+		shapeRenderer.end();
 		stage.act(delta);
 		stage.draw();
 		for (int i = 0; i < extensions.size; ++i)
