@@ -33,6 +33,8 @@ public class Tile
 	protected SheepGame sheepGame;
 	protected AssetHolder assetHolder;
 	protected boolean exists = true;
+	protected float offsetX;
+	protected float offsetY;
 	
 	public static Texture getTex(AssetHolder assetHolder)
 	{
@@ -187,6 +189,15 @@ public class Tile
 		}
 		return false;
 	}
+
+	public float getOffsetX()
+	{
+		return offsetX;
+	}
+	public float getOffsetY()
+	{
+		return offsetY;
+	}
 	
 	public void drawSprite(SpriteBatch batch, Texture tex, float x, float y, boolean flipX, float alpha)
 	{
@@ -201,7 +212,7 @@ public class Tile
 		if (flipX)
 			flip = -1;
 		
-		batch.draw(tex, startX+(x+(flip==-1?1:0))*tileW+sheepGame.getOffsetX(), startY+y*tileH+sheepGame.getOffsetY(), tileW*flip, tileH);
+		batch.draw(tex, startX+(x+(flip==-1?1:0)+getOffsetX())*tileW+sheepGame.getOffsetX(), startY+(y+getOffsetY())*tileH+sheepGame.getOffsetY(), tileW*flip, tileH);
 	}
 	
 	public void update(float delta)

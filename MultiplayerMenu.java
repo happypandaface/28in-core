@@ -50,6 +50,7 @@ public class MultiplayerMenu implements ButtonListener
 	private sheep sheep;
 	private Table loginTable;
 	private Table bottomTable;
+	private Table levelsTable;
 	private TextButton newUser;
 	private TextButton loginButton;
 	private TextButton loginButton2;
@@ -63,11 +64,14 @@ public class MultiplayerMenu implements ButtonListener
 	private TextButton changeLevelName;
 	private TextButton changePassButton;
 	private TextButton gotoChangePass;
+	private TextButton highestRated;
+	private TextButton newest;
 	private Label msgLable;
 	private Label nameLabelLogin;
 	private Label passLabelLogin;
 	private Label newPassLabelLogin;
 	private Label passwordLabelLogin;
+	private Label multiplayerTitle;
 	private TextField loginUN;
 	private TextField oldPass;
 	private TextField loginPW;
@@ -80,6 +84,9 @@ public class MultiplayerMenu implements ButtonListener
 	private static int NAME_LEVEL = 5;
 	private static int CHANGE_PASS_MENU = 5;
 	public static int TOP_MENU = 6;
+	public final static int POP_TAB = 7;
+	public final static int NEW_TAB = 8;
+	public final static int MY_LEVELS = 9;
 	private int currBackMenu;
 	private String currentLogin = "";
 	private String currentPassHash = "";
@@ -108,6 +115,8 @@ public class MultiplayerMenu implements ButtonListener
 		levels = new Array<MenuLevelInfo>();
 		
 		bottomTable = new Table();
+		levelsTable = new Table();
+		levelsTable.center();
 		bottomTable.setFillParent(true);
 		bottomTable.bottom();
 		
@@ -123,6 +132,12 @@ public class MultiplayerMenu implements ButtonListener
 		String un = sheep.getSaved("username", "");
 		loginUN.setText(un);
 		
+		multiplayerTitle = new Label("MULTIPLAYER", assetHolder.labelStyle);
+		highestRated = new TextButton("POPULAR", assetHolder.smallButtonStyle);
+		highestRated.addListener(new ButtonListenBridge().setButtonListener(this).setId(POP_TAB));
+		newest = new TextButton("NEWEST", assetHolder.smallButtonStyle);
+		newest.addListener(new ButtonListenBridge().setButtonListener(this).setId(NEW_TAB));
+
 		passLabelLogin = new Label("password:", assetHolder.labelStyle);
 		newPassLabelLogin = new Label("new password:", assetHolder.labelStyle);
 		levelName = new TextField("", assetHolder.textFieldStyle);
@@ -150,17 +165,8 @@ public class MultiplayerMenu implements ButtonListener
 			}
 		});
 		myLevels = new TextButton("my levels", assetHolder.buttonStyle);
-		myLevels.addListener(new InputListener(){
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button)
-			{
-				return true;
-			}
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button)
-			{
-				//Gdx.input.setOnscreenKeyboardVisible(true);
-				getOnMyLevels();
-			}
-		});
+		myLevels.addListener(new ButtonListenBridge().setButtonListener(this).setId(MY_LEVELS));
+		
 		changeLevelName = new TextButton("Set Name", assetHolder.buttonStyle);
 		changeLevelName.addListener(new InputListener(){
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button)
@@ -332,7 +338,64 @@ public class MultiplayerMenu implements ButtonListener
 			case CHANGE_PASS_MENU_BUTTON:
 				changePass();
 				break;
+			case POP_TAB:
+				loadLevels(0, NetUtil.GET_POP);
+				break;
+			case NEW_TAB:
+				loadLevels(0, NetUtil.GET_NEW);
+				break;
+			case MY_LEVELS:
+				getOnMyLevels();
+				break;
 		}
+	}
+	public void loadLevels(int page, int type)
+	{
+		// load the highest rated levels and display them
+		// in a table
+		levelsTable.clearChildren();
+		levelsTable.add(new Label("Loading...", assetHolder.labelStyle));
+		NetUtil.sendRequest(type, "", new HttpResponseListener() {
+			public void handleHttpResponse(HttpResponse httpResponse) {
+				String str = httpResponse.getResultAsString();
+				Json json = new Json();
+				json.addClassTag(assetHolder.mliClassName, MenuLevelInfo.class);
+				String[] mlis = str.split("\n");
+				levels.clear();
+				for (int i = 0; i < mlis.length; ++i)
+				{
+					String lvlStr = mlis[i];
+					if (!lvlStr.equals(""))
+					{
+						MenuLevelInfo mli = json.fromJson(MenuLevelInfo.class, lvlStr);
+						levels.add(mli);
+					}
+				}
+				
+				makeLevelButtons(0);
+				Gdx.app.log("rtn pop", str);
+				//do stuff here based on response
+			}
+
+			public void failed(Throwable t) {
+				String str = t.getMessage();
+				showMessage("Failed:\n"+str, CREATE_MENU);
+				Gdx.app.log("failed", str);
+				//do stuff here based on the failed attempt
+			}
+
+			public void cancelled() {
+				showMessage("Request cancelled", CREATE_MENU);
+				//do stuff here based on the failed attempt
+			}
+		});
+	}
+	public void loadNew(int page)
+	{
+		// load the highest rated levels and display them
+		// in a table
+		levelsTable.clearChildren();
+		levelsTable.add(new Label("Loading...", assetHolder.labelStyle));
 	}
 	public void doChangePassword(String pass)
 	{
@@ -510,6 +573,7 @@ public class MultiplayerMenu implements ButtonListener
 	{
 		clearTables();
 		loginTable.center();
+		mainLogin();
 		for (int i = 0; i < levels.size; ++i)
 		{
 			MenuLevelInfo mli = levels.get(i);
@@ -519,7 +583,7 @@ public class MultiplayerMenu implements ButtonListener
 			//String username = levelNames[i];
 			float padding = 0;//assetHolder.getPercentHeight(0.02f);
 			TextButton lvl1 = new TextButton(levelName/*"Level "+(i+1)*/, assetHolder.newButtonStyle);
-			loginTable.add(lvl1).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(padding);
+			loginTable.add(lvl1).height(assetHolder.getPercentHeight(assetHolder.buttonHeight)).width(assetHolder.getPercentWidth(assetHolder.buttonWidth)).pad(padding);
 			loginTable.row();
 			lvl1.addListener(new InputListener(){
 				private String levelName;
@@ -539,15 +603,13 @@ public class MultiplayerMenu implements ButtonListener
 					return this;
 				}
 			}.setLevelInfo(username, levelName));
-			loginTable.add(lvl1).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(10);
-			loginTable.row();
 		}
 	}
 	
 	public void doLevel(String userName, String levelName)
 	{
 		showMessage("Loading level...", MULTI_MENU);
-		String command = "username="+userName+"&levelName="+levelName;
+		String command = "username="+userName+"&levelName=\""+levelName+"\"";
 		Gdx.app.log("command", command);
 		NetUtil.sendRequest(NetUtil.GET_LEVEL, command, new HttpResponseListener()
 		{
@@ -617,10 +679,19 @@ public class MultiplayerMenu implements ButtonListener
 	public void mainLogin()
 	{
 		clearTables();
+		levelsTable.clearChildren();
+		loginTable.center();
+		loginTable.add(multiplayerTitle).row();
+		// these are the popular/new buttons
+		Table twoButtons = new Table();
+		twoButtons.add(highestRated).size(assetHolder.getSmallButtonWidth(), assetHolder.getSmallButtonHeight());
+		twoButtons.add(newest).size(assetHolder.getSmallButtonWidth(), assetHolder.getSmallButtonHeight());
+		loginTable.add(twoButtons).row();
+		loginTable.add(levelsTable).row();
+		/*
 		if (currentLogin.equals("") &&
 			currentPassHash.equals(""))
 		{
-			loginTable.center();
 			loginTable.add(back).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(10);
 			loginTable.row();
 			loginTable.add(loginButton).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(10);
@@ -629,7 +700,6 @@ public class MultiplayerMenu implements ButtonListener
 			loginTable.row();
 		}else
 		{
-			loginTable.center();
 			loginTable.add(back).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(10);
 			loginTable.row();
 			loginTable.add(logOutButton).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(10);
@@ -643,6 +713,7 @@ public class MultiplayerMenu implements ButtonListener
 			loginTable.add(gotoChangePass).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(10);
 			loginTable.row();
 		}
+		*/
 	}
 	
 	public void doLogin()

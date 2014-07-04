@@ -20,6 +20,8 @@ public class NetUtil
 	public static int GET_USR_LVL = 5;
 	public static int CHANGE_PASS = 6;
 	public static int GET_LEVEL = 7;
+	public static int GET_POP = 8;
+	public static int GET_NEW = 9;
 	
 	public static String bytesToHex(byte[] b) {
 		char hexDigit[] = {'0', '1', '2', '3', '4', '5', '6', '7',
@@ -59,6 +61,10 @@ public class NetUtil
 			contentString += "type=changePassword&";
 		else if (type == GET_LEVEL)
 			contentString += "type=getLevel&";
+		else if (type == GET_POP)
+			contentString += "type=getPop&";
+		else if (type == GET_NEW)
+			contentString += "type=getNew&";
 		contentString += data;
 		httpGet.setContent(contentString);
 		//httpGet.setContent(HttpParametersUtils.convertHttpParameters(parameters));

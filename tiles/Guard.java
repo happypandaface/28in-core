@@ -31,6 +31,7 @@ public class Guard extends Enemy
 	{
 		return assetHolder.guardTex1;
 	}
+	/*
 	public Texture getTex()
 	{
 		Texture tex = assetHolder.guardTex3;
@@ -38,10 +39,41 @@ public class Guard extends Enemy
 		if (steps%2 == 0)
 			tex = assetHolder.guardTex2;
 		return tex;
-	}
+	}*/
 	public String getTypeStr()
 	{
 		return "Guard";
+	}
+	@Override
+	public Texture getWalkerTex(int type)
+	{
+		switch(type)
+		{
+			case STAND_SIDE:
+				return assetHolder.newGuardTex1;
+			case SIDE_WALK1:
+				return assetHolder.newGuardTex2;
+			case SIDE_WALK2:
+				return assetHolder.newGuardTex3;
+			case STAND_UP:
+				return assetHolder.newGuardUpTex1;
+			case UP_WALK1:
+				return assetHolder.newGuardUpTex2;
+			case UP_WALK2:
+				return assetHolder.newGuardUpTex3;
+			case STAND_DOWN:
+				return assetHolder.newGuardDownTex1;
+			case DOWN_WALK1:
+				return assetHolder.newGuardDownTex2;
+			case DOWN_WALK2:
+				return assetHolder.newGuardDownTex3;
+		}
+		return super.getWalkerTex(type);
+	}
+	@Override
+	public boolean shouldFlipAgain()
+	{
+		return true;
 	}
 	/*
 	public void draw(SpriteBatch batch, float delta)

@@ -28,7 +28,6 @@ import com.mygdx.sheep.*;
 public class SheepObj extends PathWalker
 {
 	protected boolean dead = false;
-	private boolean moving = false;
 	
 	public SheepObj()
 	{
@@ -97,48 +96,46 @@ public class SheepObj extends PathWalker
 		}
 		pos = getPosition(stepsThroughPath);
 	}
-	
-	public Texture getTex()
+	@Override
+	public boolean shouldFlipAgain()
 	{
-		if (dir.y == 0)
-		{
-			if (!moving)
-				return assetHolder.sheepTex1;
-			
-			int steps = ((int)(getStepsThroughPath()*3.0f));
-			if (steps%2 == 0)
-				return assetHolder.sheepTex2;
-			else
-				return assetHolder.sheepTex3;
-		}else
-		if (dir.x == 0)
-		{
-			if (!moving)
-				return assetHolder.sheepVert1;
-			
-			int steps = ((int)(getStepsThroughPath()*3.0f));
-			if (steps%2 == 0)
-				return assetHolder.sheepVert2;
-			else
-				return assetHolder.sheepVert3;
-		}else
-		{
-			return assetHolder.sheepTex1;
-		}
+		return (dir.y == -1);
 	}
+	@Override
+	public boolean checkCanDraw()
+	{
+		return (getExists() && getOnField() && !getCompleted());
+	}
+	@Override
+	public Texture getWalkerTex(int type)
+	{
+		switch(type)
+		{
+			case STAND_SIDE:
+				return assetHolder.newSheepTex1;
+			case SIDE_WALK1:
+				return assetHolder.newSheepTex2;
+			case SIDE_WALK2:
+				return assetHolder.newSheepTex3;
+			case STAND_UP:
+				return assetHolder.newSheepUpTex1;
+			case UP_WALK1:
+				return assetHolder.newSheepUpTex2;
+			case UP_WALK2:
+				return assetHolder.newSheepUpTex3;
+			case STAND_DOWN:
+				return assetHolder.newSheepDownTex1;
+			case DOWN_WALK1:
+				return assetHolder.newSheepDownTex2;
+			case DOWN_WALK2:
+				return assetHolder.newSheepDownTex3;
+		}
+		return super.getWalkerTex(type);
+	}
+	
 	
 	public static Texture getTex(AssetHolder assetHolder)
 	{
 		return assetHolder.sheepTex1;
-	}
-	
-	@Override
-	public void draw(SpriteBatch batch, float delta)
-	{
-		boolean flipX = false;
-		if (dir.x == -1 || (dir.x == 0 && lastDir.x == -1))
-			flipX = true;
-		if (getExists() && getOnField() && !getCompleted())
-			drawSprite(batch, getTex(), pos.x, pos.y, flipX);
 	}
 }

@@ -363,11 +363,12 @@ public class EndlessInches extends SheepGame
 			guardPath.clear();
 			for (int i = 0; i < numLinks; ++i)
 			{
-				Vector2 startGuardPos = i==0?new Vector2(getRndX(), getRndY(startY, range)):guardPath.peek();
+				Vector2 startGuardPos = null;
 				int plusX = 0;
 				int plusY = 0;
 				do
 				{	
+					startGuardPos = i==0?new Vector2(getRndX(), getRndY(startY, range)):guardPath.peek();
 					int distribution = (int)Math.floor(Math.random()*(float)linkDist);
 					plusX = (int)(linkDist-distribution)*(Math.random()<.5?1:-1);
 					plusY = (int)(distribution)*(Math.random()<.5?1:-1);

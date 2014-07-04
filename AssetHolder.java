@@ -35,10 +35,13 @@ public class AssetHolder
 	public Texture sheepTex;
 	public Image sheepImg;
 	public BitmapFont fontWhite;
+	public BitmapFont smallFontWhite;
 	public BitmapFont fontRed;
 	public Skin skin;
 	public LabelStyle labelStyle;
+	public LabelStyle smallLabelStyle;
 	public TextButtonStyle buttonStyle;
+	public TextButtonStyle smallButtonStyle;
 	private String fontFile = "theGoodFont/goodFont.fnt";
 	public TextureRegionDrawable backButtonTex;
 	private String backButton = "140621-Menu-Button.png";
@@ -63,6 +66,7 @@ public class AssetHolder
 	public TextureRegionDrawable tabButtonUp;
 	public TextureRegionDrawable tabButtonDown;
 	private float fontSize = 1.0f/1500.0f;
+	private float smallFontSize = 1.0f/10000.0f;
 	public LevelLoader levelLoader;
 	public float buttonHeight = 0.07f;
 	public float buttonWidth = 0.75f;
@@ -79,6 +83,27 @@ public class AssetHolder
 //	public Texture profileIcon;
 	public TextureRegionDrawable profileIcon;
 	public TextureRegionDrawable closeIcon;
+	public String lightColorHex = "47edab";
+	public String darkColorHex = "39b27b";
+	public String mliClassName = "levelInfo";
+	public Texture newSheepTex1;
+	public Texture newSheepTex2;
+	public Texture newSheepTex3;
+	public Texture newSheepUpTex1;
+	public Texture newSheepUpTex2;
+	public Texture newSheepUpTex3;
+	public Texture newSheepDownTex1;
+	public Texture newSheepDownTex2;
+	public Texture newSheepDownTex3;
+	public Texture newGuardTex1;
+	public Texture newGuardTex2;
+	public Texture newGuardTex3;
+	public Texture newGuardUpTex1;
+	public Texture newGuardUpTex2;
+	public Texture newGuardUpTex3;
+	public Texture newGuardDownTex1;
+	public Texture newGuardDownTex2;
+	public Texture newGuardDownTex3;
 
 	public void startLoad()
 	{
@@ -119,15 +144,57 @@ public class AssetHolder
 		assets.load("dog.png", Texture.class);
 		assets.load("profileIcon.png", Texture.class);
 		assets.load("closeIcon.png", Texture.class);
+		assets.load("01 Horizontal/140703-28Inches-RedSheep-Horizontal-1.png", Texture.class);
+		assets.load("01 Horizontal/140703-28Inches-RedSheep-Horizontal-2.png", Texture.class);
+		assets.load("01 Horizontal/140703-28Inches-RedSheep-Horizontal-3.png", Texture.class);
+		assets.load("02 Up/140703-28Inches-RedSheep-Vertical-1.png", Texture.class);
+		assets.load("02 Up/140703-28Inches-RedSheep-Vertical-2.png", Texture.class);
+		assets.load("02 Up/140703-28Inches-RedSheep-Vertical-3.png", Texture.class);
+		assets.load("03 Down/140703-28Inches-RedSheep-Vertical-Down-1.png", Texture.class);
+		assets.load("03 Down/140703-28Inches-RedSheep-Vertical-Down-2.png", Texture.class);
+		assets.load("03 Down/140703-28Inches-RedSheep-Vertical-Down-3.png", Texture.class);
+		assets.load("01 Horizontal/140703-28Inches-Guard-Horizontal-1.png", Texture.class);
+		assets.load("01 Horizontal/140703-28Inches-Guard-Horizontal-2.png", Texture.class);
+		assets.load("01 Horizontal/140703-28Inches-Guard-Horizontal-3.png", Texture.class);
+		assets.load("02 Up/140703-28Inches-Guard-Up-1.png", Texture.class);
+		assets.load("02 Up/140703-28Inches-Guard-Up-2.png", Texture.class);
+		assets.load("02 Up/140703-28Inches-Guard-Up-3.png", Texture.class);
+		assets.load("03 Down/140703-28Inches-Guard-Down-1.png", Texture.class);
+		assets.load("03 Down/140703-28Inches-Guard-Down-2.png", Texture.class);
+		assets.load("03 Down/140703-28Inches-Guard-Down-3.png", Texture.class);
+		assets.load("01 Horizontal/140703-28Inches-Guard-Horizontal-1.png", Texture.class);
+		assets.load("01 Horizontal/140703-28Inches-Guard-Horizontal-2.png", Texture.class);
+		assets.load("01 Horizontal/140703-28Inches-Guard-Horizontal-3.png", Texture.class);
 	}
 	public void finishLoad()
 	{
+		newSheepTex1 = assets.get("01 Horizontal/140703-28Inches-RedSheep-Horizontal-1.png", Texture.class);
+		newSheepTex2 = assets.get("01 Horizontal/140703-28Inches-RedSheep-Horizontal-2.png", Texture.class);
+		newSheepTex3 = assets.get("01 Horizontal/140703-28Inches-RedSheep-Horizontal-3.png", Texture.class);
+		newSheepUpTex1 = assets.get("02 Up/140703-28Inches-RedSheep-Vertical-1.png", Texture.class);
+		newSheepUpTex2 = assets.get("02 Up/140703-28Inches-RedSheep-Vertical-2.png", Texture.class);
+		newSheepUpTex3 = assets.get("02 Up/140703-28Inches-RedSheep-Vertical-3.png", Texture.class);
+		newSheepDownTex1 = assets.get("03 Down/140703-28Inches-RedSheep-Vertical-Down-1.png", Texture.class);
+		newSheepDownTex2 = assets.get("03 Down/140703-28Inches-RedSheep-Vertical-Down-2.png", Texture.class);
+		newSheepDownTex3 = assets.get("03 Down/140703-28Inches-RedSheep-Vertical-Down-3.png", Texture.class);
+		newGuardTex1 = assets.get("01 Horizontal/140703-28Inches-Guard-Horizontal-1.png", Texture.class);
+		newGuardTex2 = assets.get("01 Horizontal/140703-28Inches-Guard-Horizontal-2.png", Texture.class);
+		newGuardTex3 = assets.get("01 Horizontal/140703-28Inches-Guard-Horizontal-3.png", Texture.class);
+		newGuardUpTex1 = assets.get("02 Up/140703-28Inches-Guard-Up-1.png", Texture.class);
+		newGuardUpTex2 = assets.get("02 Up/140703-28Inches-Guard-Up-2.png", Texture.class);
+		newGuardUpTex3 = assets.get("02 Up/140703-28Inches-Guard-Up-3.png", Texture.class);
+		newGuardDownTex1 = assets.get("03 Down/140703-28Inches-Guard-Down-1.png", Texture.class);
+		newGuardDownTex2 = assets.get("03 Down/140703-28Inches-Guard-Down-2.png", Texture.class);
+		newGuardDownTex3 = assets.get("03 Down/140703-28Inches-Guard-Down-3.png", Texture.class);
 		float fontScale = getPercentWidth(fontSize);
+		float smallFontScale = getPercentWidth(smallFontSize);
 		profileIcon = new TextureRegionDrawable(new TextureRegion(assets.get("profileIcon.png", Texture.class)));
 		closeIcon = new TextureRegionDrawable(new TextureRegion(assets.get("closeIcon.png", Texture.class)));
-		fontWhite = assets.get(fontFile, BitmapFont.class);
+		fontWhite = new BitmapFont(Gdx.files.internal(fontFile));
 		fontWhite.setColor(1, 1, 1, 1);
-		fontWhite.setScale(fontScale);
+		fontWhite.setScale(fontScale);//fontScale);
+		smallFontWhite = assets.get(fontFile, BitmapFont.class);
+		smallFontWhite.setScale(smallFontScale);
 		levelLoader = new LevelLoader();
 		skin = new Skin();
 		regTile1 = assets.get("140616_Tile RD1-BIG.png", Texture.class);
@@ -193,19 +260,27 @@ public class AssetHolder
 		textFieldStyle.background = new TextureRegionDrawable(new TextureRegion(assets.get("140621-28Inches-Button-Pressed.png", Texture.class)));
 		sheepTex = new Texture(Gdx.files.internal("140616_Sheep RD1-BIG-sheep.png"));
 		sheepImg = new Image(sheepTex);
-		fontRed = assets.get(fontFile, BitmapFont.class);
+		smallFontWhite.setScale(.1f);//fontScale);
+		fontRed = new BitmapFont(Gdx.files.internal(fontFile));
 		fontRed.setColor(1, 1, 1, 1);
 		fontRed.setScale(fontScale);
 		labelStyle = new LabelStyle();
+		smallLabelStyle = new LabelStyle();
+		smallLabelStyle.font = smallFontWhite;
 		labelStyle.font = fontWhite;
 		buttonStyle = new TextButtonStyle();
+		smallButtonStyle = new TextButtonStyle();
 		//NinePatch upPatch = new NinePatch(assets.get("140621-28Inches-Button-Normal.png", Texture.class), 128, 128, 128, 128);
 		//NinePatch downPatch = new NinePatch(assets.get("140621-28Inches-Button-Pressed.png", Texture.class), 128, 128, 128, 128);
 		buttonStyle.up = new TextureRegionDrawable(new TextureRegion(assets.get("140621-28Inches-Button-Normal.png", Texture.class)));
+		smallButtonStyle.up = new TextureRegionDrawable(new TextureRegion(assets.get("140621-28Inches-Button-Normal.png", Texture.class)));
 		//new NinePatchDrawable(upPatch);//skin.newDrawable("white", Color.valueOf("ffffff"));
 		buttonStyle.down = new TextureRegionDrawable(new TextureRegion(assets.get("140621-28Inches-Button-Pressed.png", Texture.class)));
+		smallButtonStyle.down = new TextureRegionDrawable(new TextureRegion(assets.get("140621-28Inches-Button-Pressed.png", Texture.class)));
 		//new NinePatchDrawable(downPatch);//skin.newDrawable("white", Color.valueOf("ff0000"));
 		buttonStyle.font = fontRed;
+		smallButtonStyle.font = smallFontWhite;
+		smallButtonStyle.fontColor = Color.valueOf(lightColorHex);
 		buttonStyle.fontColor = Color.valueOf("ff0000");
 		buttonStyle.downFontColor = Color.valueOf("ffffff");
 		buttonStyle.overFontColor = Color.valueOf("ff0000");
@@ -224,6 +299,14 @@ public class AssetHolder
 	public float getButtonWidth()
 	{
 		return getPercentWidth(buttonWidth);
+	}
+	public float getSmallButtonHeight()
+	{
+		return getPercentHeight(.05f);
+	}
+	public float getSmallButtonWidth()
+	{
+		return getPercentWidth(.3f);
 	}
 	public float getPercentWidth(float per)
 	{

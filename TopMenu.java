@@ -56,6 +56,7 @@ public class TopMenu implements ButtonListener
 	private ImageButton closeIcon;
 	private TextField usernameField;
 	private TextField passwordField;
+	private TextField repasswordField;
 	private TextButton loginButton;
 	private float profileIconBigSize;
 	private float iconBigPadding;

@@ -34,6 +34,7 @@ public class PathWalker extends Tile
 	protected Vector2 dir;
 	protected Vector2 lastDir;
 	protected float highestPathY = 0;
+	protected boolean moving = true;
 	
 	public static class PathWalkerJson extends Tile.TileJson
 	{
@@ -111,7 +112,62 @@ public class PathWalker extends Tile
 		//	dir = path.get(1).cpy().sub(path.get(0));
 		return this;
 	}
-	
+	public boolean getIsBouncing(int steps)
+	{
+		if ((int)Math.floor(steps+offset*.3f)%3 == 0)
+		{
+			return true;
+		}
+		return false;
+	}
+	protected final static int STAND_SIDE = 1;
+	protected final static int SIDE_WALK1 = 2;
+	protected final static int SIDE_WALK2 = 3;
+	protected final static int STAND_UP = 4;
+	protected final static int UP_WALK1 = 5;
+	protected final static int UP_WALK2 = 6;
+	protected final static int STAND_DOWN = 7;
+	protected final static int DOWN_WALK1 = 8;
+	protected final static int DOWN_WALK2 = 9;
+	public Texture getWalkerTex(int type)
+	{
+		return null;
+	}
+	public Texture getTex()
+	{
+		if (dir.y == 0)
+		{
+			offsetY = 0;
+			if (!moving)
+				return getWalkerTex(STAND_SIDE);//assetHolder.newSheepTex1;
+			
+			int steps = ((int)(getStepsThroughPath()*3.0f));
+			if (getIsBouncing(steps))
+				offsetY = .03f;
+			if (steps%2 == 0)
+			{
+				return getWalkerTex(SIDE_WALK1);//assetHolder.newSheepTex2;
+			}else
+			{
+				return getWalkerTex(SIDE_WALK2);//assetHolder.newSheepTex3;
+			}
+		}else
+		if (dir.x == 0)
+		{
+			offsetY = 0;
+			if (!moving)
+				return dir.y>0?getWalkerTex(STAND_UP):getWalkerTex(STAND_DOWN);//assetHolder.newSheepDownTex1;
+			
+			int steps = ((int)(getStepsThroughPath()*3.0f));
+			if (getIsBouncing(steps))
+				offsetY = .03f;
+			if (steps%2 == 0)
+				return dir.y>0?getWalkerTex(UP_WALK1):getWalkerTex(DOWN_WALK1);//assetHolder.newSheepDownTex2;
+			else
+				return dir.y>0?getWalkerTex(UP_WALK2):getWalkerTex(DOWN_WALK2);
+		}
+		return getWalkerTex(STAND_SIDE);
+	}
 	
 	public PathWalker setPath(Array<Vector2> p)
 	{
@@ -204,5 +260,24 @@ public class PathWalker extends Tile
 		dir = dist.cpy();
 		rtn.add(dist.scl(thisStep));
 		return rtn;
+	}
+	public boolean checkCanDraw()
+	{
+		return (getExists());
+	}
+	public boolean shouldFlipAgain()
+	{
+		return false;
+	}
+	@Override
+	public void draw(SpriteBatch batch, float delta)
+	{
+		boolean flipX = false;
+		if (dir.x == -1 || (dir.x == 0 && lastDir.x == -1))
+			flipX = true;
+		if (shouldFlipAgain())
+			flipX = !flipX;
+		if (checkCanDraw())
+			drawSprite(batch, getTex(), pos.x, pos.y, flipX);
 	}
 }
