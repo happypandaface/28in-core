@@ -32,6 +32,7 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
@@ -95,6 +96,8 @@ public class MultiplayerMenu implements ButtonListener
 	private int levelsPerPage = 4;
 	private final static int CHANGE_PASS_MENU_BUTTON = 1;
 	private final static int CHANGE_PASS = 2;
+	private Table popTogNew;
+	private boolean showingPop;
 	
 	public void setSheepMain(sheep s)
 	{
@@ -136,6 +139,8 @@ public class MultiplayerMenu implements ButtonListener
 		highestRated = new TextButton("POPULAR", assetHolder.smallButtonStyle);
 		highestRated.addListener(new ButtonListenBridge().setButtonListener(this).setId(POP_TAB));
 		newest = new TextButton("NEWEST", assetHolder.smallButtonStyle);
+		popTogNew = new Table();
+
 		newest.addListener(new ButtonListenBridge().setButtonListener(this).setId(NEW_TAB));
 
 		passLabelLogin = new Label("password:", assetHolder.labelStyle);
@@ -321,6 +326,7 @@ public class MultiplayerMenu implements ButtonListener
 		
 		
 		mainLogin();
+		buttonPressed(POP_TAB);
 	}
 	public void buttonPressed(int id)
 	{
@@ -339,9 +345,13 @@ public class MultiplayerMenu implements ButtonListener
 				changePass();
 				break;
 			case POP_TAB:
+				popTogNew.clearChildren();
+				popTogNew.add(new Image(assetHolder.popTogNew1));
 				loadLevels(0, NetUtil.GET_POP);
 				break;
 			case NEW_TAB:
+				popTogNew.clearChildren();
+				popTogNew.add(new Image(assetHolder.popTogNew2));
 				loadLevels(0, NetUtil.GET_NEW);
 				break;
 			case MY_LEVELS:
@@ -686,7 +696,9 @@ public class MultiplayerMenu implements ButtonListener
 		Table twoButtons = new Table();
 		twoButtons.add(highestRated).size(assetHolder.getSmallButtonWidth(), assetHolder.getSmallButtonHeight());
 		twoButtons.add(newest).size(assetHolder.getSmallButtonWidth(), assetHolder.getSmallButtonHeight());
-		loginTable.add(twoButtons).row();
+		loginTable.add(popTogNew).size(assetHolder.getPercentWidth(.65f), assetHolder.getPercentHeight(.05f)).row();
+
+		//loginTable.add(twoButtons).row();
 		loginTable.add(levelsTable).row();
 		/*
 		if (currentLogin.equals("") &&

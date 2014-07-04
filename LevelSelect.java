@@ -200,7 +200,7 @@ public class LevelSelect implements ButtonListener
 			leftTable.add(textTable);
 			textTable.add(new Label(i<=atLevel?levelName:"LOCKED", assetHolder.labelStyle)).row();
 			if (i <= atLevel)
-				textTable.add(new Label("Level "+i, assetHolder.smallLabelStyle)).left();
+				textTable.add(new Label("Level "+(i+1), assetHolder.smallLabelStyle)).left();
 			lvl1.add(leftTable).fill().expand();
 			levels.add(lvl1).height(buttonHeight).width(assetHolder.getPercentWidth(1.0f)).padTop(padTop).padBottom(padBottom);
 			levels.row();

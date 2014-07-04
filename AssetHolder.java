@@ -107,6 +107,17 @@ public class AssetHolder
 	public Texture newGuardDownTex1;
 	public Texture newGuardDownTex2;
 	public Texture newGuardDownTex3;
+	public Texture newDogTex1;
+	public Texture newDogTex2;
+	public Texture newDogTex3;
+	public Texture newDogUpTex1;
+	public Texture newDogUpTex2;
+	public Texture newDogUpTex3;
+	public Texture newDogDownTex1;
+	public Texture newDogDownTex2;
+	public Texture newDogDownTex3;
+	public TextureRegionDrawable popTogNew1;
+	public TextureRegionDrawable popTogNew2;
 
 	public void startLoad()
 	{
@@ -114,6 +125,8 @@ public class AssetHolder
 		assets = new AssetManager();
 		assets.load(fontFile, BitmapFont.class);
 		assets.load(backButton, Texture.class);
+		assets.load("popTogNew1.png", Texture.class);
+		assets.load("popTogNew2.png", Texture.class);
 		assets.load("140621-28Inches-Sprite-Sheep-Frame0.png", Texture.class);
 		assets.load("140621-28Inches-Sprite-Sheep-Frame1.png", Texture.class);
 		assets.load("140621-28Inches-Sprite-Sheep-Frame2.png", Texture.class);
@@ -172,9 +185,20 @@ public class AssetHolder
 		assets.load("01 Horizontal/140703-28Inches-Guard-Horizontal-3.png", Texture.class);
 		assets.load("singlePlayerLevelButton.png", Texture.class);
 		assets.load("singlePlayerLevelButtonDown.png", Texture.class);
+		assets.load("03 Dog/Up/140703-28Inches-Dog-Up-1.png", Texture.class);
+		assets.load("03 Dog/Up/140703-28Inches-Dog-Up-2.png", Texture.class);
+		assets.load("03 Dog/Up/140703-28Inches-Dog-Up-3.png", Texture.class);
+		assets.load("03 Dog/Down/140703-28Inches-Dog-Down-1.png", Texture.class);
+		assets.load("03 Dog/Down/140703-28Inches-Dog-Down-2.png", Texture.class);
+		assets.load("03 Dog/Down/140703-28Inches-Dog-Down-3.png", Texture.class);
+		assets.load("03 Dog/Horizontal/140703-28Inches-Dog-Horizontal-1.png", Texture.class);
+		assets.load("03 Dog/Horizontal/140703-28Inches-Dog-Horizontal-2.png", Texture.class);
+		assets.load("03 Dog/Horizontal/140703-28Inches-Dog-Horizontal-3.png", Texture.class);
 	}
 	public void finishLoad()
 	{
+		popTogNew1 = new TextureRegionDrawable(new TextureRegion(assets.get("popTogNew1.png", Texture.class)));
+		popTogNew2 = new TextureRegionDrawable(new TextureRegion(assets.get("popTogNew2.png", Texture.class)));
 		newSheepTex1 = assets.get("01 Horizontal/140703-28Inches-RedSheep-Horizontal-1.png", Texture.class);
 		newSheepTex2 = assets.get("01 Horizontal/140703-28Inches-RedSheep-Horizontal-2.png", Texture.class);
 		newSheepTex3 = assets.get("01 Horizontal/140703-28Inches-RedSheep-Horizontal-3.png", Texture.class);
@@ -193,6 +217,15 @@ public class AssetHolder
 		newGuardDownTex1 = assets.get("03 Down/140703-28Inches-Guard-Down-1.png", Texture.class);
 		newGuardDownTex2 = assets.get("03 Down/140703-28Inches-Guard-Down-2.png", Texture.class);
 		newGuardDownTex3 = assets.get("03 Down/140703-28Inches-Guard-Down-3.png", Texture.class);
+		newDogUpTex1 = assets.get("03 Dog/Up/140703-28Inches-Dog-Up-1.png", Texture.class);
+		newDogUpTex2 = assets.get("03 Dog/Up/140703-28Inches-Dog-Up-2.png", Texture.class);
+		newDogUpTex3 = assets.get("03 Dog/Up/140703-28Inches-Dog-Up-3.png", Texture.class);
+		newDogDownTex1 = assets.get("03 Dog/Down/140703-28Inches-Dog-Down-1.png", Texture.class);
+		newDogDownTex2 = assets.get("03 Dog/Down/140703-28Inches-Dog-Down-2.png", Texture.class);
+		newDogDownTex3 = assets.get("03 Dog/Down/140703-28Inches-Dog-Down-3.png", Texture.class);
+		newDogTex1 = assets.get("03 Dog/Horizontal/140703-28Inches-Dog-Horizontal-1.png", Texture.class);
+		newDogTex2 = assets.get("03 Dog/Horizontal/140703-28Inches-Dog-Horizontal-2.png", Texture.class);
+		newDogTex3 = assets.get("03 Dog/Horizontal/140703-28Inches-Dog-Horizontal-3.png", Texture.class);
 		float fontScale = getPercentWidth(fontSize);
 		float smallFontScale = getPercentWidth(smallFontSize);
 		profileIcon = new TextureRegionDrawable(new TextureRegion(assets.get("profileIcon.png", Texture.class)));
@@ -293,7 +326,7 @@ public class AssetHolder
 		buttonStyle.font = fontRed;
 		smallButtonStyle.font = smallFontWhite;
 		smallButtonStyle.fontColor = Color.valueOf(lightColorHex);
-		buttonStyle.fontColor = Color.valueOf("ff0000");
+		buttonStyle.fontColor = Color.valueOf("ffffff");
 		buttonStyle.downFontColor = Color.valueOf("ffffff");
 		buttonStyle.overFontColor = Color.valueOf("ff0000");
 		buttonStyle.checkedFontColor = Color.valueOf("ff0000");

@@ -174,7 +174,7 @@ public class sheep extends ApplicationAdapter implements ButtonListener
 		stage.addActor(topTable);
 		batch = new SpriteBatch();
 		
-		gotoMenu("main");
+		gotoMenu("level");
 		
 		loaded = true;
 	}

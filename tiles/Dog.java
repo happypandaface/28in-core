@@ -31,12 +31,44 @@ public class Dog extends Enemy
 	{
 		return assetHolder.dog1;
 	}
-	public Texture getTex()
-	{
-		return this.getTex(assetHolder);
-	}
 	public String getTypeStr()
 	{
 		return "Dog";
+	}
+	@Override
+	public float getOffsetY()
+	{
+		return super.getOffsetY()-.2f;
+	}
+	@Override
+	public boolean shouldFlipAgain()
+	{
+		return true;
+	}
+	@Override
+	public Texture getWalkerTex(int type)
+	{
+		switch(type)
+		{
+			case STAND_SIDE:
+				return assetHolder.newDogTex1;
+			case SIDE_WALK1:
+				return assetHolder.newDogTex2;
+			case SIDE_WALK2:
+				return assetHolder.newDogTex3;
+			case STAND_UP:
+				return assetHolder.newDogUpTex1;
+			case UP_WALK1:
+				return assetHolder.newDogUpTex2;
+			case UP_WALK2:
+				return assetHolder.newDogUpTex3;
+			case STAND_DOWN:
+				return assetHolder.newDogDownTex1;
+			case DOWN_WALK1:
+				return assetHolder.newDogDownTex2;
+			case DOWN_WALK2:
+				return assetHolder.newDogDownTex3;
+		}
+		return super.getWalkerTex(type);
 	}
 }
