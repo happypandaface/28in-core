@@ -98,6 +98,7 @@ public class MultiplayerMenu implements ButtonListener
 	private final static int CHANGE_PASS = 2;
 	private Table popTogNew;
 	private boolean showingPop;
+	protected boolean loadingLevels;
 	
 	public void setSheepMain(sheep s)
 	{
@@ -114,6 +115,7 @@ public class MultiplayerMenu implements ButtonListener
 	
 	public void load()
 	{
+		loadingLevels = false;
 		stage = new Stage();
 		levels = new Array<MenuLevelInfo>();
 		
@@ -345,14 +347,24 @@ public class MultiplayerMenu implements ButtonListener
 				changePass();
 				break;
 			case POP_TAB:
-				popTogNew.clearChildren();
-				popTogNew.add(new Image(assetHolder.popTogNew1));
-				loadLevels(0, NetUtil.GET_POP);
+				if (!loadingLevels)
+				{
+					popTogNew.clearChildren();
+					ImageButton goButton = new ImageButton(assetHolder.popTogNew1);
+					popTogNew.add(goButton).size(assetHolder.getPercentWidth(.7f), assetHolder.getPercentHeight(.04f)).row();
+					goButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(NEW_TAB));
+					loadLevels(0, NetUtil.GET_POP);
+				}
 				break;
 			case NEW_TAB:
-				popTogNew.clearChildren();
-				popTogNew.add(new Image(assetHolder.popTogNew2));
-				loadLevels(0, NetUtil.GET_NEW);
+				if (!loadingLevels)
+				{
+					popTogNew.clearChildren();
+					ImageButton goButton2 = new ImageButton(assetHolder.popTogNew2);
+					popTogNew.add(goButton2).size(assetHolder.getPercentWidth(.7f), assetHolder.getPercentHeight(.04f)).row();
+					goButton2.addListener(new ButtonListenBridge().setButtonListener(this).setId(POP_TAB));
+					loadLevels(0, NetUtil.GET_NEW);
+				}
 				break;
 			case MY_LEVELS:
 				getOnMyLevels();
@@ -363,6 +375,7 @@ public class MultiplayerMenu implements ButtonListener
 	{
 		// load the highest rated levels and display them
 		// in a table
+		loadingLevels = true;
 		levelsTable.clearChildren();
 		levelsTable.add(new Label("Loading...", assetHolder.labelStyle));
 		NetUtil.sendRequest(type, "", new HttpResponseListener() {
@@ -381,7 +394,7 @@ public class MultiplayerMenu implements ButtonListener
 						levels.add(mli);
 					}
 				}
-				
+				loadingLevels = false;
 				makeLevelButtons(0);
 				Gdx.app.log("rtn pop", str);
 				//do stuff here based on response
@@ -391,6 +404,7 @@ public class MultiplayerMenu implements ButtonListener
 				String str = t.getMessage();
 				showMessage("Failed:\n"+str, CREATE_MENU);
 				Gdx.app.log("failed", str);
+				loadingLevels = false;
 				//do stuff here based on the failed attempt
 			}
 
@@ -696,7 +710,7 @@ public class MultiplayerMenu implements ButtonListener
 		Table twoButtons = new Table();
 		twoButtons.add(highestRated).size(assetHolder.getSmallButtonWidth(), assetHolder.getSmallButtonHeight());
 		twoButtons.add(newest).size(assetHolder.getSmallButtonWidth(), assetHolder.getSmallButtonHeight());
-		loginTable.add(popTogNew).size(assetHolder.getPercentWidth(.65f), assetHolder.getPercentHeight(.05f)).row();
+		loginTable.add(popTogNew).size(assetHolder.getPercentWidth(.7f), assetHolder.getPercentHeight(.04f)).row();
 
 		//loginTable.add(twoButtons).row();
 		loginTable.add(levelsTable).row();

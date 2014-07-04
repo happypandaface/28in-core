@@ -54,6 +54,7 @@ public class TopMenu implements ButtonListener
 	private static final int MAKE_ACCOUNT_BUTTON = 7;
 	private static final int MSG = 8;
 	private static final int BACK_BUTTON = 9;
+	private static final int MULTI_MENU = 10;
 	private int currentMenu = LOGIN_MENU;
 	private int backMenu = LOGIN_MENU;
 	private InputMultiplexer inMux;
@@ -79,6 +80,8 @@ public class TopMenu implements ButtonListener
 	private float profileIconSize;
 	private float iconPadding;
 	private final String successStr = "success";
+	private String currentLogin;
+	private String currentPassHash;
 
 	public TopMenu()
 	{
@@ -177,7 +180,6 @@ public class TopMenu implements ButtonListener
 			centerTable.add(passwordField).size(profileIconBigSize, profileIconSize).pad(iconPadding);
 			centerTable.row();
 			centerTable.add(loginButton).size(profileIconBigSize, profileIconSize).pad(iconPadding);
-			topRightTable.add(closeIcon).size(profileIconSize, profileIconSize).pad(iconPadding);
 			bottomTable.add(needAccount).size(assetHolder.getPercentWidth(1), profileIconSize);
 		}else if (currentMenu == MK_ACC)
 		{
@@ -189,14 +191,17 @@ public class TopMenu implements ButtonListener
 			centerTable.add(repasswordField).size(profileIconBigSize, profileIconSize).pad(iconPadding);
 			centerTable.row();
 			centerTable.add(makeAccountButton).size(profileIconBigSize, profileIconSize).pad(iconPadding);
-			topRightTable.add(closeIcon).size(profileIconSize, profileIconSize).pad(iconPadding);
 			bottomTable.add(haveAccount).size(assetHolder.getPercentWidth(1), profileIconSize);
 		}else if (currentMenu == MSG)
 		{
 			centerTable.add(messageLabel).size(profileIconBigSize, profileIconSize).pad(iconPadding).row();
 			centerTable.add(backButton).size(profileIconBigSize, profileIconSize).pad(iconPadding);
-			topRightTable.add(closeIcon).size(profileIconSize, profileIconSize).pad(iconPadding);
+		}else if (currentMenu == MULTI_MENU)
+		{
+			//centerTable.add(levelEditor).size(profileIconBigSize, profileIconSize).pad(iconPadding);
 		}
+		// always allow close
+		topRightTable.add(closeIcon).size(profileIconSize, profileIconSize).pad(iconPadding);
 	}
 
 	public void buttonPressed(int id)
@@ -236,7 +241,7 @@ public class TopMenu implements ButtonListener
 					sheep.gotoMenu("multi");
 					try
 					{
-						sheep.getMultiplayerMenu().doLogin(MultiplayerMenu.TOP_MENU, usernameField.getText(), NetUtil.encode(passwordField.getText()));
+						doLogin(LOGIN_MENU, usernameField.getText(), NetUtil.encode(passwordField.getText()));
 					}catch(Exception e)
 					{
 						Gdx.app.log("error in top menu", e.toString());
@@ -251,7 +256,55 @@ public class TopMenu implements ButtonListener
 				currentMenu = LOGIN_MENU;
 				centerIcon();
 				break;
+			case MULTI_MENU:
+				currentMenu = MULTI_MENU;
+				centerIcon();
+				break;
 		}
+	}
+	
+	
+	public void doLogin(int backMenu, String un, String hash)
+	{
+		Gdx.app.log("username", un);
+		showMessage("Logging in...", backMenu);
+		
+		NetUtil.sendRequest(NetUtil.LOGIN, "username="+un+"&password="+hash, new HttpResponseListener()
+		{
+			private String hash;
+			private String login;
+			public void handleHttpResponse(HttpResponse httpResponse) {
+				String str = httpResponse.getResultAsString();
+				if (str.equals(successStr))
+				{
+					sheep.setSaved("username", login);
+					currentLogin = login;
+					currentPassHash = hash;
+					showMessage(str, MULTI_MENU, "continue");
+				}else
+					showMessage(str, LOGIN_MENU);
+				Gdx.app.log("login res", str);
+				//do stuff here based on response
+			}
+
+			public void failed(Throwable t)
+			{
+				showMessage("Failed:\n"+t.getMessage(), LOGIN_MENU);
+				//do stuff here based on the failed attempt
+			}
+
+			public void cancelled()
+			{
+				showMessage("Request cancelled", LOGIN_MENU);
+				//do stuff here based on the failed attempt
+			}
+			public HttpResponseListener setHashAndLogin(String p, String l)
+			{
+				hash = p;
+				login = l;
+				return this;
+			}
+		}.setHashAndLogin(hash, un));
 	}
 	
 	
