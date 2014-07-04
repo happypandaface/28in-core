@@ -338,7 +338,6 @@ public class sheep extends ApplicationAdapter implements ButtonListener
 		inMux.addProcessor(topMenu.getInput());
 		overInMux.addProcessor(topMenu.getInput());
 		inMux.addProcessor(tabMenu.getInput());
-		overInMux.addProcessor(tabMenu.getInput());
 		Gdx.input.setInputProcessor(inMux);
 	}
 	public void onlyTopAndTabs()
@@ -403,8 +402,8 @@ public class sheep extends ApplicationAdapter implements ButtonListener
 					stage.draw();
 					break;
 			}
-			topMenu.render();
 			tabMenu.render();
+			topMenu.render();
 		}
 	}
 }

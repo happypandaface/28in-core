@@ -36,15 +36,26 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.mygdx.sheep.ui.ButtonListener;
 import com.mygdx.sheep.ui.ButtonListenBridge;
 
+import com.badlogic.gdx.Net.HttpResponse;
+import com.badlogic.gdx.Net.HttpResponseListener;
+
 public class TopMenu implements ButtonListener
 {
 	public Stage topStage;
 	public Table topRightTable;
 	public Table centerTable;
+	public Table bottomTable;
 	private static final int MAIN_MENU = 1;
 	private static final int CLOSE = 2;
 	private static final int PROFILE = 3;
 	private static final int LOGIN_BUTTON = 4;
+	private static final int MK_ACC = 5;
+	private static final int LOGIN_MENU = 6;
+	private static final int MAKE_ACCOUNT_BUTTON = 7;
+	private static final int MSG = 8;
+	private static final int BACK_BUTTON = 9;
+	private int currentMenu = LOGIN_MENU;
+	private int backMenu = LOGIN_MENU;
 	private InputMultiplexer inMux;
 	private AssetHolder assetHolder;
 	private sheep sheep;
@@ -57,11 +68,17 @@ public class TopMenu implements ButtonListener
 	private TextField usernameField;
 	private TextField passwordField;
 	private TextField repasswordField;
+	private Label messageLabel;
 	private TextButton loginButton;
+	private TextButton makeAccountButton;
+	private TextButton needAccount;
+	private TextButton haveAccount;
+	private TextButton backButton;
 	private float profileIconBigSize;
 	private float iconBigPadding;
 	private float profileIconSize;
 	private float iconPadding;
+	private final String successStr = "success";
 
 	public TopMenu()
 	{
@@ -86,8 +103,11 @@ public class TopMenu implements ButtonListener
 		inMux.addProcessor(topStage);
 		topRightTable = new Table();
 		centerTable = new Table();
+		bottomTable = new Table();
+		bottomTable.setFillParent(true);
 		centerTable.setFillParent(true);
 		centerTable.center();
+		bottomTable.bottom();
 		topRightTable.top();
 		topRightTable.right();
 		topRightTable.setFillParent(true);
@@ -98,6 +118,7 @@ public class TopMenu implements ButtonListener
 //		profileIcon.setPosition(90, 190);
 		topStage.addActor(topRightTable);
 		topStage.addActor(centerTable);
+		topStage.addActor(bottomTable);
 		cornerIcon();
 		
 		usernameField = new TextField("", assetHolder.textFieldStyle);
@@ -105,9 +126,21 @@ public class TopMenu implements ButtonListener
 		passwordField = new TextField("", assetHolder.textFieldStyle);
 		passwordField.setPasswordMode(true);
 		passwordField.setPasswordCharacter((char)42);
+		repasswordField = new TextField("", assetHolder.textFieldStyle);
+		repasswordField.setPasswordMode(true);
+		repasswordField.setPasswordCharacter((char)42);
 		
+		makeAccountButton = new TextButton("CREATE ACCOUNT", assetHolder.buttonStyle);
+		makeAccountButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(MAKE_ACCOUNT_BUTTON));
 		loginButton = new TextButton("login", assetHolder.buttonStyle);
 		loginButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(LOGIN_BUTTON));
+		needAccount = new TextButton("NEED AN ACCOUNT?", assetHolder.buttonStyle);
+		needAccount.addListener(new ButtonListenBridge().setButtonListener(this).setId(MK_ACC));
+		haveAccount = new TextButton("ALREADY HAVE AN ACCOUNT?", assetHolder.buttonStyle);
+		haveAccount.addListener(new ButtonListenBridge().setButtonListener(this).setId(LOGIN_MENU));
+		backButton = new TextButton("back", assetHolder.buttonStyle);
+		backButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(BACK_BUTTON));
+		messageLabel = new Label("back", assetHolder.labelStyle);
 	}
 	public void updateVals()
 	{
@@ -133,14 +166,36 @@ public class TopMenu implements ButtonListener
 		inProfileMenu = true;
 		topRightTable.clearChildren();
 		centerTable.clearChildren();
-		centerTable.add(profileIcon).size(profileIconBigSize, profileIconBigSize).pad(iconBigPadding);
-		centerTable.row();
-		centerTable.add(usernameField).size(profileIconBigSize, profileIconSize).pad(iconPadding);
-		centerTable.row();
-		centerTable.add(passwordField).size(profileIconBigSize, profileIconSize).pad(iconPadding);
-		centerTable.row();
-		centerTable.add(loginButton).size(profileIconBigSize, profileIconSize).pad(iconPadding);
-		topRightTable.add(closeIcon).size(profileIconSize, profileIconSize).pad(iconPadding);
+		bottomTable.clearChildren();
+		if (currentMenu == LOGIN_MENU)
+		{
+			centerTable.add(profileIcon).size(profileIconBigSize, profileIconBigSize).pad(iconBigPadding);
+			centerTable.row();
+			centerTable.add(usernameField).size(profileIconBigSize, profileIconSize).pad(iconPadding);
+			centerTable.row();
+			centerTable.add(passwordField).size(profileIconBigSize, profileIconSize).pad(iconPadding);
+			centerTable.row();
+			centerTable.add(loginButton).size(profileIconBigSize, profileIconSize).pad(iconPadding);
+			topRightTable.add(closeIcon).size(profileIconSize, profileIconSize).pad(iconPadding);
+			bottomTable.add(needAccount).size(assetHolder.getPercentWidth(1), profileIconSize);
+		}else if (currentMenu == MK_ACC)
+		{
+			centerTable.add(profileIcon).size(profileIconBigSize, profileIconBigSize).pad(iconBigPadding);
+			centerTable.row();
+			centerTable.add(usernameField).size(profileIconBigSize, profileIconSize).pad(iconPadding);
+			centerTable.row();
+			centerTable.add(passwordField).size(profileIconBigSize, profileIconSize).pad(iconPadding).row();
+			centerTable.add(repasswordField).size(profileIconBigSize, profileIconSize).pad(iconPadding);
+			centerTable.row();
+			centerTable.add(makeAccountButton).size(profileIconBigSize, profileIconSize).pad(iconPadding);
+			topRightTable.add(closeIcon).size(profileIconSize, profileIconSize).pad(iconPadding);
+			bottomTable.add(haveAccount).size(assetHolder.getPercentWidth(1), profileIconSize);
+		}else if (currentMenu == MSG)
+		{
+			centerTable.add(messageLabel).size(profileIconBigSize, profileIconSize).pad(iconPadding).row();
+			centerTable.add(backButton).size(profileIconBigSize, profileIconSize).pad(iconPadding);
+			topRightTable.add(closeIcon).size(profileIconSize, profileIconSize).pad(iconPadding);
+		}
 	}
 
 	public void buttonPressed(int id)
@@ -160,6 +215,19 @@ public class TopMenu implements ButtonListener
 					cornerIcon();
 				}
 				break;
+			case MAKE_ACCOUNT_BUTTON:
+				if (inProfileMenu)
+				{
+					createUser();
+				}
+				break;
+			case BACK_BUTTON:
+				if (inProfileMenu)
+				{
+					currentMenu = backMenu;
+					centerIcon();
+				}
+				break;
 			case LOGIN_BUTTON:
 				if (inProfileMenu)
 				{
@@ -174,6 +242,71 @@ public class TopMenu implements ButtonListener
 					}
 				}
 				break;
+			case MK_ACC:
+				currentMenu = MK_ACC;
+				centerIcon();
+				break;
+			case LOGIN_MENU:
+				currentMenu = LOGIN_MENU;
+				centerIcon();
+				break;
+		}
+	}
+	
+	
+	public void showMessage(String message, int menu)
+	{
+		showMessage(message, menu, "back");
+	}
+	public void showMessage(String message, int menu, String button)
+	{
+		messageLabel.setText(message);
+		backMenu = menu;
+		currentMenu = MSG;
+		centerIcon();
+	}
+	
+	public void createUser()
+	{
+		String un = usernameField.getText();
+		String pass1 = passwordField.getText();
+		String pass2 = repasswordField.getText();
+		if (!pass1.equals(pass2))
+			showMessage("Passwords don't\nmatch", MK_ACC);
+		else
+		{
+			showMessage("Creating account...", MK_ACC);
+			try
+			{
+				String hash = NetUtil.encode(pass1);
+				
+				NetUtil.sendRequest(NetUtil.CREATE_ACCOUNT, "username="+un+"&password="+hash, new HttpResponseListener() {
+					public void handleHttpResponse(HttpResponse httpResponse) {
+						String str = httpResponse.getResultAsString();
+						if (str.equals(successStr))
+						{
+							showMessage(str, LOGIN_MENU, "login");
+						}else
+							showMessage(str, MK_ACC);
+						Gdx.app.log("rtn", httpResponse.getResultAsString());
+						//do stuff here based on response
+					}
+
+					public void failed(Throwable t) {
+						showMessage("Failed:\n"+t.getMessage(), MK_ACC);
+						//do stuff here based on the failed attempt
+					}
+
+					public void cancelled() {
+						showMessage("Request cancelled", MK_ACC);
+						//do stuff here based on the failed attempt
+					}
+				});
+			}catch (Exception e)
+			{
+				showMessage("hash error", MK_ACC);
+				Gdx.app.log("error", e.toString());
+			}
 		}
 	}
 
