@@ -66,7 +66,7 @@ public class AssetHolder
 	public TextureRegionDrawable tabButtonUp;
 	public TextureRegionDrawable tabButtonDown;
 	private float fontSize = 1.0f/1500.0f;
-	private float smallFontSize = 1.0f/10000.0f;
+	private float smallFontSize = 1.0f/2500.0f;
 	public LevelLoader levelLoader;
 	public float buttonHeight = 0.07f;
 	public float buttonWidth = 0.75f;
@@ -74,7 +74,10 @@ public class AssetHolder
 	public ImageButtonStyle playTabButtonStyle;
 	public ScrollPaneStyle scrollPaneStyle;
 	public TextButtonStyle newButtonStyle;
+	public TextButtonStyle spButtonStyle;
 	public Texture levelPreview;
+	public Texture unlockedLevel;
+	public Texture lockedLevel;
 	public Texture rightArrowActive;
 	public Texture rightArrowFaded;
 	public Texture leftArrowFaded;
@@ -114,6 +117,8 @@ public class AssetHolder
 		assets.load("140621-28Inches-Sprite-Sheep-Frame0.png", Texture.class);
 		assets.load("140621-28Inches-Sprite-Sheep-Frame1.png", Texture.class);
 		assets.load("140621-28Inches-Sprite-Sheep-Frame2.png", Texture.class);
+		assets.load("unlockedLevel.png", Texture.class);
+		assets.load("lockedLevel.png", Texture.class);
 		
 		assets.load("140621-28Inches-Sprite-Guard-Frame-0.png", Texture.class);
 		assets.load("140621-28Inches-Sprite-Guard-Frame-1.png", Texture.class);
@@ -165,6 +170,8 @@ public class AssetHolder
 		assets.load("01 Horizontal/140703-28Inches-Guard-Horizontal-1.png", Texture.class);
 		assets.load("01 Horizontal/140703-28Inches-Guard-Horizontal-2.png", Texture.class);
 		assets.load("01 Horizontal/140703-28Inches-Guard-Horizontal-3.png", Texture.class);
+		assets.load("singlePlayerLevelButton.png", Texture.class);
+		assets.load("singlePlayerLevelButtonDown.png", Texture.class);
 	}
 	public void finishLoad()
 	{
@@ -211,6 +218,8 @@ public class AssetHolder
 		sheepVert3 = assets.get("140621-28Inches-Sprite-Sheep-Vertical-Frame2.png", Texture.class);
 		startOverlay = assets.get("140621-Starting-Area.png", Texture.class);
 		levelPreview = assets.get("levelPreview.png", Texture.class);
+		unlockedLevel = assets.get("unlockedLevel.png", Texture.class);
+		lockedLevel = assets.get("lockedLevel.png", Texture.class);
 		rightArrowActive = assets.get("rightArrowActive.png", Texture.class);
 		rightArrowFaded = assets.get("rightArrowFaded.png", Texture.class);
 		leftArrowFaded = assets.get("leftArrowFaded.png", Texture.class);
@@ -218,6 +227,9 @@ public class AssetHolder
 		newButtonStyle = new TextButtonStyle();
 		newButtonStyle.up = new NinePatchDrawable(new NinePatch(assets.get("newButtonTexUp.png", Texture.class), 32, 32, 32, 32));
 		newButtonStyle.down = new NinePatchDrawable(new NinePatch(assets.get("newButtonTexUp.png", Texture.class), 32, 32, 32, 32));
+		spButtonStyle = new TextButtonStyle();
+		spButtonStyle.up = new NinePatchDrawable(new NinePatch(assets.get("singlePlayerLevelButton.png", Texture.class), 32, 32, 109, 109));
+		spButtonStyle.down = new NinePatchDrawable(new NinePatch(assets.get("singlePlayerLevelButtonDown.png", Texture.class), 32, 32, 109, 109));
 		newButtonStyle.font = fontWhite;
 		playTabButtonStyle = new ImageButtonStyle();
 		playTabButtonStyle.imageUp = new TextureRegionDrawable(new TextureRegion(assets.get("140628-28Inches-Inactive-Tab.png", Texture.class)));
@@ -260,7 +272,7 @@ public class AssetHolder
 		textFieldStyle.background = new TextureRegionDrawable(new TextureRegion(assets.get("140621-28Inches-Button-Pressed.png", Texture.class)));
 		sheepTex = new Texture(Gdx.files.internal("140616_Sheep RD1-BIG-sheep.png"));
 		sheepImg = new Image(sheepTex);
-		smallFontWhite.setScale(.1f);//fontScale);
+		//smallFontWhite.setScale(.1f);//fontScale);
 		fontRed = new BitmapFont(Gdx.files.internal(fontFile));
 		fontRed.setColor(1, 1, 1, 1);
 		fontRed.setScale(fontScale);

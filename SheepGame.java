@@ -58,6 +58,7 @@ public class SheepGame implements InputProcessor
 	protected GameOverlay normOverlay;
 	protected int cutsUsed;
 	protected int cutsGained;
+	protected int levelNumber;
 	
 	protected boolean playingEndless;
 	
@@ -121,6 +122,7 @@ public class SheepGame implements InputProcessor
 	}
 	public void reset()
 	{
+		levelNumber = 0;
 		playingEndless = false;
 		if (gameOverlay != null)
 			inMux.removeProcessor(gameOverlay.inMux);
@@ -141,7 +143,10 @@ public class SheepGame implements InputProcessor
 		sheepGo = false;
 		canDirectSheep = false;
 	}
-	
+	public void setLevelNumber(int i)
+	{
+		levelNumber = i;
+	}
 	public void setOverlay(GameOverlay go)
 	{
 		if (gameOverlay != null)
@@ -414,6 +419,10 @@ public class SheepGame implements InputProcessor
 	public void winTheGame()
 	{
 		winning = true;
+		if (levelNumber > Integer.parseInt(sheep.getSaved("level", "-1")))
+		{
+			sheep.setSaved("level", ""+levelNumber);
+		}
 		gameOverlay.newMessage();
 		messages.add(new SheepMessage(getWinText(), .5f).setColor("green"));
 	}

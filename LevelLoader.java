@@ -164,6 +164,12 @@ public class LevelLoader
 		currentLevelStr = levelName;
 		sheepGame.reset();
 		sheepGame.setLevelName(levelName);
+		for (int i = 0; i < levelLink.size; ++i)
+			if (levelName.equals(levelLink.get(i)))
+			{
+				sheepGame.setLevelNumber(i);
+				break;
+			}
 		LevelInfo levelInfo = new LevelInfo();
 		if (levelName.equals("Roundabout"))
 		{
