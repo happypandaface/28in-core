@@ -609,6 +609,19 @@ public class SheepGame implements InputProcessor
 				sheepGo = true;
 		}
 	}
+	public boolean worksAsPath(Vector2 add)
+	{
+		for (int i = 0; i < tiles.size; ++i)
+		{
+			Tile t = tiles.get(i);
+			if (!checkIfCanPathOver(t))
+			{
+				if (t.checkOverlap(add))
+					return false;
+			}
+		}
+		return true;
+	}
 	public void doDrag(Vector2 add)
 	{
 		if (checkInBounds(add))
@@ -620,15 +633,9 @@ public class SheepGame implements InputProcessor
 				if (p.x == add.x && p.y == add.y)
 					pieceWorks = false;
 			}
-			for (int i = 0; i < tiles.size; ++i)
-			{
-				Tile t = tiles.get(i);
-				if (!checkIfCanPathOver(t))
-				{
-					if (t.checkOverlap(add))
-						pieceWorks = false;
-				}
-			}
+			if (!worksAsPath(add))
+				pieceWorks = false;
+			
 			if (sheepPath.size == 0 && !checkIsStartingPiece(add))
 				pieceWorks = false;
 			if (sheepPath.size != 0 && sheepPath.get(sheepPath.size-1).cpy().sub(add).len() != 1)

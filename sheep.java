@@ -356,7 +356,10 @@ public class sheep extends ApplicationAdapter implements ButtonListener
 	}
 
 	@Override
-	public void render () {
+	public void render () 
+	{
+		if (Gdx.input.justTouched())
+			Gdx.input.setOnscreenKeyboardVisible(false);
 		Gdx.gl.glClearColor(assetHolder.getBgColor().r, assetHolder.getBgColor().g, assetHolder.getBgColor().b, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		//Gdx.gl.glEnable(GL20.GL_BLEND);

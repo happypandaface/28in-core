@@ -112,11 +112,37 @@ public class PathWalker extends Tile
 		return this;
 	}
 	
+	
 	public PathWalker setPath(Array<Vector2> p)
 	{
 		for (int i = 0; i < p.size; ++i)
 		{
 			addPath(p.get(i).x, p.get(i).y);
+		}
+		return this;
+	}
+	public boolean isPathLegal()
+	{
+		Vector2 dist = path.get(0).cpy().sub(path.peek());
+		// guards can only move one space at a time
+		if (dist.len() == 1 || dist.len() == 0)
+			return true;
+		return false;
+	}
+	public PathWalker makePathLegal()
+	{
+		if (!isPathLegal())
+		{
+			// recursing backwards over the path and adding copies of all the 
+			// tiles will make the path legal
+			// illegal paths almost always have more than 2 tiles
+			// currrently there is no way to make path that
+			// disobeys this
+			for (int i = path.size-2; i > 0; --i)
+			{
+				Vector2 p = path.get(i);
+				addPath(p.x, p.y);
+			}
 		}
 		return this;
 	}

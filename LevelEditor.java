@@ -144,7 +144,7 @@ public class LevelEditor extends SheepGame
 		{
 			if (pathWalker != null)
 			{
-				if (pathWalker.notInPath(add))
+				if (worksAsPath(add) && pathWalker.notInPath(add))
 					pathWalker.addPath(add.x, add.y);
 			}else
 			{
@@ -165,6 +165,10 @@ public class LevelEditor extends SheepGame
 	}
 	public void touchReleased(Vector2 add)
 	{
+		if (pathWalker != null)
+		{
+			pathWalker.makePathLegal();
+		}
 		pathWalker = null;
 	}
 }
