@@ -55,6 +55,7 @@ public class TopMenu implements ButtonListener
 	private static final int MSG = 8;
 	private static final int BACK_BUTTON = 9;
 	private static final int MULTI_MENU = 10;
+	private static final int TYPING = 11;
 	private int currentMenu = LOGIN_MENU;
 	private int backMenu = LOGIN_MENU;
 	private InputMultiplexer inMux;
@@ -70,6 +71,7 @@ public class TopMenu implements ButtonListener
 	private TextField passwordField;
 	private TextField repasswordField;
 	private Label messageLabel;
+	private Label nameLabel;
 	private TextButton loginButton;
 	private TextButton makeAccountButton;
 	private TextButton needAccount;
@@ -126,6 +128,7 @@ public class TopMenu implements ButtonListener
 		
 		usernameField = new TextField("", assetHolder.textFieldStyle);
 		usernameField.setRightAligned(false);
+		usernameField.addListener(new ButtonListenBridge().setButtonListener(this).setId(TYPING));
 		passwordField = new TextField("", assetHolder.textFieldStyle);
 		passwordField.setPasswordMode(true);
 		passwordField.setPasswordCharacter((char)42);
@@ -144,6 +147,7 @@ public class TopMenu implements ButtonListener
 		backButton = new TextButton("back", assetHolder.buttonStyle);
 		backButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(BACK_BUTTON));
 		messageLabel = new Label("back", assetHolder.labelStyle);
+		nameLabel = new Label("Not logged in", assetHolder.labelStyle);
 	}
 	public void updateVals()
 	{
@@ -198,7 +202,9 @@ public class TopMenu implements ButtonListener
 			centerTable.add(backButton).size(profileIconBigSize, profileIconSize).pad(iconPadding);
 		}else if (currentMenu == MULTI_MENU)
 		{
+			nameLabel.setText("Welcome, "+currentLogin+"!");
 			//centerTable.add(levelEditor).size(profileIconBigSize, profileIconSize).pad(iconPadding);
+			centerTable.add(nameLabel).size(profileIconBigSize, profileIconSize).pad(iconPadding);
 		}
 		// always allow close
 		topRightTable.add(closeIcon).size(profileIconSize, profileIconSize).pad(iconPadding);
@@ -207,8 +213,12 @@ public class TopMenu implements ButtonListener
 	public void buttonPressed(int id)
 	{
 		Gdx.app.log("id", ""+id);
+		centerTable.setY(assetHolder.getPercentHeight(0f));
 		switch (id)
 		{
+			case TYPING:
+				centerTable.setY(assetHolder.getPercentHeight(.3f));
+				break;
 			case PROFILE:
 				if (!inProfileMenu)
 				{
