@@ -643,6 +643,7 @@ public class MultiplayerMenu implements ButtonListener
 
 				assetHolder.levelLoader.loadFromString(sheep.getPuzzleMode(), str);
 				sheep.gotoMenu("game");
+				sheepGame.setCanRate(true);
 				goBackInternal();
 				//do stuff here based on response
 			}
@@ -950,6 +951,7 @@ public class MultiplayerMenu implements ButtonListener
 	
 	public void switchTo()
 	{
+		sheep.getTabMenu().animateUp();
 	//	Gdx.input.setInputProcessor(stage);
 	}
 	public InputProcessor getInput()

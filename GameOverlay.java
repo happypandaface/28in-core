@@ -281,8 +281,8 @@ public class GameOverlay
 				return this;
 			}
 		}.setSceneChanger(this));
-		table.add(selectLevel).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(10);
-		table.row();
+		//table.add(selectLevel).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(10);
+		//table.row();
 		if (assetHolder.levelLoader.currentLevelHasHelp())
 			addHelpButton(table);
 	}
@@ -377,20 +377,23 @@ public class GameOverlay
 	}
 	public void addRate(Table table)
 	{
-		Table starTable = new Table();
-		for (int i = 0; i < 5; ++i)
+		if (sheepGame.canRate())
 		{
-			TextButton star = new TextButton("s", assetHolder.smallButtonStyle);
-			star.addListener(new ButtonListenBridge().setButtonListener(new ButtonListener()
+			Table starTable = new Table();
+			for (int i = 0; i < 5; ++i)
 			{
-				public void buttonPressed(int id)
+				TextButton star = new TextButton("s", assetHolder.smallButtonStyle);
+				star.addListener(new ButtonListenBridge().setButtonListener(new ButtonListener()
 				{
-					rateLevel(id);
-				}
-			}).setId(i));
-			starTable.add(star).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).pad(1);
+					public void buttonPressed(int id)
+					{
+						rateLevel(id);
+					}
+				}).setId(i));
+				starTable.add(star).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).pad(1);
+			}
+			table.add(starTable).row();
 		}
-		table.add(starTable).row();
 	}
 	public void addResumeButton(Table table)
 	{

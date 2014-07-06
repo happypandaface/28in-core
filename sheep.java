@@ -65,6 +65,9 @@ public class sheep extends ApplicationAdapter implements ButtonListener
 	private InputMultiplexer overInMux;
 	private TopMenu topMenu;
 	private Preferences prefs;
+	private Texture splashTexture;
+	private Texture sheepTexture1;
+	private Texture sheepTexture2;
 	
 	public sheep()
 	{
@@ -74,6 +77,10 @@ public class sheep extends ApplicationAdapter implements ButtonListener
 		@Override
 	public void create ()
 	{
+		batch = new SpriteBatch();
+		splashTexture = new Texture(Gdx.files.internal("splash.png"));
+		sheepTexture2 = new Texture(Gdx.files.internal("01 Horizontal/140703-28Inches-RedSheep-Horizontal-2.png"));
+		sheepTexture1 = new Texture(Gdx.files.internal("01 Horizontal/140703-28Inches-RedSheep-Horizontal-3.png"));
 		shapeRenderer = new ShapeRenderer();
 		
 		assetHolder = new AssetHolder();
@@ -172,7 +179,6 @@ public class sheep extends ApplicationAdapter implements ButtonListener
 		//bottomTable.add(studioLabel);
 		stage.addActor(table);
 		stage.addActor(topTable);
-		batch = new SpriteBatch();
 		
 		gotoMenu("level");
 		
@@ -369,13 +375,24 @@ public class sheep extends ApplicationAdapter implements ButtonListener
 		}else if (loading)
 		{
 			float per = assetHolder.getProgress();
+			batch.begin();
+			batch.draw(splashTexture, assetHolder.getPercentWidth(.25f), assetHolder.getPercentHeight(.5f), assetHolder.getPercentWidth(.5f), assetHolder.getPercentWidth(.5f));
+			batch.draw(((int)Math.floor(per*20)%2==0)?sheepTexture1:sheepTexture2, assetHolder.getPercentWidth(.3f), assetHolder.getPercentHeight(.3f), assetHolder.getPercentWidth(.4f), assetHolder.getPercentWidth(.4f));
+			batch.end();
+			/*
 			shapeRenderer.begin(ShapeType.Line);
 			shapeRenderer.setColor(1, 0, 0, 1);
 			shapeRenderer.rect(assetHolder.getPercentWidth(.2f), assetHolder.getPercentHeight(.45f), assetHolder.getPercentWidth(.6f), assetHolder.getPercentHeight(.1f));
 			shapeRenderer.end();
+			*/
 			shapeRenderer.begin(ShapeType.Filled);
-			shapeRenderer.setColor(1, 0, 0, 1);
-			shapeRenderer.rect(assetHolder.getPercentWidth(.2f), assetHolder.getPercentHeight(.45f), assetHolder.getPercentWidth(.6f)*per, assetHolder.getPercentHeight(.1f));
+			shapeRenderer.setColor(77f/255f, 1f, 184f/255f, 1);
+			float startX = .1f;
+			float startY = .25f;
+			float height = .02f;
+			shapeRenderer.rect(assetHolder.getPercentWidth(startX), assetHolder.getPercentHeight(startY), assetHolder.getPercentWidth(1f-startX*2), assetHolder.getPercentHeight(height));
+			shapeRenderer.setColor(54f/255f, 178f/255f, 128f/255f, 1);
+			shapeRenderer.rect(assetHolder.getPercentWidth(startX), assetHolder.getPercentHeight(startY), assetHolder.getPercentWidth(1f-startX*2)*per, assetHolder.getPercentHeight(height));
 			shapeRenderer.end();
 		}
 		if (loaded)

@@ -214,6 +214,7 @@ public class TopMenu implements ButtonListener
 	{
 		Gdx.app.log("id", ""+id);
 		centerTable.setY(assetHolder.getPercentHeight(0f));
+		// test
 		switch (id)
 		{
 			case TYPING:
@@ -248,7 +249,7 @@ public class TopMenu implements ButtonListener
 				if (inProfileMenu)
 				{
 					cornerIcon();
-					sheep.gotoMenu("multi");
+					//sheep.gotoMenu("multi");
 					try
 					{
 						doLogin(LOGIN_MENU, usernameField.getText(), NetUtil.encode(passwordField.getText()));

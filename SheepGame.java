@@ -59,6 +59,7 @@ public class SheepGame implements InputProcessor
 	protected int cutsUsed;
 	protected int cutsGained;
 	protected int levelNumber;
+	protected boolean levelCanBeRated;
 	
 	protected boolean playingEndless;
 	
@@ -120,8 +121,17 @@ public class SheepGame implements InputProcessor
 	{
 		gameOverlay.setLevelName(s);
 	}
+	public void setCanRate(boolean b)
+	{
+		levelCanBeRated = b;
+	}
+	public boolean canRate()
+	{
+		return levelCanBeRated;
+	}
 	public void reset()
 	{
+		levelCanBeRated = false;
 		levelNumber = 0;
 		playingEndless = false;
 		if (gameOverlay != null)
