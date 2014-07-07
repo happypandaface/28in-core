@@ -173,6 +173,7 @@ public class SheepGame implements InputProcessor
 	{
 		gameOverlay.unpauseOverlay();
 		sheep.overlayOff();
+		sheep.hideProfile();
 		//Gdx.input.setInputProcessor(inMux);
 	}
 	public InputProcessor getInput()
@@ -215,7 +216,15 @@ public class SheepGame implements InputProcessor
 		t.create(this);
 		tiles.add(t);
 	}
-	
+	public boolean collect(Collectable c)
+	{
+		if (c instanceof Cut && cutsAvailable() == 0)
+		{
+			cutsGained++;
+			return true;
+		}
+		return false;
+	}
 	public void render()
 	{
 		float realDelta = Gdx.graphics.getDeltaTime();// for all effects
@@ -297,9 +306,11 @@ public class SheepGame implements InputProcessor
 		int doneSheep = 0;
 		int deadSheep = 0;
 		// this is the num of cuts you have
-		int cutsCollected = 0;
+		//int cutsCollected = 0;
 		// draw and count sheep and other things
 		//  like collected stuff and dead stuff
+		//  CHANGING collecting stuff
+		//  because of endless
 		for (int i = 0; i < tiles.size; ++i)
 		{
 			Tile t = tiles.get(i);
@@ -312,15 +323,16 @@ public class SheepGame implements InputProcessor
 				++doneSheep;
 			if (t instanceof SheepObj && ((SheepObj)t).isDead())
 				++deadSheep;
-			if (t instanceof Cut && ((Cut)t).isCollected())
-				++cutsCollected;
+			//if (t instanceof Cut && ((Cut)t).isCollected())
+			//	++cutsCollected;
 		}
+		/*
 		if (cutsCollected-cutsUsed > 0)
 		{
 			batch.draw(Cut.getTex(assetHolder), startX, startY, tileW, tileH);
-		}
+		}*/
 		// this makes the variable available to the tiles
-		cutsGained = cutsCollected;
+		//cutsGained = cutsCollected;
 		if (doneSheep == numSheep && !winning)
 			winTheGame();
 		if (deadSheep > 0 && !losing)

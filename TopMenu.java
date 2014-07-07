@@ -56,6 +56,10 @@ public class TopMenu implements ButtonListener
 	private static final int BACK_BUTTON = 9;
 	private static final int MULTI_MENU = 10;
 	private static final int TYPING = 11;
+	private static final int GOTO_EDIT = 12;
+	private static final int LEVEL_EDIT = 13;
+	private static final int CHOICE = 14;
+	private static final int CONT_UPLOAD = 15;
 	private int currentMenu = LOGIN_MENU;
 	private int backMenu = LOGIN_MENU;
 	private InputMultiplexer inMux;
@@ -71,6 +75,8 @@ public class TopMenu implements ButtonListener
 	private TextField passwordField;
 	private TextField repasswordField;
 	private Label messageLabel;
+	private TextButton yesButton;
+	private TextButton noButton;
 	private Label nameLabel;
 	private TextButton loginButton;
 	private TextButton makeAccountButton;
@@ -84,6 +90,9 @@ public class TopMenu implements ButtonListener
 	private final String successStr = "success";
 	private String currentLogin;
 	private String currentPassHash;
+	private Table topLeftTable;
+	private Button editButton;
+	private boolean showing = true;
 
 	public TopMenu()
 	{
@@ -99,6 +108,11 @@ public class TopMenu implements ButtonListener
 	{
 		sheep = s;
 	}
+	public String getLoginInfo(String cmd)
+	{
+		cmd += "username="+currentLogin+"&password="+currentPassHash;
+		return cmd;
+	}
 
 	public void create()
 	{
@@ -107,8 +121,13 @@ public class TopMenu implements ButtonListener
 		shapeRenderer = new ShapeRenderer();
 		inMux.addProcessor(topStage);
 		topRightTable = new Table();
+
 		centerTable = new Table();
 		bottomTable = new Table();
+		topLeftTable = new Table();
+		topLeftTable.setFillParent(true);
+		topLeftTable.top();
+		topLeftTable.left();
 		bottomTable.setFillParent(true);
 		centerTable.setFillParent(true);
 		centerTable.center();
@@ -124,15 +143,21 @@ public class TopMenu implements ButtonListener
 		topStage.addActor(topRightTable);
 		topStage.addActor(centerTable);
 		topStage.addActor(bottomTable);
+		topStage.addActor(topLeftTable);
 		cornerIcon();
-		
+	
+		editButton = new Button(assetHolder.editButton);
+		editButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(GOTO_EDIT));
+
 		usernameField = new TextField("", assetHolder.textFieldStyle);
 		usernameField.setRightAligned(false);
 		usernameField.addListener(new ButtonListenBridge().setButtonListener(this).setId(TYPING));
 		passwordField = new TextField("", assetHolder.textFieldStyle);
 		passwordField.setPasswordMode(true);
 		passwordField.setPasswordCharacter((char)42);
+		passwordField.addListener(new ButtonListenBridge().setButtonListener(this).setId(TYPING));
 		repasswordField = new TextField("", assetHolder.textFieldStyle);
+		repasswordField.addListener(new ButtonListenBridge().setButtonListener(this).setId(TYPING));
 		repasswordField.setPasswordMode(true);
 		repasswordField.setPasswordCharacter((char)42);
 		
@@ -147,6 +172,8 @@ public class TopMenu implements ButtonListener
 		backButton = new TextButton("back", assetHolder.buttonStyle);
 		backButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(BACK_BUTTON));
 		messageLabel = new Label("back", assetHolder.labelStyle);
+		yesButton = new TextButton("back", assetHolder.buttonStyle);
+		noButton = new TextButton("back", assetHolder.buttonStyle);
 		nameLabel = new Label("Not logged in", assetHolder.labelStyle);
 	}
 	public void updateVals()
@@ -157,11 +184,61 @@ public class TopMenu implements ButtonListener
 		iconPadding = assetHolder.getPercentWidth(.02f);
 	}
 
+	public void hide()
+	{
+		inMux.clear();
+		inMux.removeProcessor(topStage);
+		showing = false;
+	}
+	public void show()
+	{
+		inMux.clear();
+		inMux.addProcessor(topStage);
+		showing = true;
+	}
+
+	private String levelToUpload;
+	public void uploadLevel(String mul)
+	{
+		levelToUpload = mul;
+		showConfirm("This will overwrite\nany level of the\nsame name and it's\nratings", CONT_UPLOAD, LEVEL_EDIT, "continue", "back");
+	}
+	public void doUpload()
+	{
+		showMessage("Uploading...", LEVEL_EDIT);
+		String commandString = new String();
+		commandString = getLoginInfo(commandString);
+		//commandString += "username="+currentLogin+"&password="+currentPassHash;
+		commandString += "&levelString="+levelToUpload+"&levelName="+sheep.getMultiplayerMenu().getLevelName();
+		Gdx.app.log("commandString", commandString);
+		NetUtil.sendRequest(NetUtil.SAVE_LEVEL, commandString, new HttpResponseListener() {
+			public void handleHttpResponse(HttpResponse httpResponse) {
+				String str = httpResponse.getResultAsString();
+				showMessage(str, LEVEL_EDIT, "continue");
+				Gdx.app.log("savlvlrtn", str);
+				//do stuff here based on response
+			}
+
+			public void failed(Throwable t) {
+				showMessage("Failed:\n"+t.getMessage(), LEVEL_EDIT);
+				//do stuff here based on the failed attempt
+			}
+
+			public void cancelled() {
+				showMessage("Request cancelled", LEVEL_EDIT);
+				//do stuff here based on the failed attempt
+			}
+		});
+		Gdx.app.log("level string: ", levelToUpload);
+	}
+
+
 	public void cornerIcon()
 	{
 		sheep.restoreInput();
 		inProfileMenu = false;
 		topRightTable.clearChildren();
+		topLeftTable.clearChildren();
 		centerTable.clearChildren();
 		bottomTable.clearChildren();
 		updateVals();
@@ -173,6 +250,7 @@ public class TopMenu implements ButtonListener
 		sheep.onlyTopAndTabs();
 		inProfileMenu = true;
 		topRightTable.clearChildren();
+		topLeftTable.clearChildren();
 		centerTable.clearChildren();
 		bottomTable.clearChildren();
 		if (currentMenu == LOGIN_MENU)
@@ -202,9 +280,16 @@ public class TopMenu implements ButtonListener
 			centerTable.add(backButton).size(profileIconBigSize, profileIconSize).pad(iconPadding);
 		}else if (currentMenu == MULTI_MENU)
 		{
+			topLeftTable.add(editButton).size(profileIconSize, profileIconSize);
 			nameLabel.setText("Welcome, "+currentLogin+"!");
 			//centerTable.add(levelEditor).size(profileIconBigSize, profileIconSize).pad(iconPadding);
 			centerTable.add(nameLabel).size(profileIconBigSize, profileIconSize).pad(iconPadding);
+		}else if (currentMenu == MSG)
+		{
+			centerTable.add(messageLabel).size(profileIconBigSize, profileIconSize).pad(iconPadding).row();
+			centerTable.add(yesButton).size(profileIconBigSize, profileIconSize).pad(iconPadding).row();
+			centerTable.add(noButton).size(profileIconBigSize, profileIconSize).pad(iconPadding).row();
+			
 		}
 		// always allow close
 		topRightTable.add(closeIcon).size(profileIconSize, profileIconSize).pad(iconPadding);
@@ -217,6 +302,14 @@ public class TopMenu implements ButtonListener
 		// test
 		switch (id)
 		{
+			case LEVEL_EDIT:
+				cornerIcon();
+				sheep.gotoMenu("levelEdit");
+				break;
+			case GOTO_EDIT:
+				sheep.getMultiplayerMenu().editNewLevel();
+				cornerIcon();
+				break;
 			case TYPING:
 				centerTable.setY(assetHolder.getPercentHeight(.3f));
 				break;
@@ -239,6 +332,11 @@ public class TopMenu implements ButtonListener
 				}
 				break;
 			case BACK_BUTTON:
+				if (backMenu == LEVEL_EDIT)
+				{
+					cornerIcon();
+					sheep.gotoMenu("levelEdit");
+				}else
 				if (inProfileMenu)
 				{
 					currentMenu = backMenu;
@@ -318,7 +416,18 @@ public class TopMenu implements ButtonListener
 		}.setHashAndLogin(hash, un));
 	}
 	
-	
+	private int yesMenu;
+	private int noMenu;
+	public void showConfirm(String message, int yesMenu, int noMenu, String yesText, String noText)
+	{
+		messageLabel.setText(message);
+		this.yesMenu = yesMenu;
+		this.noMenu = noMenu;
+		yesButton.setText(yesText);
+		noButton.setText(noText);
+		currentMenu = CHOICE;
+		centerIcon();
+	}
 	public void showMessage(String message, int menu)
 	{
 		showMessage(message, menu, "back");
@@ -385,13 +494,16 @@ public class TopMenu implements ButtonListener
 			animationPercent = 1;
 		else if (animationPercent < 0)
 			animationPercent = 0;
-		Gdx.gl.glEnable(GL20.GL_BLEND);
-		shapeRenderer.begin(ShapeType.Filled);
-		shapeRenderer.setColor(assetHolder.getBgColor().r, assetHolder.getBgColor().g, assetHolder.getBgColor().b, animationPercent);
-		shapeRenderer.rect(0, 0, assetHolder.getPercentWidth(1f), assetHolder.getPercentHeight(1));
-		shapeRenderer.end();
-		topStage.act(Gdx.graphics.getDeltaTime());
-		topStage.draw();
+		if (showing)
+		{
+			Gdx.gl.glEnable(GL20.GL_BLEND);
+			shapeRenderer.begin(ShapeType.Filled);
+			shapeRenderer.setColor(assetHolder.getBgColor().r, assetHolder.getBgColor().g, assetHolder.getBgColor().b, animationPercent);
+			shapeRenderer.rect(0, 0, assetHolder.getPercentWidth(1f), assetHolder.getPercentHeight(1));
+			shapeRenderer.end();
+			topStage.act(Gdx.graphics.getDeltaTime());
+			topStage.draw();
+		}
 	}
 
 	public InputProcessor getInput()

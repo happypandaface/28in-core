@@ -88,6 +88,7 @@ public class MultiplayerMenu implements ButtonListener
 	public final static int POP_TAB = 7;
 	public final static int NEW_TAB = 8;
 	public final static int MY_LEVELS = 9;
+	public final static int LOAD_MORE = 10;
 	private int currBackMenu;
 	private String currentLogin = "";
 	private String currentPassHash = "";
@@ -99,6 +100,8 @@ public class MultiplayerMenu implements ButtonListener
 	private Table popTogNew;
 	private boolean showingPop;
 	protected boolean loadingLevels;
+	private boolean levelsNeedsUpdate = false;
+	private int currPage = 0;
 	
 	public void setSheepMain(sheep s)
 	{
@@ -369,6 +372,12 @@ public class MultiplayerMenu implements ButtonListener
 			case MY_LEVELS:
 				getOnMyLevels();
 				break;
+			case LOAD_MORE:
+				int type = NetUtil.GET_NEW;
+				if (showingPop)
+					type = NetUtil.GET_POP;
+
+				loadLevels(currPage+1, type);
 		}
 	}
 	public void loadLevels(int page, int type)
@@ -376,11 +385,13 @@ public class MultiplayerMenu implements ButtonListener
 		// load the highest rated levels and display them
 		// in a table
 		loadingLevels = true;
+		currPage = page;
 		levelsTable.clearChildren();
 		levelsTable.add(new Label("Loading...", assetHolder.labelStyle));
-		NetUtil.sendRequest(type, "", new HttpResponseListener() {
+		NetUtil.sendRequest(type, "page="+page, new HttpResponseListener() {
 			public void handleHttpResponse(HttpResponse httpResponse) {
 				String str = httpResponse.getResultAsString();
+				Gdx.app.log("gtlvlstr", str);
 				Json json = new Json();
 				json.addClassTag(assetHolder.mliClassName, MenuLevelInfo.class);
 				String[] mlis = str.split("\n");
@@ -395,7 +406,9 @@ public class MultiplayerMenu implements ButtonListener
 					}
 				}
 				loadingLevels = false;
-				makeLevelButtons(0);
+				levelsNeedsUpdate = true;
+				//makeLevelButtons(0);
+				//makeLevelButtons(0);
 				Gdx.app.log("rtn pop", str);
 				//do stuff here based on response
 			}
@@ -494,6 +507,10 @@ public class MultiplayerMenu implements ButtonListener
 			loginScreen();
 		}
 	}
+	public String getLevelName()
+	{
+		return levelName.getText();
+	}
 	
 	public void nameLevel()
 	{
@@ -563,7 +580,8 @@ public class MultiplayerMenu implements ButtonListener
 					//mli.username = 
 				}
 //				setLevels(parts);
-				makeLevelButtons(0);
+				levelsNeedsUpdate = true;
+				//makeLevelButtons(0);
 				//do stuff here based on response
 			}
 			
@@ -606,7 +624,7 @@ public class MultiplayerMenu implements ButtonListener
 //			String rating = mli.rating;
 			//String username = levelNames[i];
 			float padding = 0;//assetHolder.getPercentHeight(0.02f);
-			TextButton lvl1 = new TextButton(levelName/*"Level "+(i+1)*/, assetHolder.newButtonStyle);
+			TextButton lvl1 = new TextButton(levelName/*"Level "+(i+1)*/, i%2==0?assetHolder.onLevelButton:assetHolder.offLevelButton);
 			loginTable.add(lvl1).height(assetHolder.getPercentHeight(assetHolder.buttonHeight)).width(assetHolder.getPercentWidth(assetHolder.buttonWidth)).pad(padding);
 			loginTable.row();
 			lvl1.addListener(new InputListener(){
@@ -628,6 +646,11 @@ public class MultiplayerMenu implements ButtonListener
 				}
 			}.setLevelInfo(username, levelName));
 		}
+		TextButton loadMore = new TextButton("", assetHolder.loadMoreButton);
+		loginTable.add(loadMore).height(assetHolder.getPercentHeight(assetHolder.buttonHeight)).width(assetHolder.getPercentWidth(assetHolder.buttonWidth)).pad(0);
+		loginTable.row();
+		loadMore.addListener(new ButtonListenBridge().setButtonListener(this).setId(LOAD_MORE));
+
 	}
 	
 	public void doLevel(String userName, String levelName)
@@ -945,6 +968,9 @@ public class MultiplayerMenu implements ButtonListener
 		Color bgColor = assetHolder.getBgColor();
 		Gdx.gl.glClearColor(bgColor.r, bgColor.g, bgColor.b, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		if (levelsNeedsUpdate)
+			makeLevelButtons(0);
+		levelsNeedsUpdate = false;
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
 	}

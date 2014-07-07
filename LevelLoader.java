@@ -65,7 +65,7 @@ public class LevelLoader
 		levelLink.add("Yardwork");
 		levelLink.add("Rotations 3");
 		levelLink.add("Landscaping");
-		levelLink.add("To the skies");
+		//levelLink.add("To the skies");
 		levelLink.add("Landscaping 2");
 		levelLink.add("Two paths");
 		levelLink.add("Raptors");
@@ -153,6 +153,9 @@ public class LevelLoader
 				else
 				if (tj.type.equals("TallGrass"))
 					t = new TallGrass().makeFromJsonObject(tj);
+				else
+				if (tj.type.equals("Cut"))
+					t = new Cut().makeFromJsonObject(tj);
 				
 				tileArr.add(t);
 			}
@@ -327,6 +330,8 @@ public class LevelLoader
 			sheepGame.addTile(new Boulder().set(0, 3));
 			sheepGame.addTile(new Boulder().set(0, 4));
 			sheepGame.addTile(new Boulder().set(2, 4));
+
+			sheepGame.addTile(new Cut().set(4, 2));
 			
 			WalkPath path1 = new WalkPath();
 			path1.add(1, 5);
@@ -477,6 +482,8 @@ public class LevelLoader
 			
 			sheepGame.addTile(new TallGrass().set(1, 1));
 			sheepGame.addTile(new TallGrass().set(3, 1));
+			sheepGame.addTile(new Cut().set(1, 2));
+			sheepGame.addTile(new Cut().set(2, 1));
 			
 			sheepGame.addTile(new Guard()
 				.addPath(0, 3)
@@ -591,6 +598,10 @@ public class LevelLoader
 			for (int x = 1; x < 4; ++x)
 				sheepGame.addTile(new Boulder().set(x, 2));
 			
+			sheepGame.addTile(new Cut().set(4, 2));
+			sheepGame.addTile(new Cut().set(0, 4));
+			sheepGame.addTile(new Cut().set(0, 2));
+
 			sheepGame.addTile(new TallGrass().set(3, 3));
 			sheepGame.addTile(new TallGrass().set(2, 4));
 			sheepGame.addTile(new TallGrass().set(0, 1));
@@ -702,6 +713,7 @@ public class LevelLoader
 	{
 		//loadLevel(sheepGame, currentLevel, showHelp);
 		sheepGame.reset();
+		Gdx.app.log("lastLevelString", lastLevelString);
 		sheepGame.addTiles(fromString(lastLevelString));
 	}
 	public void nextLevel(SheepGame sheepGame, boolean showHelp)

@@ -29,10 +29,14 @@ public class Cut extends Collectable
 {
 	public static Texture getTex(AssetHolder assetHolder)
 	{
-		return assetHolder.white;
+		return assetHolder.cutTex;
 	}
 	public Texture getTex()
 	{
 		return this.getTex(assetHolder);
+	}
+	public String getTypeStr()
+	{
+		return "Cut";
 	}
 }

@@ -41,6 +41,9 @@ public class AssetHolder
 	public LabelStyle labelStyle;
 	public LabelStyle smallLabelStyle;
 	public TextButtonStyle buttonStyle;
+	public TextButtonStyle onLevelButton;
+	public TextButtonStyle offLevelButton;
+	public TextButtonStyle loadMoreButton;
 	public TextButtonStyle smallButtonStyle;
 	private String fontFile = "theGoodFont/goodFont.fnt";
 	public TextureRegionDrawable backButtonTex;
@@ -72,6 +75,7 @@ public class AssetHolder
 	public float buttonWidth = 0.75f;
 	public TextFieldStyle textFieldStyle;
 	public ImageButtonStyle playTabButtonStyle;
+	public ImageButtonStyle editButton;
 	public ScrollPaneStyle scrollPaneStyle;
 	public TextButtonStyle newButtonStyle;
 	public TextButtonStyle spButtonStyle;
@@ -118,6 +122,10 @@ public class AssetHolder
 	public Texture newDogDownTex3;
 	public TextureRegionDrawable popTogNew1;
 	public TextureRegionDrawable popTogNew2;
+	public Texture penTex;
+	public Texture cutTex;
+	public Texture cutIcon;
+	public Texture cutFaded;
 
 	public void startLoad()
 	{
@@ -194,9 +202,26 @@ public class AssetHolder
 		assets.load("03 Dog/Horizontal/140703-28Inches-Dog-Horizontal-1.png", Texture.class);
 		assets.load("03 Dog/Horizontal/140703-28Inches-Dog-Horizontal-2.png", Texture.class);
 		assets.load("03 Dog/Horizontal/140703-28Inches-Dog-Horizontal-3.png", Texture.class);
+		assets.load("onLevelButton.png", Texture.class);
+		assets.load("offLevelButton.png", Texture.class);
+		assets.load("nextPage.png", Texture.class);
+		assets.load("editUp.png", Texture.class);
+		assets.load("editDown.png", Texture.class);
+		assets.load("140704-28Inches-Endless-Tent.png", Texture.class);
+		assets.load("cutTile.png", Texture.class);
+		assets.load("cutIcon.png", Texture.class);
+		assets.load("cutFaded.png", Texture.class);
 	}
 	public void finishLoad()
 	{
+		cutTex = assets.get("cutTile.png", Texture.class);
+		cutIcon = assets.get("cutIcon.png", Texture.class);
+		cutFaded = assets.get("cutFaded.png", Texture.class);
+		penTex = assets.get("140704-28Inches-Endless-Tent.png", Texture.class);
+		editButton = new ImageButtonStyle();
+		editButton.up = new TextureRegionDrawable(new TextureRegion(assets.get("editUp.png", Texture.class)));
+		editButton.down = new TextureRegionDrawable(new TextureRegion(assets.get("editDown.png", Texture.class)));
+
 		popTogNew1 = new TextureRegionDrawable(new TextureRegion(assets.get("popTogNew1.png", Texture.class)));
 		popTogNew2 = new TextureRegionDrawable(new TextureRegion(assets.get("popTogNew2.png", Texture.class)));
 		newSheepTex1 = assets.get("01 Horizontal/140703-28Inches-RedSheep-Horizontal-1.png", Texture.class);
@@ -235,6 +260,15 @@ public class AssetHolder
 		fontWhite.setScale(fontScale);//fontScale);
 		smallFontWhite = assets.get(fontFile, BitmapFont.class);
 		smallFontWhite.setScale(smallFontScale);
+		onLevelButton = new TextButtonStyle();
+		onLevelButton.up = new TextureRegionDrawable(new TextureRegion(assets.get("onLevelButton.png", Texture.class)));
+		onLevelButton.font = fontWhite;
+		offLevelButton = new TextButtonStyle();
+		offLevelButton.up = new TextureRegionDrawable(new TextureRegion(assets.get("offLevelButton.png", Texture.class)));
+		offLevelButton.font = fontWhite;
+		loadMoreButton = new TextButtonStyle();
+		loadMoreButton.up = new TextureRegionDrawable(new TextureRegion(assets.get("nextPage.png", Texture.class)));
+		loadMoreButton.font = fontWhite;
 		levelLoader = new LevelLoader();
 		skin = new Skin();
 		regTile1 = assets.get("140616_Tile RD1-BIG.png", Texture.class);

@@ -114,7 +114,13 @@ public class EndlessInches extends SheepGame
 			sheepGo = false;
 		}
 		if (canDirectSheep)
+		{
+			if (!gameOverlay.isPaused())
+				sheep.overlayOff();
 			madeFirstPath = true;
+		}else
+			if (numLevels == 0)// open tab menu if just starting
+				sheep.overlayOn();
 		
 		// if they've already made one path and the next
 		// pen is off screen, speed up a bit.
@@ -613,6 +619,14 @@ public class EndlessInches extends SheepGame
 	public int endRedOverlay()
 	{
 		return (int)(nextPen().getPos().x+getOffsetTileX()+1);
+	}
+	@Override
+	public void switchTo()
+	{
+		sheep.hideProfile();
+		gameOverlay.unpauseOverlay();
+		//sheep.overlayOff();
+		//Gdx.input.setInputProcessor(inMux);
 	}
 	
 	public void retryLevel()

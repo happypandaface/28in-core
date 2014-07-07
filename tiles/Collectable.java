@@ -66,10 +66,16 @@ public class Collectable extends Tile
 	}
 	public void setCollected(boolean b)
 	{
-		if (b)
+		if (!collected)
 		{
-			exists = false;
+			if (sheepGame.collect(this))
+			{
+				// this means the game successfully collected
+				// the item
+				exists = false;
+				collected = b;
+
+			}
 		}
-		collected = b;
 	}
 }

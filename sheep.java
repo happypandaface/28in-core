@@ -325,12 +325,22 @@ public class sheep extends ApplicationAdapter implements ButtonListener
 			inMux.addProcessor(levelEdit.getInput());
 		}
 	}
+	public void showProfile()
+	{
+		topMenu.show();
+	}
+	public void hideProfile()
+	{
+		topMenu.hide();
+	}
 	public void overlayOff()
 	{
+		topMenu.hide();
 		tabMenu.animateDown();
 	}
 	public void overlayOn()
 	{
+		topMenu.show();
 		tabMenu.animateUp();
 	}
 	public TabMenu getTabMenu()

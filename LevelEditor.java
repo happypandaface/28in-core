@@ -70,6 +70,7 @@ public class LevelEditor extends SheepGame
 		testOverlay.setSheepGame(this);
 		testOverlay.create();
 		editOver.setSheepGame(this);
+		editOver.displayFadedCut = false;
 		editOver.addExtension(tileChooser);
 		editOver.create();
 	}

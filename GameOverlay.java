@@ -57,6 +57,7 @@ public class GameOverlay
 	protected float resultTime = -1;
 	protected float resultFadeDelay = 1.5f;
 	protected float resultBannerAlpha = 0.8f;// this is how see through the overlays are (for messages in-game)
+	public boolean displayFadedCut = true;
 	
 	protected boolean shownBottomMenu;
 	
@@ -168,13 +169,19 @@ public class GameOverlay
 		stage.draw();
 		for (int i = 0; i < extensions.size; ++i)
 			extensions.get(i).render(delta);
+		batch.begin();
+		float tileW = sheepGame.getTileWidth();
+		float tileH = sheepGame.getTileHeight();
+		if (sheepGame.cutsAvailable() > 0)
+			batch.draw(assetHolder.cutIcon, tileW*1.2f, assetHolder.getPercentHeight(1f)-sheepGame.getTileHeight()*.8f, sheepGame.getTileWidth()*.6f, sheepGame.getTileHeight()*.6f);
+		else if (displayFadedCut)
+			batch.draw(assetHolder.cutFaded, tileW*1.2f, assetHolder.getPercentHeight(1f)-sheepGame.getTileHeight()*.8f, sheepGame.getTileWidth()*.6f, sheepGame.getTileHeight()*.6f);
 		if (inOverlay)
 		{
-			batch.begin();
 			batch.setColor(0f, 0f, 0f, 0.75f);
 			batch.draw(assetHolder.white, 0, 0, assetHolder.getPercentWidth(1), assetHolder.getPercentHeight(1));
-			batch.end();
 		}
+		batch.end();
 		overlayStage.act(delta);
 		overlayStage.draw();
 	}
