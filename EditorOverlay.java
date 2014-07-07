@@ -84,7 +84,7 @@ public class EditorOverlay extends GameOverlay
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button)
 			{
 				sheep.getTopMenu().uploadLevel(assetHolder.levelLoader.toString(sheepGame.getLevelInfo()));
-				sheep.gotoMenu("multi");
+				//sheep.gotoMenu("multi");
 			}
 			public InputListener setSceneChanger(GameOverlay s)
 			{

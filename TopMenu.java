@@ -1,5 +1,6 @@
 package com.mygdx.sheep;
 
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.InputMultiplexer;
@@ -60,6 +61,8 @@ public class TopMenu implements ButtonListener
 	private static final int LEVEL_EDIT = 13;
 	private static final int CHOICE = 14;
 	private static final int CONT_UPLOAD = 15;
+	private static final int NO_BUTTON = 16;
+	private static final int YES_BUTTON = 17;
 	private int currentMenu = LOGIN_MENU;
 	private int backMenu = LOGIN_MENU;
 	private InputMultiplexer inMux;
@@ -172,8 +175,11 @@ public class TopMenu implements ButtonListener
 		backButton = new TextButton("back", assetHolder.buttonStyle);
 		backButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(BACK_BUTTON));
 		messageLabel = new Label("back", assetHolder.labelStyle);
+		messageLabel.setAlignment(Align.bottom, Align.center);
 		yesButton = new TextButton("back", assetHolder.buttonStyle);
+		yesButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(YES_BUTTON));
 		noButton = new TextButton("back", assetHolder.buttonStyle);
+		noButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(NO_BUTTON));
 		nameLabel = new Label("Not logged in", assetHolder.labelStyle);
 	}
 	public void updateVals()
@@ -284,7 +290,7 @@ public class TopMenu implements ButtonListener
 			nameLabel.setText("Welcome, "+currentLogin+"!");
 			//centerTable.add(levelEditor).size(profileIconBigSize, profileIconSize).pad(iconPadding);
 			centerTable.add(nameLabel).size(profileIconBigSize, profileIconSize).pad(iconPadding);
-		}else if (currentMenu == MSG)
+		}else if (currentMenu == CHOICE)
 		{
 			centerTable.add(messageLabel).size(profileIconBigSize, profileIconSize).pad(iconPadding).row();
 			centerTable.add(yesButton).size(profileIconBigSize, profileIconSize).pad(iconPadding).row();
@@ -302,6 +308,19 @@ public class TopMenu implements ButtonListener
 		// test
 		switch (id)
 		{
+			case NO_BUTTON:
+				if (noMenu == LEVEL_EDIT)
+				{
+					cornerIcon();
+					sheep.gotoMenu("levelEdit");
+				}
+				break;
+			case YES_BUTTON:
+				if (yesMenu == CONT_UPLOAD)
+				{
+					doUpload();
+				}
+				break;
 			case LEVEL_EDIT:
 				cornerIcon();
 				sheep.gotoMenu("levelEdit");

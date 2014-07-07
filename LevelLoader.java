@@ -570,8 +570,13 @@ public class LevelLoader
 		{
 			if (showHelp)
 			{
-				sheepGame.addMessage(new SheepMessage("Draw a path from\nthe bottom to the top", 0.3f));
-				sheepGame.addMessage(new SheepMessage("Then tap and hold\nanywhere to move sheep\nalong the path", 0.3f));
+				sheepGame.addMessage(new SheepMessage("WELCOME TO THE\nFRONT LINES, SONNY!", 0.3f));
+				sheepGame.addMessage(new SheepMessage("THINGS ON THE CANADIAN\nBORDER HAVEN'T BEEN\nGOING SO SMOOTHLY", 0.3f));
+				sheepGame.addMessage(new SheepMessage("WE'VE DECIDED TO\nUSE A NEW TACTIC...\nSHEEP!", 0.3f));
+				sheepGame.addMessage(new SheepMessage("BUT THOSE GALL DURN\nWOOLY THINGS DON'T KNOW\nTHEIR ARSE FROM THEIR TAIL!", 0.3f));
+				sheepGame.addMessage(new SheepMessage("FIRST YOU'VE GOT TO DRAW\nOUT THEIR EXACT PATH TO\nGET THEM ACROSS THE BORDER!", 0.3f));
+				sheepGame.addMessage(new SheepMessage("THEN YOU'VE GOT TO\nTELL THEM EXACTLY WHEN TO\nMOVE FORWARD\nBY TAPPING ON THE SCREEN!", 0.3f));
+				sheepGame.addMessage(new SheepMessage("WELP, GOOD LUCK!\nI'LL CHECK BACK UP ON\nYOU LATER!", 0.3f));
 			}
 			
 			sheepGame.addTile(new Boulder().set(1, 4));

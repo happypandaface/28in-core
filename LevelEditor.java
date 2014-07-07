@@ -145,7 +145,7 @@ public class LevelEditor extends SheepGame
 		{
 			if (pathWalker != null)
 			{
-				if (worksAsPath(add) && pathWalker.notInPath(add))
+				if (worksAsPath(pathWalker, add) && pathWalker.notInPath(add))
 					pathWalker.addPath(add.x, add.y);
 			}else
 			{

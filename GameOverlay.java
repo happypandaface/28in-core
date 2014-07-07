@@ -55,8 +55,9 @@ public class GameOverlay
 	private ShapeRenderer shapeRenderer;
 	
 	protected float resultTime = -1;
-	protected float resultFadeDelay = 1.5f;
-	protected float resultBannerAlpha = 0.8f;// this is how see through the overlays are (for messages in-game)
+	protected float resultFadeDelay = 0.3f;
+	protected float fadeSpeed = 1f;
+	protected float resultBannerAlpha = 1f;// this is how see through the overlays are (for messages in-game)
 	public boolean displayFadedCut = true;
 	
 	protected boolean shownBottomMenu;
@@ -157,7 +158,7 @@ public class GameOverlay
 			batch.begin();
 			if (resultTime < 0)
 				resultTime = 0;
-			resultTime += delta;
+			resultTime += delta*fadeSpeed;
 			drawSheepMessage(sheepGame.getMessage());
 			batch.end();
 		}
@@ -206,6 +207,8 @@ public class GameOverlay
 	
 	public void drawSheepMessage(SheepMessage msg)
 	{
+		msg.msg = msg.msg.replace("\n", " ");
+		msg.pos = .3f;
 		if (resultTime > resultFadeDelay)
 		{
 			resultTime = resultFadeDelay;
@@ -218,20 +221,28 @@ public class GameOverlay
 		// get the alpha based on the time the message has been on the screen
 		float alpha = (resultTime/resultFadeDelay)*resultBannerAlpha;
 		// set the alpha of the batch
-		batch.setColor(1.0f, 1.0f, 1.0f, alpha);
 		
-		TextBounds tb = assetHolder.fontWhite.getMultiLineBounds(msg.msg);
+		float dialogueBubbleWidth = assetHolder.getPercentWidth(.85f);
+		float dialogueBubbleWidth2 = assetHolder.getPercentWidth(.80f);
+		float dialogueBubbleWMargin = (assetHolder.getPercentWidth(1f)-dialogueBubbleWidth)*.5f;
+		TextBounds tb = assetHolder.fontGreen.getWrappedBounds(msg.msg, dialogueBubbleWidth);
 		
 		// draw the background for the text with some padding
 		Texture tex = assetHolder.redTex;
 		if (msg.color.equals("green"))
 			tex = assetHolder.greenTex;
-		batch.draw(tex, assetHolder.getPercentWidth(.45f)-(float)tb.width/2.0f, assetHolder.getPercentHeight(msg.pos-.025f)-(float)tb.height/2.0f,
-			tb.width+assetHolder.getPercentWidth(.1f), tb.height+assetHolder.getPercentHeight(.05f));
+		float msgPosOffsetY = .4f;
+		float announceSize = assetHolder.getPercentHeight(.75f);
+		batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+		batch.draw(assetHolder.announcer, -announceSize*.25f, -announceSize*.2f, announceSize, announceSize); 
+		batch.setColor(1.0f, 1.0f, 1.0f, alpha);
+		assetHolder.dialogueBubble.draw(batch, dialogueBubbleWMargin, assetHolder.getPercentHeight(msg.pos+msgPosOffsetY-.057f)-(float)tb.height/2.0f,
+			dialogueBubbleWidth, tb.height+assetHolder.getPercentHeight(.08f));
 		
 		// set the alpha of the font
-		assetHolder.fontWhite.setColor(1, 1, 1, alpha);
-		assetHolder.fontWhite.drawMultiLine(batch, msg.msg, assetHolder.getPercentWidth(.5f)-(float)tb.width/2.0f, assetHolder.getPercentHeight(msg.pos)+(float)tb.height/2.0f, tb.width, HAlignment.CENTER);
+		assetHolder.fontGreen.setColor(assetHolder.fontGreen.getColor().r, assetHolder.fontGreen.getColor().g, assetHolder.fontGreen.getColor().b, alpha);
+		assetHolder.fontGreen.drawWrapped(batch, msg.msg, assetHolder.getPercentWidth(.5f)-(float)tb.width/2.0f, assetHolder.getPercentHeight(msg.pos+msgPosOffsetY)+(float)tb.height/2.0f, tb.width, HAlignment.CENTER);
+		batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	
 	

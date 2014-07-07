@@ -643,6 +643,13 @@ public class SheepGame implements InputProcessor
 				sheepGo = true;
 		}
 	}
+	public boolean worksAsPath(PathWalker pw, Vector2 add)
+	{
+		Vector2 dist = pw.getPath().peek().cpy().sub(add);
+		if (dist.len() != 1)
+			return false;
+		return worksAsPath(add);
+	}
 	public boolean worksAsPath(Vector2 add)
 	{
 		for (int i = 0; i < tiles.size; ++i)

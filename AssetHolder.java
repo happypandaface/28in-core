@@ -35,6 +35,7 @@ public class AssetHolder
 	public Texture sheepTex;
 	public Image sheepImg;
 	public BitmapFont fontWhite;
+	public BitmapFont fontGreen;
 	public BitmapFont smallFontWhite;
 	public BitmapFont fontRed;
 	public Skin skin;
@@ -49,6 +50,7 @@ public class AssetHolder
 	public TextureRegionDrawable backButtonTex;
 	private String backButton = "140621-Menu-Button.png";
 	public Texture sheepTex1;
+	public Texture announcer;
 	public Texture sheepTex2;
 	public Texture sheepTex3;
 	public Texture guardTex1;
@@ -69,6 +71,7 @@ public class AssetHolder
 	public TextureRegionDrawable tabButtonUp;
 	public TextureRegionDrawable tabButtonDown;
 	private float fontSize = 1.0f/1500.0f;
+	private float bigFontSize = 1.0f/900.0f;
 	private float smallFontSize = 1.0f/2500.0f;
 	public LevelLoader levelLoader;
 	public float buttonHeight = 0.07f;
@@ -122,6 +125,7 @@ public class AssetHolder
 	public Texture newDogDownTex3;
 	public TextureRegionDrawable popTogNew1;
 	public TextureRegionDrawable popTogNew2;
+	public NinePatch dialogueBubble;
 	public Texture penTex;
 	public Texture cutTex;
 	public Texture cutIcon;
@@ -211,9 +215,13 @@ public class AssetHolder
 		assets.load("cutTile.png", Texture.class);
 		assets.load("cutIcon.png", Texture.class);
 		assets.load("cutFaded.png", Texture.class);
+		assets.load("140704-28Inches-Announcer.png", Texture.class);
+		assets.load("dialogueBubble.png", Texture.class);
 	}
 	public void finishLoad()
 	{
+		dialogueBubble = new NinePatch(assets.get("dialogueBubble.png", Texture.class), 16, 16, 16, 32);
+		announcer = assets.get("140704-28Inches-Announcer.png", Texture.class);
 		cutTex = assets.get("cutTile.png", Texture.class);
 		cutIcon = assets.get("cutIcon.png", Texture.class);
 		cutFaded = assets.get("cutFaded.png", Texture.class);
@@ -252,6 +260,7 @@ public class AssetHolder
 		newDogTex2 = assets.get("03 Dog/Horizontal/140703-28Inches-Dog-Horizontal-2.png", Texture.class);
 		newDogTex3 = assets.get("03 Dog/Horizontal/140703-28Inches-Dog-Horizontal-3.png", Texture.class);
 		float fontScale = getPercentWidth(fontSize);
+		float bigFontScale = getPercentWidth(bigFontSize);
 		float smallFontScale = getPercentWidth(smallFontSize);
 		profileIcon = new TextureRegionDrawable(new TextureRegion(assets.get("profileIcon.png", Texture.class)));
 		closeIcon = new TextureRegionDrawable(new TextureRegion(assets.get("closeIcon.png", Texture.class)));
@@ -260,6 +269,9 @@ public class AssetHolder
 		fontWhite.setScale(fontScale);//fontScale);
 		smallFontWhite = assets.get(fontFile, BitmapFont.class);
 		smallFontWhite.setScale(smallFontScale);
+		fontGreen = new BitmapFont(Gdx.files.internal(fontFile));
+		fontGreen.setScale(fontScale*.75f);
+		fontGreen.setColor(getBgColor().r, getBgColor().g, getBgColor().b, 1f);
 		onLevelButton = new TextButtonStyle();
 		onLevelButton.up = new TextureRegionDrawable(new TextureRegion(assets.get("onLevelButton.png", Texture.class)));
 		onLevelButton.font = fontWhite;
