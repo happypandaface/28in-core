@@ -729,7 +729,9 @@ public class LevelLoader
 	public void reloadLevel(SheepGame sheepGame, boolean showHelp)
 	{
 		//loadLevel(sheepGame, currentLevel, showHelp);
-		sheepGame.reset();
+		sheepGame.reset(showHelp);
+		if (showHelp)
+			sheepGame.loadOldMessages();
 		Gdx.app.log("lastLevelString", lastLevelString);
 		sheepGame.addTiles(fromString(lastLevelString));
 	}

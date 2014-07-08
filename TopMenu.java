@@ -101,6 +101,7 @@ public class TopMenu implements ButtonListener
 	private Table topLeftTable;
 	private Button editButton;
 	private boolean showing = true;
+	private boolean inMenu = false;
 	private Button myLevels;
 	private Button changePass;
 	private boolean badVersion = false;
@@ -534,7 +535,8 @@ public class TopMenu implements ButtonListener
 					sheep.setSaved("passhash", hash);
 					currentLogin = login;
 					currentPassHash = hash;
-					showMessage(str, MULTI_MENU, "continue");
+					gotoMenu(MULTI_MENU);
+				//	showMessage(str, MULTI_MENU, "continue");
 				}else
 					showMessage(str, LOGIN_MENU);
 				Gdx.app.log("login res", str);
@@ -582,7 +584,13 @@ public class TopMenu implements ButtonListener
 		messageLabel.setText(message);
 		backMenu = menu;
 		currentMenu = MSG;
-		if (showing)
+		if (inProfileMenu)
+			centerIcon();
+	}
+	public void gotoMenu(int menu)
+	{
+		currentMenu = menu;
+		if (inProfileMenu)
 			centerIcon();
 	}
 	

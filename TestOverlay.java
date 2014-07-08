@@ -51,7 +51,7 @@ public class TestOverlay extends GameOverlay
 				sheep.gotoMenu("levelEdit");
 			}
 		});
-		topMenu.add(editButton).width(sheepGame.getTileWidth()).height(sheepGame.getTileHeight()).padLeft(assetHolder.getPercentWidth(.4f));
+		topMenu.add(editButton).width(sheepGame.getTileWidth()).height(assetHolder.getButtonHeight()).padLeft(assetHolder.getPercentWidth(.4f));
 	}
 	public void addRetryButtons(Table table)
 	{

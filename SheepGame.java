@@ -38,6 +38,7 @@ public class SheepGame implements InputProcessor
 	protected Array<Vector2> sheepPath;
 	public LevelInfo tiles;
 	public Array<SheepMessage> messages;
+	public Array<SheepMessage> oldMessages;
 	public ArrayMap<String, Texture> texLink;
 	protected boolean sheepGo;
 	protected boolean canDirectSheep;
@@ -93,6 +94,7 @@ public class SheepGame implements InputProcessor
 		texLink = new ArrayMap<String, Texture>();
 		tiles = new LevelInfo();
 		messages = new Array<SheepMessage>();
+		oldMessages = new Array<SheepMessage>();
 		batch = new SpriteBatch();
 		texLink.put("sheep", new Texture(Gdx.files.internal("140616_Sheep RD1-BIG-sheep.png")));
 		texLink.put("grass", new Texture(Gdx.files.internal("140616_Tile RD1-BIG.png")));
@@ -139,6 +141,13 @@ public class SheepGame implements InputProcessor
 	}
 	public void reset()
 	{
+		reset(false);
+	}
+	public void reset(boolean b)
+	{
+		if (!b)
+			oldMessages.clear();
+		
 		levelCanBeRated = false;
 		levelNumber = 0;
 		playingEndless = false;
@@ -160,6 +169,14 @@ public class SheepGame implements InputProcessor
 		sheepPath.clear();
 		sheepGo = false;
 		canDirectSheep = false;
+		
+	}
+	public void loadOldMessages()
+	{
+		Gdx.app.log("oldMessages", ""+oldMessages.size);
+		for (int i = 0; i < oldMessages.size; ++i)
+			messages.add(oldMessages.get(i));
+		oldMessages.clear();
 	}
 	public void setLevelNumber(int i)
 	{
@@ -191,11 +208,16 @@ public class SheepGame implements InputProcessor
 	
 	public void addMessage(SheepMessage msg)
 	{
+		oldMessages.add(msg);
 		messages.add(msg);
 	}
 	public SheepMessage getMessage()
 	{
 		return messages.get(0);
+	}
+	public boolean hasHelp()
+	{
+		return oldMessages.size > 0;
 	}
 	public boolean hasMessage()
 	{

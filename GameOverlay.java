@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -303,7 +304,8 @@ public class GameOverlay
 		}.setSceneChanger(this));
 		//table.add(selectLevel).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(10);
 		//table.row();
-		if (assetHolder.levelLoader.currentLevelHasHelp())
+		//if (assetHolder.levelLoader.currentLevelHasHelp())
+		if (sheepGame.hasHelp())
 			addHelpButton(table);
 	}
 	
@@ -415,7 +417,7 @@ public class GameOverlay
 			Table starTable = new Table();
 			for (int i = 0; i < 5; ++i)
 			{
-				TextButton star = new TextButton("s", assetHolder.smallButtonStyle);
+				Button star = new ImageButton(new TextureRegionDrawable(new TextureRegion(assetHolder.onStar)), new TextureRegionDrawable(new TextureRegion(assetHolder.offStar)));
 				star.addListener(new ButtonListenBridge().setButtonListener(new ButtonListener()
 				{
 					public void buttonPressed(int id)
