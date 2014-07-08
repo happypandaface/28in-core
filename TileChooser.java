@@ -42,7 +42,12 @@ public class TileChooser extends OverlayExtension
 	private final static int DOG = 2;
 	private final static int GUARD = 3;
 	private final static int TALL_GRASS = 4;
-	private final static int TOTAL_TILES = 4;
+	private final static int CUT = 5;
+	private final static int BLOCK_UP = 6;
+	private final static int BLOCK_RIGHT = 7;
+	private final static int BLOCK_LEFT = 8;
+	private final static int BLOCK_DOWN = 9;
+	private final static int TOTAL_TILES = 9;
 	private int currentTile = 1;
 	
 	public TileChooser()
@@ -104,7 +109,6 @@ public class TileChooser extends OverlayExtension
 				scrollLeftTiles();
 			}
 		});
-		topRightTable.add(saveGame).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentHeightInt(assetHolder.buttonHeight*1.5f)).pad(5);
 		topRightTable.add(playGame).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentHeightInt(assetHolder.buttonHeight*1.5f)).pad(5);
 		topRightTable.add(tileTypeLeft).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentHeightInt(assetHolder.buttonHeight));
 		topRightTable.add(currentTileImg).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentHeightInt(assetHolder.buttonHeight));
@@ -156,6 +160,16 @@ public class TileChooser extends OverlayExtension
 				return new Guard();
 			case TALL_GRASS:
 				return new TallGrass();
+			case CUT:
+				return new Cut();
+			case BLOCK_UP:
+				return new BlockUp();
+			case BLOCK_DOWN:
+				return new BlockDown();
+			case BLOCK_LEFT:
+				return new BlockLeft();
+			case BLOCK_RIGHT:
+				return new BlockRight();
 		}
 		return null;
 	}
@@ -175,6 +189,21 @@ public class TileChooser extends OverlayExtension
 			case TALL_GRASS:
 				sheepGame.addTile(new TallGrass().set(pos.x, pos.y));
 				break;
+			case CUT:
+				sheepGame.addTile(new Cut().set(pos.x, pos.y));
+				break;
+			case BLOCK_UP:
+				sheepGame.addTile(new BlockUp().set(pos.x, pos.y));
+				break;
+			case BLOCK_RIGHT:
+				sheepGame.addTile(new BlockRight().set(pos.x, pos.y));
+				break;
+			case BLOCK_LEFT:
+				sheepGame.addTile(new BlockLeft().set(pos.x, pos.y));
+				break;
+			case BLOCK_DOWN:
+				sheepGame.addTile(new BlockDown().set(pos.x, pos.y));
+				break;
 		}
 		
 	}
@@ -191,6 +220,16 @@ public class TileChooser extends OverlayExtension
 				return Guard.getTex(assetHolder);
 			case TALL_GRASS:
 				return TallGrass.getTex(assetHolder);
+			case CUT:
+				return Cut.getTex(assetHolder);
+			case BLOCK_UP:
+				return BlockUp.getTex(assetHolder);
+			case BLOCK_DOWN:
+				return BlockDown.getTex(assetHolder);
+			case BLOCK_LEFT:
+				return BlockLeft.getTex(assetHolder);
+			case BLOCK_RIGHT:
+				return BlockRight.getTex(assetHolder);
 		}
 		return null;
 	}

@@ -60,6 +60,7 @@ public class SheepGame implements InputProcessor
 	protected int cutsGained;
 	protected int levelNumber;
 	protected boolean levelCanBeRated;
+	protected Array<Tile> tilesToDelete = new Array<Tile>();
 	
 	protected boolean playingEndless;
 	
@@ -116,7 +117,14 @@ public class SheepGame implements InputProcessor
 			texLink.put("light", new Texture(pixmap));
 		}
 	}
-	
+	public void setToDelete(Tile t)
+	{
+		tilesToDelete.add(t);
+	}
+	public void setCreatorName(String s)
+	{
+		gameOverlay.setCreatorName(s);
+	}
 	public void setLevelName(String s)
 	{
 		gameOverlay.setLevelName(s);
@@ -229,12 +237,25 @@ public class SheepGame implements InputProcessor
 	{
 		float realDelta = Gdx.graphics.getDeltaTime();// for all effects
 		float delta = realDelta;// for game effects
-		if (gameOverlay.isPaused())
-			delta = 0;
+		if (gameOverlay != null)
+			if (gameOverlay.isPaused())
+				delta = 0;
 		render(realDelta, delta);
 	}
 	public void render(float realDelta, float delta)
 	{
+		for (int i = 0; i < tilesToDelete.size; ++i)
+		{
+			tiles.removeValue(tilesToDelete.get(i), true);
+		}
+		tilesToDelete.clear();
+		for (int i = tiles.size-1; i >= 0; --i)
+		{
+			if (tiles.get(i).getShouldBeRemoved())
+			{
+				tiles.removeIndex(i);
+			}
+		}
 		Color bgColor = assetHolder.getBgColor();
 		Gdx.gl.glClearColor(bgColor.r, bgColor.g, bgColor.b, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -253,14 +274,15 @@ public class SheepGame implements InputProcessor
 		float startX = getStartX();
 		float startY = getStartY();
 		
-		if (!gameOverlay.isPaused() && messages.size == 0)
-		{
-			for (int i = 0; i < tiles.size; ++i)
+		if (gameOverlay != null)
+			if (!gameOverlay.isPaused() && messages.size == 0)
 			{
-				Tile t = tiles.get(i);
-				t.update(delta);
+				for (int i = 0; i < tiles.size; ++i)
+				{
+					Tile t = tiles.get(i);
+					t.update(delta);
+				}
 			}
-		}
 		//batch.enableBlending();
 		batch.begin();
 		if (playingEndless)
@@ -424,12 +446,37 @@ public class SheepGame implements InputProcessor
 		
 	}
 	
+	private String[] loseTexts =
+	{
+		"Time to get the gloves on again!",
+		"You call that drug trafficking!?",
+		"Do it again, but, um, better"
+	};
+	private String[] winTexts =
+	{
+		"That was pretty good!",
+		"Those coke heads can rest easy tonight"
+	};
 	public String getLoseText()
 	{
+		float chance = (float)Math.random();
+		float eachChance = 1f/(float)loseTexts.length;
+		for (int i = 0; i < loseTexts.length; ++i)
+		{
+			if (chance < (i+1)*(eachChance))
+				return loseTexts[i];
+		}
 		return "You Lose!";
 	}
 	public String getWinText()
 	{
+		float chance = (float)Math.random();
+		float eachChance = 1f/(float)winTexts.length;
+		for (int i = 0; i < winTexts.length; ++i)
+		{
+			if (chance < (i+1)*(eachChance))
+				return winTexts[i];
+		}
 		return "You Win!";
 	}
 	public void loseTheGame()
@@ -652,13 +699,27 @@ public class SheepGame implements InputProcessor
 	}
 	public boolean worksAsPath(Vector2 add)
 	{
+		Vector2 dist = null;
+		if (sheepPath.size > 0)
+			dist = sheepPath.peek().cpy().sub(add);
 		for (int i = 0; i < tiles.size; ++i)
 		{
 			Tile t = tiles.get(i);
-			if (!checkIfCanPathOver(t))
+			if (t.checkOverlap(add))
 			{
-				if (t.checkOverlap(add))
+				if (!checkIfCanPathOver(t))
 					return false;
+				if (dist != null)
+				{
+					if (dist.x == -1 && t instanceof BlockLeft)
+						return false;
+					if (dist.x == 1 && t instanceof BlockRight)
+						return false;
+					if (dist.y == -1 && t instanceof BlockDown)
+						return false;
+					if (dist.y == 1 && t instanceof BlockUp)
+						return false;
+				}
 			}
 		}
 		return true;

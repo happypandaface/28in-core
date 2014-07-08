@@ -22,6 +22,10 @@ public class NetUtil
 	public static int GET_LEVEL = 7;
 	public static int GET_POP = 8;
 	public static int GET_NEW = 9;
+	public static int RATE_LEVEL = 10;
+	public static int SEARCH = 11;
+	public static int USER = 12;
+	public static int VERSION= 13;
 	
 	public static String bytesToHex(byte[] b) {
 		char hexDigit[] = {'0', '1', '2', '3', '4', '5', '6', '7',
@@ -65,6 +69,14 @@ public class NetUtil
 			contentString += "type=getPop&";
 		else if (type == GET_NEW)
 			contentString += "type=getNew&";
+		else if (type == RATE_LEVEL)
+			contentString += "type=rateLevel&";
+		else if (type == SEARCH)
+			contentString += "type=search&";
+		else if (type == USER)
+			contentString += "type=userLevels&";
+		else if (type == VERSION)
+			contentString += "type=getVersion&";
 		contentString += data;
 		httpGet.setContent(contentString);
 		//httpGet.setContent(HttpParametersUtils.convertHttpParameters(parameters));

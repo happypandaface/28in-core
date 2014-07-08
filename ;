@@ -43,6 +43,7 @@ public class LevelEditor extends SheepGame
 	private float touchTimer;
 	private float doubleTapTime = .5f;
 	private Vector2 removeVec = null;
+	private PathWalker pwToEdit = null;
 	
 	public LevelEditor()
 	{
@@ -106,7 +107,7 @@ public class LevelEditor extends SheepGame
 				{
 					if (t instanceof PathWalker)
 					{
-						editOver.setPathWalker((PathWalker)t);
+						pwToEdit = (PathWalker)t;
 					}else
 						tiles.removeIndex(i);
 				}

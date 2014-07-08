@@ -83,12 +83,15 @@ public class MultiplayerMenu implements ButtonListener
 	private static int MULTI_MENU = 3;
 	private static int LEVEL_EDIT = 4;
 	private static int NAME_LEVEL = 5;
-	private static int CHANGE_PASS_MENU = 5;
+	public static int CHANGE_PASS_MENU = 5;
 	public static int TOP_MENU = 6;
 	public final static int POP_TAB = 7;
 	public final static int NEW_TAB = 8;
 	public final static int MY_LEVELS = 9;
 	public final static int LOAD_MORE = 10;
+	public final static int SEARCH_PAGE = 11;
+	public final static int SEARCH = 12;
+	public final static int CLOSE = 13;
 	private int currBackMenu;
 	private String currentLogin = "";
 	private String currentPassHash = "";
@@ -98,10 +101,15 @@ public class MultiplayerMenu implements ButtonListener
 	private final static int CHANGE_PASS_MENU_BUTTON = 1;
 	private final static int CHANGE_PASS = 2;
 	private Table popTogNew;
-	private boolean showingPop;
 	protected boolean loadingLevels;
 	private boolean levelsNeedsUpdate = false;
 	private int currPage = 0;
+	private Table topLeftTable;
+	private Button searchButton;
+	private Button closeButton;
+	private TextField searchField;
+	private int currLevelMenu;
+	private String searchStr;
 	
 	public void setSheepMain(sheep s)
 	{
@@ -131,10 +139,19 @@ public class MultiplayerMenu implements ButtonListener
 		loginTable = new Table();
 		loginTable.setFillParent(true);
 		loginTable.center();
+		topLeftTable = new Table();
+		topLeftTable.setFillParent(true);
+		topLeftTable.top();
+		topLeftTable.left();
 		
+		searchField = new TextField("", assetHolder.textFieldStyle);
+
 		msgLable = new Label("", assetHolder.labelStyle);
 		msgLable.setAlignment(Align.bottom, Align.center);
-		
+		searchButton = new ImageButton(assetHolder.searchIcon);
+		closeButton = new ImageButton(assetHolder.closeIcon);
+		searchButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(SEARCH_PAGE));
+		closeButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(CLOSE));
 		nameLabelLogin = new Label("username:", assetHolder.labelStyle);
 		loginUN = new TextField("", assetHolder.textFieldStyle);
 		String un = sheep.getSaved("username", "");
@@ -328,16 +345,64 @@ public class MultiplayerMenu implements ButtonListener
 		}.setSceneChanger(this));
 		
 		stage.addActor(loginTable);
+		stage.addActor(topLeftTable);
 		stage.addActor(bottomTable);
 		
 		
 		mainLogin();
 		buttonPressed(POP_TAB);
 	}
+	public void gotoSearchPage()
+	{
+		clearTables();
+		topLeftTable.clearChildren();
+		loginTable.center();
+		Label searchLabel = new Label("SEARCH", assetHolder.labelStyle);
+		Button searchButton = new TextButton("search", assetHolder.buttonStyle);
+		assetHolder.correctLabel(searchLabel);
+		loginTable.add(searchLabel).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).row();
+		loginTable.add(searchField).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).padBottom(assetHolder.getLargeButtonPadding()).row();
+		loginTable.add(searchButton).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth));
+		searchButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(SEARCH));
+	}
 	public void buttonPressed(int id)
 	{
 		switch (id)
 		{
+			case CLOSE:
+				loadLevels(0, NetUtil.GET_POP);
+				break;
+			case SEARCH:
+				searchStr = searchField.getText();
+				Gdx.app.log("search", searchField.getText());
+				loadLevels(0, NetUtil.SEARCH);
+				/*
+				NetUtil.sendRequest(NetUtil.SEARCH, "searchStr="+searchStr+"&page="+page, new HttpResponseListener(){
+					public void handleHttpResponse(HttpResponse httpResponse) {
+						String str = httpResponse.getResultAsString();
+						//showMessage(str, MULTI_MENU, "continue");
+						Gdx.app.log("search rtn", str);
+						//do stuff here based on response
+					}
+
+					public void failed(Throwable t) {
+						String str = t.getMessage();
+						showMessage("Failed:\n"+str, CHANGE_PASS_MENU);
+						Gdx.app.log("search fail", str);
+						//do stuff here based on the failed attempt
+					}
+
+					public void cancelled() {
+						showMessage("Request cancelled", CHANGE_PASS_MENU);
+						Gdx.app.log("search cancel", "");
+						//do stuff here based on the failed attempt
+					}
+				});
+				*/
+				break;
+			case SEARCH_PAGE:
+				gotoSearchPage();
+				break;
 			case CHANGE_PASS:
 				Gdx.app.log("change pass", loginPW.getText());
 				String pass1 = loginPW.getText();
@@ -345,7 +410,7 @@ public class MultiplayerMenu implements ButtonListener
 				if (pass1.equals(pass2))
 					doChangePassword(pass1);
 				else
-					showMessage("Passwords do not\nmatch", CHANGE_PASS_MENU);
+					showMessage("Passwords do not\nmatch", MULTI_MENU);
 				break;
 			case CHANGE_PASS_MENU_BUTTON:
 				changePass();
@@ -354,7 +419,7 @@ public class MultiplayerMenu implements ButtonListener
 				if (!loadingLevels)
 				{
 					popTogNew.clearChildren();
-					ImageButton goButton = new ImageButton(assetHolder.popTogNew1);
+					ImageButton goButton = new ImageButton(assetHolder.popTogNew2);
 					popTogNew.add(goButton).size(assetHolder.getPercentWidth(.7f), assetHolder.getPercentHeight(.04f)).row();
 					goButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(NEW_TAB));
 					loadLevels(0, NetUtil.GET_POP);
@@ -364,7 +429,7 @@ public class MultiplayerMenu implements ButtonListener
 				if (!loadingLevels)
 				{
 					popTogNew.clearChildren();
-					ImageButton goButton2 = new ImageButton(assetHolder.popTogNew2);
+					ImageButton goButton2 = new ImageButton(assetHolder.popTogNew1);
 					popTogNew.add(goButton2).size(assetHolder.getPercentWidth(.7f), assetHolder.getPercentHeight(.04f)).row();
 					goButton2.addListener(new ButtonListenBridge().setButtonListener(this).setId(POP_TAB));
 					loadLevels(0, NetUtil.GET_NEW);
@@ -374,11 +439,7 @@ public class MultiplayerMenu implements ButtonListener
 				getOnMyLevels();
 				break;
 			case LOAD_MORE:
-				int type = NetUtil.GET_NEW;
-				if (showingPop)
-					type = NetUtil.GET_POP;
-
-				loadLevels(currPage+1, type);
+				loadLevels(currPage+1, currLevelMenu);
 		}
 	}
 	public void loadLevels(int page, int type)
@@ -387,9 +448,27 @@ public class MultiplayerMenu implements ButtonListener
 		// in a table
 		loadingLevels = true;
 		currPage = page;
+		if (type == NetUtil.GET_POP)
+		{
+			currLevelMenu = NetUtil.GET_POP;
+		}else if (type == NetUtil.GET_NEW)
+		{
+			currLevelMenu = NetUtil.GET_NEW;
+		}else if (type == NetUtil.SEARCH)
+		{
+			currLevelMenu = NetUtil.SEARCH;
+		}else if (type == NetUtil.USER)
+		{
+			currLevelMenu = NetUtil.USER;
+		}
 		levelsTable.clearChildren();
+		String cmd = "page="+page;
+		if (currLevelMenu == NetUtil.SEARCH)
+			cmd += "&searchStr="+searchStr;
+		if (currLevelMenu == NetUtil.USER)
+			cmd += "&user="+sheep.getSaved("username", "");
 		levelsTable.add(new Label("Loading...", assetHolder.labelStyle));
-		NetUtil.sendRequest(type, "page="+page, new HttpResponseListener() {
+		NetUtil.sendRequest(type, cmd, new HttpResponseListener() {
 			public void handleHttpResponse(HttpResponse httpResponse) {
 				String str = httpResponse.getResultAsString();
 				Gdx.app.log("gtlvlstr", str);
@@ -435,12 +514,18 @@ public class MultiplayerMenu implements ButtonListener
 		levelsTable.clearChildren();
 		levelsTable.add(new Label("Loading...", assetHolder.labelStyle));
 	}
+	public void gotoChangePassMenu()
+	{
+		currBackMenu = CHANGE_PASS_MENU;
+		goBackInternal();
+	}
 	public void doChangePassword(String pass)
 	{
 		try
 		{
 			showMessage("Changing...", CHANGE_PASS_MENU);
 			String commandString = new String();
+			currentPassHash = NetUtil.encode(oldPass.getText());
 			commandString = getLoginInfo(commandString);
 			commandString += "&newPassword="+NetUtil.encode(pass);
 			//commandString += "username="+currentLogin+"&password="+currentPassHash;
@@ -525,7 +610,7 @@ public class MultiplayerMenu implements ButtonListener
 	
 	public String getLoginInfo(String cmd)
 	{
-		cmd += "username="+currentLogin+"&password="+currentPassHash;
+		cmd += "username="+sheep.getTopMenu().getUsername()+"&password="+currentPassHash;
 		return cmd;
 	}
 	public void uploadLevel(String mul)
@@ -625,8 +710,26 @@ public class MultiplayerMenu implements ButtonListener
 //			String rating = mli.rating;
 			//String username = levelNames[i];
 			float padding = 0;//assetHolder.getPercentHeight(0.02f);
-			TextButton lvl1 = new TextButton(levelName/*"Level "+(i+1)*/, i%2==0?assetHolder.onLevelButton:assetHolder.offLevelButton);
-			loginTable.add(lvl1).height(assetHolder.getPercentHeight(assetHolder.buttonHeight)).width(assetHolder.getPercentWidth(assetHolder.buttonWidth)).pad(padding);
+			float buttonHeight = assetHolder.getPercentHeight(assetHolder.buttonHeight*1.4f);
+			Button lvl1 = new Button(i%2==0?assetHolder.onLevelButton:assetHolder.offLevelButton);
+			Table levAndUsr = new Table();
+			levAndUsr.left();
+			levAndUsr.add(new Label(levelName, assetHolder.levelNameLabelStyle)).height(buttonHeight*.3f).left().row();
+			levAndUsr.add(new Label(username, assetHolder.creatorNameLabelStyle)).height(buttonHeight*.3f).left();
+			Table ratingTable = new Table();
+			ratingTable.right();
+			float starSize = assetHolder.getPercentWidth(.04f);
+			for (int c = 0; c < 5; ++c)
+			{
+				if (c < mli.rating)
+					ratingTable.add(new Image(assetHolder.onStar)).size(starSize, starSize).right();
+				else
+					ratingTable.add(new Image(assetHolder.offStar)).size(starSize, starSize).right();
+			}
+			float padH = assetHolder.getPercentWidth(.03f);
+			lvl1.add(levAndUsr).padLeft(padH).fill().expand();
+			lvl1.add(ratingTable).padRight(padH).fill().expand();
+			loginTable.add(lvl1).height(buttonHeight).width(assetHolder.getPercentWidth(assetHolder.buttonWidth)).pad(padding);
 			loginTable.row();
 			lvl1.addListener(new InputListener(){
 				private String levelName;
@@ -661,13 +764,25 @@ public class MultiplayerMenu implements ButtonListener
 		Gdx.app.log("command", command);
 		NetUtil.sendRequest(NetUtil.GET_LEVEL, command, new HttpResponseListener()
 		{
+			private String userName;
+			private String levelName;
 			public void handleHttpResponse(HttpResponse httpResponse) {
 				String str = httpResponse.getResultAsString();
 				Gdx.app.log("getlvl res", str);
-
-				assetHolder.levelLoader.loadFromString(sheep.getPuzzleMode(), str);
-				sheep.gotoMenu("game");
+				
+				if (currLevelMenu != NetUtil.USER)
+				{
+					assetHolder.levelLoader.loadFromString(sheep.getPuzzleMode(), str);
+					sheep.gotoMenu("game");
+				}else
+				{
+					assetHolder.levelLoader.loadFromString(sheep.getLevelEditor(), str);
+					sheep.gotoMenu("levelEdit");
+				}
+					
 				sheepGame.setCanRate(true);
+				sheepGame.setLevelName(levelName);
+				sheepGame.setCreatorName(userName);
 				goBackInternal();
 				//do stuff here based on response
 			}
@@ -685,7 +800,13 @@ public class MultiplayerMenu implements ButtonListener
 				showMessage("Request cancelled", LOGIN_MENU);
 				//do stuff here based on the failed attempt
 			}
-		});
+			public HttpResponseListener setup(String un, String ln)
+			{
+				userName = un;
+				levelName = ln;
+				return this;
+			}
+		}.setup(userName, levelName));
 
 	}
 	
@@ -727,15 +848,25 @@ public class MultiplayerMenu implements ButtonListener
 	
 	public void mainLogin()
 	{
+		Gdx.app.log("mainLogin", "main");
 		clearTables();
 		levelsTable.clearChildren();
 		loginTable.center();
+		topLeftTable.clearChildren();
+		if (currLevelMenu != NetUtil.SEARCH &&
+			currLevelMenu != NetUtil.USER)
+			topLeftTable.add(searchButton).size(assetHolder.getLargeButtonWidth(), assetHolder.getLargeButtonHeight()).pad(assetHolder.getLargeButtonPadding());
+		else
+			topLeftTable.add(closeButton).size(assetHolder.getLargeButtonWidth(), assetHolder.getLargeButtonHeight()).pad(assetHolder.getLargeButtonPadding());
+			
 		loginTable.add(multiplayerTitle).row();
 		// these are the popular/new buttons
 		Table twoButtons = new Table();
 		twoButtons.add(highestRated).size(assetHolder.getSmallButtonWidth(), assetHolder.getSmallButtonHeight());
 		twoButtons.add(newest).size(assetHolder.getSmallButtonWidth(), assetHolder.getSmallButtonHeight());
-		loginTable.add(popTogNew).size(assetHolder.getPercentWidth(.7f), assetHolder.getPercentHeight(.04f)).row();
+		if (currLevelMenu != NetUtil.SEARCH &&
+			currLevelMenu != NetUtil.USER)
+			loginTable.add(popTogNew).size(assetHolder.getPercentWidth(.7f), assetHolder.getPercentHeight(.04f)).row();
 
 		//loginTable.add(twoButtons).row();
 		loginTable.add(levelsTable).row();
@@ -920,6 +1051,8 @@ public class MultiplayerMenu implements ButtonListener
 	}
 	public void changePass()
 	{
+		levelsNeedsUpdate = false;
+		Gdx.app.log("changePass", "going");
 		currBackMenu = MULTI_MENU;
 		clearTables();
 		loginTable.top();

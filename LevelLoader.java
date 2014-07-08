@@ -156,6 +156,18 @@ public class LevelLoader
 				else
 				if (tj.type.equals("Cut"))
 					t = new Cut().makeFromJsonObject(tj);
+				else
+				if (tj.type.equals("BlockUp"))
+					t = new BlockUp().makeFromJsonObject(tj);
+				else
+				if (tj.type.equals("BlockLeft"))
+					t = new BlockLeft().makeFromJsonObject(tj);
+				else
+				if (tj.type.equals("BlockRight"))
+					t = new BlockRight().makeFromJsonObject(tj);
+				else
+				if (tj.type.equals("BlockDown"))
+					t = new BlockDown().makeFromJsonObject(tj);
 				
 				tileArr.add(t);
 			}

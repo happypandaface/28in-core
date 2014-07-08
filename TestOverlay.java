@@ -36,6 +36,23 @@ public class TestOverlay extends GameOverlay
 	{
 		super();
 	}
+	public void create()
+	{
+		super.create();
+
+		TextButton editButton= new TextButton("edit", assetHolder.buttonStyle);
+		editButton.addListener(new InputListener(){
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button)
+			{
+				return true;
+			}
+			public void touchUp(InputEvent event, float x, float y, int pointer, int button)
+			{
+				sheep.gotoMenu("levelEdit");
+			}
+		});
+		topMenu.add(editButton).width(sheepGame.getTileWidth()).height(sheepGame.getTileHeight()).padLeft(assetHolder.getPercentWidth(.4f));
+	}
 	public void addRetryButtons(Table table)
 	{
 		TextButton retry = new TextButton("Restart Level", assetHolder.buttonStyle);

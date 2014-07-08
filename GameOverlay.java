@@ -51,6 +51,7 @@ public class GameOverlay
 	protected SpriteBatch batch;
 	protected Table topMenu;
 	protected String levelName;
+	protected String creatorName;
 	protected Array<OverlayExtension> extensions;
 	private ShapeRenderer shapeRenderer;
 	
@@ -138,6 +139,7 @@ public class GameOverlay
 	public void reset()
 	{
 		levelName = "";
+		creatorName = "";
 		bottomMenu.clearChildren();
 		unpauseOverlay();
 		inOverlay = false;
@@ -375,6 +377,10 @@ public class GameOverlay
 		bottomMenu.clearChildren();
 		sheepGame.retryLevelWithHelp();
 	}
+	public void setCreatorName(String s)
+	{
+		creatorName = s;
+	}
 	public void setLevelName(String s)
 	{
 		levelName = s;
@@ -387,11 +393,20 @@ public class GameOverlay
 	public void addLevelName(Table table)
 	{
 		Label levelNameLabel = new Label(levelName, assetHolder.labelStyle);
-		table.add(levelNameLabel).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(10).row();
+		assetHolder.correctLabel(levelNameLabel);
+		table.add(levelNameLabel).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(assetHolder.getBasicPadding()*.2f).row();
+		if (creatorName == null || !creatorName.equals(""))
+		{
+			Label creatorNameLabel = new Label("By: "+creatorName, assetHolder.labelStyle);
+			assetHolder.correctLabel(creatorNameLabel);
+			table.add(creatorNameLabel).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(assetHolder.getBasicPadding()*.2f).row();
+		}
 	}
 	public void rateLevel(int r)
 	{
+		//sheep.getTopMenu().rateLevel(
 		Gdx.app.log("rating", ""+r);
+		sheep.getTopMenu().rateLevel(levelName, creatorName, r);
 	}
 	public void addRate(Table table)
 	{
@@ -410,6 +425,9 @@ public class GameOverlay
 				}).setId(i));
 				starTable.add(star).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).pad(1);
 			}
+			Label rateText = new Label("tap to rate:", assetHolder.labelStyle);
+			assetHolder.correctLabel(rateText);
+			table.add(rateText).size(assetHolder.getPercentWidth(.6f), assetHolder.getButtonHeight()).row();
 			table.add(starTable).row();
 		}
 	}

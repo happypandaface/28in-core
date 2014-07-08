@@ -35,10 +35,19 @@ public class Tile
 	protected boolean exists = true;
 	protected float offsetX;
 	protected float offsetY;
+	protected boolean shouldBeRemoved = false;
 	
 	public static Texture getTex(AssetHolder assetHolder)
 	{
 		return null;
+	}
+	public boolean getShouldBeRemoved()
+	{
+		return shouldBeRemoved;
+	}
+	public void setToBeRemoved(boolean b)
+	{
+		shouldBeRemoved = b;
 	}
 	public static class TileJson
 	{

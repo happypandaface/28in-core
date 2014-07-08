@@ -63,6 +63,10 @@ public class TopMenu implements ButtonListener
 	private static final int CONT_UPLOAD = 15;
 	private static final int NO_BUTTON = 16;
 	private static final int YES_BUTTON = 17;
+	private static final int LOGOUT_BUTTON = 18;
+	private static final int MY_LEVELS= 19;
+	private static final int GOTO_CHANGE_PASS = 20;
+
 	private int currentMenu = LOGIN_MENU;
 	private int backMenu = LOGIN_MENU;
 	private InputMultiplexer inMux;
@@ -82,6 +86,7 @@ public class TopMenu implements ButtonListener
 	private TextButton noButton;
 	private Label nameLabel;
 	private TextButton loginButton;
+	private TextButton logoutButton;
 	private TextButton makeAccountButton;
 	private TextButton needAccount;
 	private TextButton haveAccount;
@@ -96,6 +101,9 @@ public class TopMenu implements ButtonListener
 	private Table topLeftTable;
 	private Button editButton;
 	private boolean showing = true;
+	private Button myLevels;
+	private Button changePass;
+	private boolean badVersion = false;
 
 	public TopMenu()
 	{
@@ -149,8 +157,12 @@ public class TopMenu implements ButtonListener
 		topStage.addActor(topLeftTable);
 		cornerIcon();
 	
-		editButton = new Button(assetHolder.editButton);
+		editButton = new TextButton("new level", assetHolder.buttonStyle);
 		editButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(GOTO_EDIT));
+		myLevels = new TextButton("my levels", assetHolder.buttonStyle);
+		myLevels.addListener(new ButtonListenBridge().setButtonListener(this).setId(MY_LEVELS));
+		changePass= new TextButton("change password", assetHolder.buttonStyle);
+		changePass.addListener(new ButtonListenBridge().setButtonListener(this).setId(GOTO_CHANGE_PASS));
 
 		usernameField = new TextField("", assetHolder.textFieldStyle);
 		usernameField.setRightAligned(false);
@@ -168,9 +180,9 @@ public class TopMenu implements ButtonListener
 		makeAccountButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(MAKE_ACCOUNT_BUTTON));
 		loginButton = new TextButton("login", assetHolder.buttonStyle);
 		loginButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(LOGIN_BUTTON));
-		needAccount = new TextButton("NEED AN ACCOUNT?", assetHolder.buttonStyle);
+		needAccount = new TextButton("NEED AN ACCOUNT?", assetHolder.newButtonStyle);
 		needAccount.addListener(new ButtonListenBridge().setButtonListener(this).setId(MK_ACC));
-		haveAccount = new TextButton("ALREADY HAVE AN ACCOUNT?", assetHolder.buttonStyle);
+		haveAccount = new TextButton("HAVE AN ACCOUNT?", assetHolder.newButtonStyle);
 		haveAccount.addListener(new ButtonListenBridge().setButtonListener(this).setId(LOGIN_MENU));
 		backButton = new TextButton("back", assetHolder.buttonStyle);
 		backButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(BACK_BUTTON));
@@ -180,7 +192,16 @@ public class TopMenu implements ButtonListener
 		yesButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(YES_BUTTON));
 		noButton = new TextButton("back", assetHolder.buttonStyle);
 		noButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(NO_BUTTON));
+		logoutButton = new TextButton("log out", assetHolder.buttonStyle);
+		logoutButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(LOGOUT_BUTTON));
 		nameLabel = new Label("Not logged in", assetHolder.labelStyle);
+		getVersion();
+		String currentLogin = sheep.getSaved("username", "");
+		String currentPassHash = sheep.getSaved("passhash", "");
+		if (!currentLogin.equals("") && !currentPassHash.equals(""))
+		{
+			doLogin(LOGIN_MENU, currentLogin, currentPassHash);
+		}
 	}
 	public void updateVals()
 	{
@@ -259,26 +280,37 @@ public class TopMenu implements ButtonListener
 		topLeftTable.clearChildren();
 		centerTable.clearChildren();
 		bottomTable.clearChildren();
+		if (badVersion)
+		{
+			Label upLabel = new Label("PLEASE UPDATE YOUR APP", assetHolder.labelStyle);
+			assetHolder.correctLabel(upLabel);
+			centerTable.add(upLabel).size(profileIconBigSize, profileIconBigSize).pad(iconBigPadding).row();
+		}
 		if (currentMenu == LOGIN_MENU)
 		{
 			centerTable.add(profileIcon).size(profileIconBigSize, profileIconBigSize).pad(iconBigPadding);
 			centerTable.row();
-			centerTable.add(usernameField).size(profileIconBigSize, profileIconSize).pad(iconPadding);
+			centerTable.add(new Label("username:", assetHolder.labelStyle)).size(assetHolder.getButtonWidth(), assetHolder.getButtonHeight()).row();
+			centerTable.add(usernameField).size(assetHolder.getButtonWidth(), profileIconSize).pad(iconPadding);
 			centerTable.row();
-			centerTable.add(passwordField).size(profileIconBigSize, profileIconSize).pad(iconPadding);
+			centerTable.add(new Label("password:", assetHolder.labelStyle)).size(assetHolder.getButtonWidth(), assetHolder.getButtonHeight()).row();
+			centerTable.add(passwordField).size(assetHolder.getButtonWidth(), profileIconSize).pad(iconPadding);
 			centerTable.row();
-			centerTable.add(loginButton).size(profileIconBigSize, profileIconSize).pad(iconPadding);
+			centerTable.add(loginButton).size(assetHolder.getButtonWidth(), profileIconSize).pad(iconPadding);
 			bottomTable.add(needAccount).size(assetHolder.getPercentWidth(1), profileIconSize);
 		}else if (currentMenu == MK_ACC)
 		{
 			centerTable.add(profileIcon).size(profileIconBigSize, profileIconBigSize).pad(iconBigPadding);
 			centerTable.row();
-			centerTable.add(usernameField).size(profileIconBigSize, profileIconSize).pad(iconPadding);
+			centerTable.add(new Label("username:", assetHolder.labelStyle)).size(assetHolder.getButtonWidth(), assetHolder.getButtonHeight()).row();
+			centerTable.add(usernameField).size(assetHolder.getButtonWidth(), profileIconSize).pad(iconPadding);
 			centerTable.row();
-			centerTable.add(passwordField).size(profileIconBigSize, profileIconSize).pad(iconPadding).row();
-			centerTable.add(repasswordField).size(profileIconBigSize, profileIconSize).pad(iconPadding);
+			centerTable.add(new Label("password:", assetHolder.labelStyle)).size(assetHolder.getButtonWidth(), assetHolder.getButtonHeight()).row();
+			centerTable.add(passwordField).size(assetHolder.getButtonWidth(), profileIconSize).pad(iconPadding).row();
+			centerTable.add(new Label("confirm:", assetHolder.labelStyle)).size(assetHolder.getButtonWidth(), assetHolder.getButtonHeight()).row();
+			centerTable.add(repasswordField).size(assetHolder.getButtonWidth(), profileIconSize).pad(iconPadding);
 			centerTable.row();
-			centerTable.add(makeAccountButton).size(profileIconBigSize, profileIconSize).pad(iconPadding);
+			centerTable.add(makeAccountButton).size(assetHolder.getButtonWidth(), profileIconSize).pad(iconPadding);
 			bottomTable.add(haveAccount).size(assetHolder.getPercentWidth(1), profileIconSize);
 		}else if (currentMenu == MSG)
 		{
@@ -286,10 +318,14 @@ public class TopMenu implements ButtonListener
 			centerTable.add(backButton).size(profileIconBigSize, profileIconSize).pad(iconPadding);
 		}else if (currentMenu == MULTI_MENU)
 		{
-			topLeftTable.add(editButton).size(profileIconSize, profileIconSize);
+			assetHolder.correctLabel(nameLabel);
 			nameLabel.setText("Welcome, "+currentLogin+"!");
 			//centerTable.add(levelEditor).size(profileIconBigSize, profileIconSize).pad(iconPadding);
-			centerTable.add(nameLabel).size(profileIconBigSize, profileIconSize).pad(iconPadding);
+			centerTable.add(nameLabel).size(profileIconBigSize, profileIconSize).pad(iconPadding).row();
+			centerTable.add(editButton).size(assetHolder.getButtonWidth(), profileIconSize).row();
+			centerTable.add(myLevels).size(assetHolder.getButtonWidth(), profileIconSize).pad(iconPadding).row();
+			centerTable.add(changePass).size(assetHolder.getButtonWidth(), profileIconSize).pad(iconPadding).row();
+			centerTable.add(logoutButton).size(profileIconBigSize, profileIconSize).pad(iconPadding).row();
 		}else if (currentMenu == CHOICE)
 		{
 			centerTable.add(messageLabel).size(profileIconBigSize, profileIconSize).pad(iconPadding).row();
@@ -300,6 +336,10 @@ public class TopMenu implements ButtonListener
 		// always allow close
 		topRightTable.add(closeIcon).size(profileIconSize, profileIconSize).pad(iconPadding);
 	}
+	public String getUsername()
+	{
+		return currentLogin;
+	}
 
 	public void buttonPressed(int id)
 	{
@@ -308,6 +348,24 @@ public class TopMenu implements ButtonListener
 		// test
 		switch (id)
 		{
+			case GOTO_CHANGE_PASS:
+				cornerIcon();
+				sheep.getMultiplayerMenu().changePass();
+				sheep.gotoMenu("multi");
+				break;
+			case MY_LEVELS:
+				sheep.getMultiplayerMenu().loadLevels(0, NetUtil.USER);
+				cornerIcon();
+				sheep.gotoMenu("multi");
+				break;
+			case LOGOUT_BUTTON:
+				currentLogin = "";
+				currentPassHash = "";
+				sheep.setSaved("username", "");
+				sheep.setSaved("passhash", "");
+				currentMenu = LOGIN_MENU;
+				centerIcon();
+				break;
 			case NO_BUTTON:
 				if (noMenu == LEVEL_EDIT)
 				{
@@ -353,6 +411,9 @@ public class TopMenu implements ButtonListener
 			case BACK_BUTTON:
 				if (backMenu == LEVEL_EDIT)
 				{
+					currentMenu = MAIN_MENU;
+					backMenu = MAIN_MENU;
+					centerIcon();
 					cornerIcon();
 					sheep.gotoMenu("levelEdit");
 				}else
@@ -390,8 +451,72 @@ public class TopMenu implements ButtonListener
 				break;
 		}
 	}
+	public void rateLevel(String name, String user, float num)
+	{
+		String cmd = "username=\""+currentLogin+"\"&password="+currentPassHash+"&levelCreator="+user+"&levelName=\""+name+"\"&rating="+(int)num;
+		Gdx.app.log("rate cmd", cmd);
+		NetUtil.sendRequest(NetUtil.RATE_LEVEL, cmd, new HttpResponseListener()
+		{
+			public void handleHttpResponse(HttpResponse httpResponse) {
+				String str = httpResponse.getResultAsString();
+				Gdx.app.log("rate res", str);
+				if (str.equals(successStr))
+				{
+					showMessage(str, LOGIN_MENU);
+				}else
+					showMessage(str, LOGIN_MENU);
+				//do stuff here based on response
+			}
+			public void failed(Throwable t)
+			{
+				String str = t.getMessage();
+				Gdx.app.log("rate fail", str);
+				showMessage("Failed:\n"+str, LOGIN_MENU);
+				//do stuff here based on the failed attempt
+			}
+
+			public void cancelled()
+			{
+				Gdx.app.log("rate cancel", "too bad!");
+				showMessage("Request cancelled", LOGIN_MENU);
+				//do stuff here based on the failed attempt
+			}
+		});
+	}
 	
-	
+	public void getVersion()
+	{
+		NetUtil.sendRequest(NetUtil.VERSION, "", new HttpResponseListener()
+		{
+			private String hash;
+			private String login;
+			public void handleHttpResponse(HttpResponse httpResponse) {
+				String str = httpResponse.getResultAsString();
+				Gdx.app.log("version", str);
+				if (str.equals("1"))
+				{
+					badVersion = false;
+					
+				}else
+				{
+					badVersion = true;
+				}
+						//do stuff here based on response
+			}
+
+			public void failed(Throwable t)
+			{
+				showMessage("Failed:\n"+t.getMessage(), LOGIN_MENU);
+				//do stuff here based on the failed attempt
+			}
+
+			public void cancelled()
+			{
+				showMessage("Request cancelled", LOGIN_MENU);
+				//do stuff here based on the failed attempt
+			}
+		});
+	}
 	public void doLogin(int backMenu, String un, String hash)
 	{
 		Gdx.app.log("username", un);
@@ -406,6 +531,7 @@ public class TopMenu implements ButtonListener
 				if (str.equals(successStr))
 				{
 					sheep.setSaved("username", login);
+					sheep.setSaved("passhash", hash);
 					currentLogin = login;
 					currentPassHash = hash;
 					showMessage(str, MULTI_MENU, "continue");
@@ -456,7 +582,8 @@ public class TopMenu implements ButtonListener
 		messageLabel.setText(message);
 		backMenu = menu;
 		currentMenu = MSG;
-		centerIcon();
+		if (showing)
+			centerIcon();
 	}
 	
 	public void createUser()
@@ -481,7 +608,7 @@ public class TopMenu implements ButtonListener
 							showMessage(str, LOGIN_MENU, "login");
 						}else
 							showMessage(str, MK_ACC);
-						Gdx.app.log("rtn", httpResponse.getResultAsString());
+						Gdx.app.log("mk acc rtn", httpResponse.getResultAsString());
 						//do stuff here based on response
 					}
 

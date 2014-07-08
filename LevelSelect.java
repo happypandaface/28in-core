@@ -91,7 +91,7 @@ public class LevelSelect implements ButtonListener
 				return this;
 			}
 		}.setSceneChanger(this));
-		topMenu.add(back).width(sheepGame.getTileWidth()).height(sheepGame.getTileHeight());
+		//topMenu.add(back).width(sheepGame.getTileWidth()).height(sheepGame.getTileHeight());
 		
 		Table bottomMenu = new Table();
 		bottomMenu.setFillParent(true);

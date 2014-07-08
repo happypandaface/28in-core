@@ -203,6 +203,12 @@ public class PathWalker extends Tile
 		return this;
 	}
 	
+	public PathWalker addOffset()
+	{
+		offset++;
+		pos = getPosition(0);
+		return this;
+	}
 	public PathWalker setOffset(float o)
 	{
 		offset = o;

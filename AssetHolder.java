@@ -1,5 +1,6 @@
 package com.mygdx.sheep;
 
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -70,7 +71,7 @@ public class AssetHolder
 	public Texture white;
 	public TextureRegionDrawable tabButtonUp;
 	public TextureRegionDrawable tabButtonDown;
-	private float fontSize = 1.0f/1500.0f;
+	private float fontSize = 1.0f/1600.0f;
 	private float bigFontSize = 1.0f/900.0f;
 	private float smallFontSize = 1.0f/2500.0f;
 	public LevelLoader levelLoader;
@@ -92,7 +93,6 @@ public class AssetHolder
 	public Color backgroundColor;
 //	public Texture profileIcon;
 	public TextureRegionDrawable profileIcon;
-	public TextureRegionDrawable closeIcon;
 	public String lightColorHex = "47edab";
 	public String darkColorHex = "39b27b";
 	public String mliClassName = "levelInfo";
@@ -130,6 +130,16 @@ public class AssetHolder
 	public Texture cutTex;
 	public Texture cutIcon;
 	public Texture cutFaded;
+	public Texture onStar;
+	public Texture offStar;
+	public Texture blockUp;
+	public Texture blockDown;
+	public Texture blockRight;
+	public Texture blockLeft;
+	public LabelStyle levelNameLabelStyle;
+	public LabelStyle creatorNameLabelStyle;
+	public TextureRegionDrawable searchIcon;
+	public TextureRegionDrawable closeIcon;
 
 	public void startLoad()
 	{
@@ -206,6 +216,10 @@ public class AssetHolder
 		assets.load("03 Dog/Horizontal/140703-28Inches-Dog-Horizontal-1.png", Texture.class);
 		assets.load("03 Dog/Horizontal/140703-28Inches-Dog-Horizontal-2.png", Texture.class);
 		assets.load("03 Dog/Horizontal/140703-28Inches-Dog-Horizontal-3.png", Texture.class);
+		assets.load("140704-28Inches-Tiles-Barbed-Wire-Top.png", Texture.class);
+		assets.load("140704-28Inches-Tiles-Barbed-Wire-Right.png", Texture.class);
+		assets.load("140704-28Inches-Tiles-Barbed-Wire-Left.png", Texture.class);
+		assets.load("140704-28Inches-Tiles-Barbed-Wire-Bottom.png", Texture.class);
 		assets.load("onLevelButton.png", Texture.class);
 		assets.load("offLevelButton.png", Texture.class);
 		assets.load("nextPage.png", Texture.class);
@@ -215,19 +229,43 @@ public class AssetHolder
 		assets.load("cutTile.png", Texture.class);
 		assets.load("cutIcon.png", Texture.class);
 		assets.load("cutFaded.png", Texture.class);
+		assets.load("onStar.png", Texture.class);
+		assets.load("offStar.png", Texture.class);
 		assets.load("140704-28Inches-Announcer.png", Texture.class);
 		assets.load("dialogueBubble.png", Texture.class);
+		assets.load("searchIcon.png", Texture.class);
+		assets.load("closeIcon.png", Texture.class);
 	}
 	public void finishLoad()
 	{
+		float fontScale = getPercentWidth(fontSize);
+		float bigFontScale = getPercentWidth(bigFontSize);
+		float smallFontScale = getPercentWidth(smallFontSize);
+		closeIcon = new TextureRegionDrawable(new TextureRegion(assets.get("closeIcon.png", Texture.class)));
+		searchIcon = new TextureRegionDrawable(new TextureRegion(assets.get("searchIcon.png", Texture.class)));
+		onStar = assets.get("onStar.png", Texture.class);
+		offStar = assets.get("offStar.png", Texture.class);
 		dialogueBubble = new NinePatch(assets.get("dialogueBubble.png", Texture.class), 16, 16, 16, 32);
+		blockUp = assets.get("140704-28Inches-Tiles-Barbed-Wire-Top.png", Texture.class);
+		blockRight = assets.get("140704-28Inches-Tiles-Barbed-Wire-Right.png", Texture.class);
+		blockLeft = assets.get("140704-28Inches-Tiles-Barbed-Wire-Left.png", Texture.class);
+		blockDown = assets.get("140704-28Inches-Tiles-Barbed-Wire-Bottom.png", Texture.class);
 		announcer = assets.get("140704-28Inches-Announcer.png", Texture.class);
 		cutTex = assets.get("cutTile.png", Texture.class);
 		cutIcon = assets.get("cutIcon.png", Texture.class);
 		cutFaded = assets.get("cutFaded.png", Texture.class);
 		penTex = assets.get("140704-28Inches-Endless-Tent.png", Texture.class);
+		fontWhite = new BitmapFont(Gdx.files.internal(fontFile));
+		fontWhite.setColor(1, 1, 1, 1);
+		fontWhite.setScale(fontScale);//fontScale);
 		editButton = new ImageButtonStyle();
 		editButton.up = new TextureRegionDrawable(new TextureRegion(assets.get("editUp.png", Texture.class)));
+		BitmapFont fontLevel = new BitmapFont(Gdx.files.internal(fontFile));
+		fontLevel.setScale(fontScale*.8f);
+		fontLevel.setColor(0,1,1,1);
+		BitmapFont fontCreator = new BitmapFont(Gdx.files.internal(fontFile));
+		fontCreator.setScale(fontScale*.6f);
+		fontCreator.setColor(0,1,1,1);
 		editButton.down = new TextureRegionDrawable(new TextureRegion(assets.get("editDown.png", Texture.class)));
 
 		popTogNew1 = new TextureRegionDrawable(new TextureRegion(assets.get("popTogNew1.png", Texture.class)));
@@ -259,14 +297,8 @@ public class AssetHolder
 		newDogTex1 = assets.get("03 Dog/Horizontal/140703-28Inches-Dog-Horizontal-1.png", Texture.class);
 		newDogTex2 = assets.get("03 Dog/Horizontal/140703-28Inches-Dog-Horizontal-2.png", Texture.class);
 		newDogTex3 = assets.get("03 Dog/Horizontal/140703-28Inches-Dog-Horizontal-3.png", Texture.class);
-		float fontScale = getPercentWidth(fontSize);
-		float bigFontScale = getPercentWidth(bigFontSize);
-		float smallFontScale = getPercentWidth(smallFontSize);
 		profileIcon = new TextureRegionDrawable(new TextureRegion(assets.get("profileIcon.png", Texture.class)));
 		closeIcon = new TextureRegionDrawable(new TextureRegion(assets.get("closeIcon.png", Texture.class)));
-		fontWhite = new BitmapFont(Gdx.files.internal(fontFile));
-		fontWhite.setColor(1, 1, 1, 1);
-		fontWhite.setScale(fontScale);//fontScale);
 		smallFontWhite = assets.get(fontFile, BitmapFont.class);
 		smallFontWhite.setScale(smallFontScale);
 		fontGreen = new BitmapFont(Gdx.files.internal(fontFile));
@@ -274,10 +306,10 @@ public class AssetHolder
 		fontGreen.setColor(getBgColor().r, getBgColor().g, getBgColor().b, 1f);
 		onLevelButton = new TextButtonStyle();
 		onLevelButton.up = new TextureRegionDrawable(new TextureRegion(assets.get("onLevelButton.png", Texture.class)));
-		onLevelButton.font = fontWhite;
+		onLevelButton.font = fontLevel;
 		offLevelButton = new TextButtonStyle();
 		offLevelButton.up = new TextureRegionDrawable(new TextureRegion(assets.get("offLevelButton.png", Texture.class)));
-		offLevelButton.font = fontWhite;
+		offLevelButton.font = fontLevel;
 		loadMoreButton = new TextButtonStyle();
 		loadMoreButton.up = new TextureRegionDrawable(new TextureRegion(assets.get("nextPage.png", Texture.class)));
 		loadMoreButton.font = fontWhite;
@@ -356,6 +388,10 @@ public class AssetHolder
 		fontRed.setColor(1, 1, 1, 1);
 		fontRed.setScale(fontScale);
 		labelStyle = new LabelStyle();
+		levelNameLabelStyle = new LabelStyle();
+		levelNameLabelStyle.font = fontLevel;
+		creatorNameLabelStyle = new LabelStyle();
+		creatorNameLabelStyle.font = fontCreator;
 		smallLabelStyle = new LabelStyle();
 		smallLabelStyle.font = smallFontWhite;
 		labelStyle.font = fontWhite;
@@ -374,15 +410,36 @@ public class AssetHolder
 		smallButtonStyle.fontColor = Color.valueOf(lightColorHex);
 		buttonStyle.fontColor = Color.valueOf("ffffff");
 		buttonStyle.downFontColor = Color.valueOf("ffffff");
-		buttonStyle.overFontColor = Color.valueOf("ff0000");
-		buttonStyle.checkedFontColor = Color.valueOf("ff0000");
+	}
+	public void correctLabel(Label l)
+	{
+		l.setAlignment(Align.bottom, Align.center);
 	}
 
 	public Color getBgColor()
 	{
 		return backgroundColor;
 	}
-	
+	public float getPadding()
+	{
+		return getPercentHeight(.01f);
+	}
+	public float getBasicPadding()
+	{
+		return getPercentHeight(.01f);
+	}
+	public float getLargeButtonPadding()
+	{
+		return getPercentWidth(.02f);
+	}
+	public float getLargeButtonWidth()
+	{
+		return getPercentWidth(.13f);
+	}
+	public float getLargeButtonHeight()
+	{
+		return getPercentWidth(.13f);
+	}
 	public float getButtonHeight()
 	{
 		return getPercentHeight(buttonHeight);

@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -30,11 +31,69 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont.HAlignment;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-public class EditorOverlay extends GameOverlay
+import com.mygdx.sheep.tiles.*;
+
+import com.mygdx.sheep.ui.ButtonListener;
+import com.mygdx.sheep.ui.ButtonListenBridge;
+
+public class EditorOverlay extends GameOverlay implements ButtonListener
 {
+	private PathWalker pwToEdit = null;
+	private Table bottomMenu;
+	private static final int DELETE = 1;
+	private static final int OFFSET = 2;
+	private static final int RETURN = 3;
+
 	public EditorOverlay()
 	{
 		super();
+		bottomMenu = new Table();
+		bottomMenu.setFillParent(true);
+		bottomMenu.bottom();
+		bottomMenu.center();
+		stage.addActor(bottomMenu);
+	}
+
+	public void buttonPressed(int id)
+	{
+		switch(id)
+		{
+			case OFFSET:
+				pwToEdit.addOffset();
+				break;
+			case RETURN:
+				bottomMenu.clearChildren();
+				pwToEdit = null;
+				break;
+			case DELETE:
+				bottomMenu.clearChildren();
+				pwToEdit.setToBeRemoved(true);
+				pwToEdit = null;
+				break;
+		}
+	}
+
+	public void setPathWalker(PathWalker pw)
+	{
+		pwToEdit = pw;
+		Button offset = new TextButton("OFFSET", assetHolder.buttonStyle);
+		Button delete = new TextButton("DELETE", assetHolder.buttonStyle);
+		Button returnButt = new TextButton("RETURN", assetHolder.buttonStyle);
+		offset.addListener(new ButtonListenBridge().setButtonListener(this).setId(OFFSET));
+		delete.addListener(new ButtonListenBridge().setButtonListener(this).setId(DELETE));
+		returnButt.addListener(new ButtonListenBridge().setButtonListener(this).setId(RETURN));
+		bottomMenu.add(offset).size(assetHolder.getButtonWidth(), assetHolder.getButtonHeight()).row().pad(assetHolder.getPadding());
+		bottomMenu.add(returnButt).size(assetHolder.getButtonWidth(), assetHolder.getButtonHeight()).row();
+		bottomMenu.add(delete).size(assetHolder.getButtonWidth(), assetHolder.getButtonHeight()).row();
+	}
+
+	public boolean isPaused()
+	{
+		if (pwToEdit != null)
+		{
+			return true;
+		}else
+			return false;
 	}
 	
 	public boolean doMenu()
@@ -69,6 +128,7 @@ public class EditorOverlay extends GameOverlay
 				return this;
 			}
 		}.setSceneChanger(this));
+		table.add(new Label("double tap to\nremove/edit a tile", assetHolder.labelStyle)).row();
 		table.add(setName).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(10);
 		table.row();
 	}
