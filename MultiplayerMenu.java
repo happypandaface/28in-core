@@ -110,7 +110,10 @@ public class MultiplayerMenu implements ButtonListener
 	private TextField searchField;
 	private int currLevelMenu;
 	private String searchStr;
+	private int currentMenu = 0;
+	private ImageButton greenCloseIcon;
 	
+
 	public void setSheepMain(sheep s)
 	{
 		sheep = s;
@@ -152,6 +155,8 @@ public class MultiplayerMenu implements ButtonListener
 		closeButton = new ImageButton(assetHolder.closeIcon);
 		searchButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(SEARCH_PAGE));
 		closeButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(CLOSE));
+		greenCloseIcon = new ImageButton(assetHolder.getDrawable(assetHolder.greenClose));
+		greenCloseIcon.addListener(new ButtonListenBridge().setButtonListener(this).setId(CLOSE));
 		nameLabelLogin = new Label("username:", assetHolder.labelStyle);
 		loginUN = new TextField("", assetHolder.textFieldStyle);
 		String un = sheep.getSaved("username", "");
@@ -354,10 +359,12 @@ public class MultiplayerMenu implements ButtonListener
 	}
 	public void gotoSearchPage()
 	{
+		currentMenu = SEARCH;
 		clearTables();
 		topLeftTable.clearChildren();
 		loginTable.center();
-		Label searchLabel = new Label("SEARCH", assetHolder.labelStyle);
+		topLeftTable.add(greenCloseIcon).size(assetHolder.getLargeButtonWidth(), assetHolder.getLargeButtonHeight()).pad(assetHolder.getLargeButtonPadding());
+		Label searchLabel = new Label("SEARCH", assetHolder.greenLabelStyle);
 		Button searchButton = new TextButton("search", assetHolder.buttonStyle);
 		assetHolder.correctLabel(searchLabel);
 		loginTable.add(searchLabel).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).row();
@@ -370,6 +377,7 @@ public class MultiplayerMenu implements ButtonListener
 		switch (id)
 		{
 			case CLOSE:
+				mainLogin();
 				loadLevels(0, NetUtil.GET_POP);
 				break;
 			case SEARCH:
@@ -600,11 +608,13 @@ public class MultiplayerMenu implements ButtonListener
 	
 	public void nameLevel()
 	{
+		currentMenu = NAME_LEVEL;
 		clearTables();
 		loginTable.top();
-		loginTable.add(levelName).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(10);
+		loginTable.setY(-1*assetHolder.getPercentHeight(.2f));
+		loginTable.add(levelName).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).padTop(10);
 		loginTable.row();
-		loginTable.add(changeLevelName).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(10);
+		loginTable.add(changeLevelName).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth));
 		loginTable.row();
 	}
 	
@@ -848,6 +858,7 @@ public class MultiplayerMenu implements ButtonListener
 	
 	public void mainLogin()
 	{
+		currentMenu = MULTI_MENU;
 		Gdx.app.log("mainLogin", "main");
 		clearTables();
 		levelsTable.clearChildren();
@@ -866,7 +877,7 @@ public class MultiplayerMenu implements ButtonListener
 		twoButtons.add(newest).size(assetHolder.getSmallButtonWidth(), assetHolder.getSmallButtonHeight());
 		if (currLevelMenu != NetUtil.SEARCH &&
 			currLevelMenu != NetUtil.USER)
-			loginTable.add(popTogNew).size(assetHolder.getPercentWidth(.7f), assetHolder.getPercentHeight(.04f)).row();
+			loginTable.add(popTogNew).size(assetHolder.getPercentWidth(.7f), assetHolder.getPercentHeight(.04f)).padBottom(assetHolder.getPercentHeight(.02f)).row();
 
 		//loginTable.add(twoButtons).row();
 		loginTable.add(levelsTable).row();
@@ -1100,7 +1111,10 @@ public class MultiplayerMenu implements ButtonListener
 	public void render()
 	{
 		Color bgColor = assetHolder.getBgColor();
-		Gdx.gl.glClearColor(bgColor.r, bgColor.g, bgColor.b, 1);
+		if (currentMenu == SEARCH)
+			Gdx.gl.glClearColor(1, 1, 1, 1);
+		else
+			Gdx.gl.glClearColor(bgColor.r, bgColor.g, bgColor.b, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		if (levelsNeedsUpdate)
 			makeLevelButtons(0);
@@ -1111,6 +1125,8 @@ public class MultiplayerMenu implements ButtonListener
 	
 	public void switchTo()
 	{
+		if (currentMenu != MULTI_MENU)
+			levelsNeedsUpdate = false;
 		sheep.getTabMenu().animateUp();
 	//	Gdx.input.setInputProcessor(stage);
 	}
@@ -1121,6 +1137,8 @@ public class MultiplayerMenu implements ButtonListener
 	
 	public void clearTables()
 	{
+		topLeftTable.clear();
+		loginTable.setY(0);
 		loginTable.clear();
 		bottomTable.clear();
 	}

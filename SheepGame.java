@@ -98,6 +98,7 @@ public class SheepGame implements InputProcessor
 		batch = new SpriteBatch();
 		texLink.put("sheep", new Texture(Gdx.files.internal("140616_Sheep RD1-BIG-sheep.png")));
 		texLink.put("grass", new Texture(Gdx.files.internal("140616_Tile RD1-BIG.png")));
+		texLink.put("darkBoulder", new Texture(Gdx.files.internal("darkBoulder.png")));
 		texLink.put("boulder", new Texture(Gdx.files.internal("140621-28Inches-Tile-Boulder.png")));
 		texLink.put("tallGrass", new Texture(Gdx.files.internal("140623-28Inches-Tile-Grass.png")));
 		{
@@ -310,18 +311,24 @@ public class SheepGame implements InputProcessor
 		if (playingEndless)
 		{
 			batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-			for (int x = 0; x < getNumTilesX(); ++x)
+			for (int x = -1; x <= getNumTilesX(); ++x)
 				for (int y = -1; y <= getNumTilesY()+1; ++y)
 				{
-					batch.draw(texLink.get("grass"), startX+x*tileW+getOffsetX()%getTileWidth(), startY+y*tileH+getOffsetY()%getTileHeight(), tileW, tileH);
+					if (x == -1 || x == getNumTilesX())
+						batch.draw(texLink.get("darkBoulder"), startX+x*tileW+getOffsetX()%getTileWidth(), startY+y*tileH+getOffsetY()%getTileHeight(), tileW, tileH);
+					else
+						batch.draw(texLink.get("grass"), startX+x*tileW+getOffsetX()%getTileWidth(), startY+y*tileH+getOffsetY()%getTileHeight(), tileW, tileH);
 				}
 		}else
 		{
 			batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-			for (int x = 0; x < getNumTilesX(); ++x)
+			for (int x = -1; x <= getNumTilesX(); ++x)
 				for (int y = 0; y < getNumTilesY(); ++y)
 				{
-					batch.draw(texLink.get("grass"), startX+x*tileW+getOffsetX(), startY+y*tileH+getOffsetY(), tileW, tileH);
+					if (x == -1 || x == getNumTilesX())
+						batch.draw(texLink.get("darkBoulder"), startX+x*tileW+getOffsetX()%getTileWidth(), startY+y*tileH+getOffsetY()%getTileHeight(), tileW, tileH);
+					else
+						batch.draw(texLink.get("grass"), startX+x*tileW+getOffsetX(), startY+y*tileH+getOffsetY(), tileW, tileH);
 				}
 		}
 		
@@ -418,7 +425,7 @@ public class SheepGame implements InputProcessor
 	}
 	public int endGreenOverlay()
 	{
-		return (int)numTilesX+1;
+		return (int)numTilesX;
 	}
 	public int redOverlayY()
 	{
@@ -431,7 +438,7 @@ public class SheepGame implements InputProcessor
 	}
 	public int endRedOverlay()
 	{
-		return (int)numTilesX+1;
+		return (int)numTilesX;
 	}
 	public void drawSheepPath(SpriteBatch batch, float delta)
 	{
@@ -615,6 +622,10 @@ public class SheepGame implements InputProcessor
 	{
 		return losing;
 	}
+	public boolean checkInBoundsMove(Vector2 add)
+	{
+		return add.y < numTilesY && add.y >= 0;
+	}
 	public boolean checkInBounds(Vector2 add)
 	{
 		return add.x < numTilesX && add.x >= 0 &&
@@ -687,7 +698,7 @@ public class SheepGame implements InputProcessor
 	}
 	public void startDrag(Vector2 add)
 	{
-		if (checkInBounds(add))
+		if (checkInBoundsMove(add))
 		{
 			boolean tileTouch = false;
 			if (canDirectSheep)

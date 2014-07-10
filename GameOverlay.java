@@ -36,7 +36,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.mygdx.sheep.ui.ButtonListener;
 import com.mygdx.sheep.ui.ButtonListenBridge;
 
-public class GameOverlay
+public class GameOverlay implements ButtonListener
 {
 	protected boolean usingOverlay;
 	public InputMultiplexer inMux;
@@ -51,6 +51,7 @@ public class GameOverlay
 	protected boolean paused;
 	protected SpriteBatch batch;
 	protected Table topMenu;
+	protected Table topRightMenu;
 	protected String levelName;
 	protected String creatorName;
 	protected Array<OverlayExtension> extensions;
@@ -61,8 +62,11 @@ public class GameOverlay
 	protected float fadeSpeed = 1f;
 	protected float resultBannerAlpha = 1f;// this is how see through the overlays are (for messages in-game)
 	public boolean displayFadedCut = true;
+	public boolean addingReload= true;
 	
 	protected boolean shownBottomMenu;
+	protected static final int RELOAD = 1;
+	protected static final int HIGHEST_ENUM = 1;
 	
 	public GameOverlay()
 	{
@@ -74,10 +78,15 @@ public class GameOverlay
 		overlayStage = new Stage();
 		shapeRenderer = new ShapeRenderer();
 		topMenu = new Table();
+		topRightMenu= new Table();
 		topMenu.setFillParent(true);
 		topMenu.top();
 		topMenu.left();
+		topRightMenu.setFillParent(true);
+		topRightMenu.top();
+		topRightMenu.right();
 		stage.addActor(topMenu);
+		stage.addActor(topRightMenu);
 		
 		bottomMenu = new Table();
 		bottomMenu.setFillParent(true);
@@ -113,9 +122,18 @@ public class GameOverlay
 		sheepGame = sg;
 	}
 	
+	public void buttonPressed(int id)
+	{
+		switch (id)
+		{
+			case RELOAD:
+				retryLevel();
+				break;
+		}
+	}
 	public void create()
 	{
-		ImageButton back = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("140621-Menu-Button.png")))));
+		ImageButton back = new ImageButton(assetHolder.getDrawable(assetHolder.newHamUp), assetHolder.getDrawable(assetHolder.newHamDown));
 		back.addListener(new InputListener(){
 			private GameOverlay gameOverlay;
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button)
@@ -133,8 +151,16 @@ public class GameOverlay
 			}
 		}.setSceneChanger(this));
 		topMenu.add(back).width(sheepGame.getTileWidth()).height(sheepGame.getTileHeight());
+		addReloadButton();
 		for (int i = 0; i < extensions.size; ++i)
 			extensions.get(i).create();
+	}
+
+	public void addReloadButton()
+	{
+		ImageButton reload = new ImageButton(assetHolder.getDrawable(assetHolder.reloadUp), assetHolder.getDrawable(assetHolder.reloadDown));
+		reload.addListener(new ButtonListenBridge().setButtonListener(this).setId(RELOAD));
+		topRightMenu.add(reload).width(sheepGame.getTileWidth()).height(sheepGame.getTileHeight()).left();
 	}
 	
 	public void reset()

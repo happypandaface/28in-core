@@ -175,6 +175,10 @@ public class EndlessInches extends SheepGame
 		}
 		return nextPen;
 	}
+	public boolean checkInBoundsMove(Vector2 add)
+	{
+		return true;//add.x < numTilesX && add.x >= 0;
+	}
 	public boolean checkInBounds(Vector2 add)
 	{
 		return add.x < numTilesX && add.x >= 0;

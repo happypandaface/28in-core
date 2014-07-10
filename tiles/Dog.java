@@ -29,7 +29,7 @@ public class Dog extends Enemy
 {
 	public static Texture getTex(AssetHolder assetHolder)
 	{
-		return assetHolder.dog1;
+		return assetHolder.newDogTex1;
 	}
 	public String getTypeStr()
 	{

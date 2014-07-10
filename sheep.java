@@ -216,9 +216,11 @@ public class sheep extends ApplicationAdapter implements ButtonListener
 				assetHolder.levelLoader.loadLevel(puzzleMode, 0);
 				break;
 			case LEVEL_SELECT:
+				topMenu.show();
 				gotoMenu("level");
 				break;
 			case MULTI_MENU:
+				topMenu.show();
 				gotoMenu("multi");
 				break;
 			case ENDLESS_GAME:
@@ -340,7 +342,7 @@ public class sheep extends ApplicationAdapter implements ButtonListener
 	}
 	public void overlayOn()
 	{
-		topMenu.show();
+		//topMenu.show();
 		tabMenu.animateUp();
 	}
 	public TabMenu getTabMenu()

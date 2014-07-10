@@ -77,6 +77,7 @@ public class TopMenu implements ButtonListener
 	private float animationSpeed = 3f;
 	private boolean inProfileMenu = false;
 	private ImageButton profileIcon;
+	private ImageButton profileIconBig;
 	private ImageButton closeIcon;
 	private TextField usernameField;
 	private TextField passwordField;
@@ -147,8 +148,9 @@ public class TopMenu implements ButtonListener
 		topRightTable.top();
 		topRightTable.right();
 		topRightTable.setFillParent(true);
-		profileIcon = new ImageButton(assetHolder.profileIcon);
-		closeIcon = new ImageButton(assetHolder.closeIcon);
+		profileIcon = new ImageButton(assetHolder.getDrawable(assetHolder.profileIconSmall));
+		profileIconBig = new ImageButton(assetHolder.profileIcon);
+		closeIcon = new ImageButton(assetHolder.getDrawable(assetHolder.greenClose));
 		profileIcon.addListener(new ButtonListenBridge().setButtonListener(this).setId(PROFILE));
 		closeIcon.addListener(new ButtonListenBridge().setButtonListener(this).setId(CLOSE));
 //		profileIcon.setPosition(90, 190);
@@ -187,7 +189,7 @@ public class TopMenu implements ButtonListener
 		haveAccount.addListener(new ButtonListenBridge().setButtonListener(this).setId(LOGIN_MENU));
 		backButton = new TextButton("back", assetHolder.buttonStyle);
 		backButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(BACK_BUTTON));
-		messageLabel = new Label("back", assetHolder.labelStyle);
+		messageLabel = new Label("back", assetHolder.greenLabelStyle);
 		messageLabel.setAlignment(Align.bottom, Align.center);
 		yesButton = new TextButton("back", assetHolder.buttonStyle);
 		yesButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(YES_BUTTON));
@@ -195,7 +197,7 @@ public class TopMenu implements ButtonListener
 		noButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(NO_BUTTON));
 		logoutButton = new TextButton("log out", assetHolder.buttonStyle);
 		logoutButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(LOGOUT_BUTTON));
-		nameLabel = new Label("Not logged in", assetHolder.labelStyle);
+		nameLabel = new Label("Not logged in", assetHolder.greenLabelStyle);
 		getVersion();
 		String currentLogin = sheep.getSaved("username", "");
 		String currentPassHash = sheep.getSaved("passhash", "");
@@ -283,32 +285,20 @@ public class TopMenu implements ButtonListener
 		bottomTable.clearChildren();
 		if (badVersion)
 		{
-			Label upLabel = new Label("PLEASE UPDATE YOUR APP", assetHolder.labelStyle);
+			Label upLabel = new Label("PLEASE UPDATE YOUR APP", assetHolder.greenLabelStyle);
 			assetHolder.correctLabel(upLabel);
 			centerTable.add(upLabel).size(profileIconBigSize, profileIconBigSize).pad(iconBigPadding).row();
 		}
-		if (currentMenu == LOGIN_MENU)
+		if (currentMenu == MK_ACC)
 		{
-			centerTable.add(profileIcon).size(profileIconBigSize, profileIconBigSize).pad(iconBigPadding);
+			centerTable.add(profileIconBig).size(profileIconBigSize, profileIconBigSize).pad(iconBigPadding);
 			centerTable.row();
-			centerTable.add(new Label("username:", assetHolder.labelStyle)).size(assetHolder.getButtonWidth(), assetHolder.getButtonHeight()).row();
+			centerTable.add(new Label("username:", assetHolder.greenLabelStyle)).size(assetHolder.getButtonWidth(), assetHolder.getButtonHeight()).row();
 			centerTable.add(usernameField).size(assetHolder.getButtonWidth(), profileIconSize).pad(iconPadding);
 			centerTable.row();
-			centerTable.add(new Label("password:", assetHolder.labelStyle)).size(assetHolder.getButtonWidth(), assetHolder.getButtonHeight()).row();
-			centerTable.add(passwordField).size(assetHolder.getButtonWidth(), profileIconSize).pad(iconPadding);
-			centerTable.row();
-			centerTable.add(loginButton).size(assetHolder.getButtonWidth(), profileIconSize).pad(iconPadding);
-			bottomTable.add(needAccount).size(assetHolder.getPercentWidth(1), profileIconSize);
-		}else if (currentMenu == MK_ACC)
-		{
-			centerTable.add(profileIcon).size(profileIconBigSize, profileIconBigSize).pad(iconBigPadding);
-			centerTable.row();
-			centerTable.add(new Label("username:", assetHolder.labelStyle)).size(assetHolder.getButtonWidth(), assetHolder.getButtonHeight()).row();
-			centerTable.add(usernameField).size(assetHolder.getButtonWidth(), profileIconSize).pad(iconPadding);
-			centerTable.row();
-			centerTable.add(new Label("password:", assetHolder.labelStyle)).size(assetHolder.getButtonWidth(), assetHolder.getButtonHeight()).row();
+			centerTable.add(new Label("password:", assetHolder.greenLabelStyle)).size(assetHolder.getButtonWidth(), assetHolder.getButtonHeight()).row();
 			centerTable.add(passwordField).size(assetHolder.getButtonWidth(), profileIconSize).pad(iconPadding).row();
-			centerTable.add(new Label("confirm:", assetHolder.labelStyle)).size(assetHolder.getButtonWidth(), assetHolder.getButtonHeight()).row();
+			centerTable.add(new Label("confirm:", assetHolder.greenLabelStyle)).size(assetHolder.getButtonWidth(), assetHolder.getButtonHeight()).row();
 			centerTable.add(repasswordField).size(assetHolder.getButtonWidth(), profileIconSize).pad(iconPadding);
 			centerTable.row();
 			centerTable.add(makeAccountButton).size(assetHolder.getButtonWidth(), profileIconSize).pad(iconPadding);
@@ -333,7 +323,19 @@ public class TopMenu implements ButtonListener
 			centerTable.add(yesButton).size(profileIconBigSize, profileIconSize).pad(iconPadding).row();
 			centerTable.add(noButton).size(profileIconBigSize, profileIconSize).pad(iconPadding).row();
 			
-		}
+		}else //if (currentMenu == LOGIN_MENU)
+		{
+			centerTable.add(profileIconBig).size(profileIconBigSize, profileIconBigSize).pad(iconBigPadding);
+			centerTable.row();
+			centerTable.add(new Label("username:", assetHolder.greenLabelStyle)).size(assetHolder.getButtonWidth(), assetHolder.getButtonHeight()).row();
+			centerTable.add(usernameField).size(assetHolder.getButtonWidth(), profileIconSize).pad(iconPadding);
+			centerTable.row();
+			centerTable.add(new Label("password:", assetHolder.greenLabelStyle)).size(assetHolder.getButtonWidth(), assetHolder.getButtonHeight()).row();
+			centerTable.add(passwordField).size(assetHolder.getButtonWidth(), profileIconSize).pad(iconPadding);
+			centerTable.row();
+			centerTable.add(loginButton).size(assetHolder.getButtonWidth(), profileIconSize).pad(iconPadding);
+			bottomTable.add(needAccount).size(assetHolder.getPercentWidth(1), profileIconSize);
+		} 
 		// always allow close
 		topRightTable.add(closeIcon).size(profileIconSize, profileIconSize).pad(iconPadding);
 	}
@@ -355,6 +357,7 @@ public class TopMenu implements ButtonListener
 				sheep.gotoMenu("multi");
 				break;
 			case MY_LEVELS:
+				sheep.getTabMenu().buttonPressed(TabMenu.MULTI_MENU);
 				sheep.getMultiplayerMenu().loadLevels(0, NetUtil.USER);
 				cornerIcon();
 				sheep.gotoMenu("multi");
@@ -381,10 +384,12 @@ public class TopMenu implements ButtonListener
 				}
 				break;
 			case LEVEL_EDIT:
+				sheep.getTabMenu().buttonPressed(TabMenu.MULTI_MENU);
 				cornerIcon();
 				sheep.gotoMenu("levelEdit");
 				break;
 			case GOTO_EDIT:
+				sheep.getTabMenu().buttonPressed(TabMenu.MULTI_MENU);
 				sheep.getMultiplayerMenu().editNewLevel();
 				cornerIcon();
 				break;
@@ -412,6 +417,7 @@ public class TopMenu implements ButtonListener
 			case BACK_BUTTON:
 				if (backMenu == LEVEL_EDIT)
 				{
+					sheep.getTabMenu().buttonPressed(TabMenu.MULTI_MENU);
 					currentMenu = MAIN_MENU;
 					backMenu = MAIN_MENU;
 					centerIcon();
@@ -427,7 +433,7 @@ public class TopMenu implements ButtonListener
 			case LOGIN_BUTTON:
 				if (inProfileMenu)
 				{
-					cornerIcon();
+					//cornerIcon();
 					//sheep.gotoMenu("multi");
 					try
 					{
@@ -535,6 +541,7 @@ public class TopMenu implements ButtonListener
 					sheep.setSaved("passhash", hash);
 					currentLogin = login;
 					currentPassHash = hash;
+					//sheep.getTabMenu().buttonPressed(TabMenu.MULTI_MENU);
 					gotoMenu(MULTI_MENU);
 				//	showMessage(str, MULTI_MENU, "continue");
 				}else
@@ -652,7 +659,8 @@ public class TopMenu implements ButtonListener
 		{
 			Gdx.gl.glEnable(GL20.GL_BLEND);
 			shapeRenderer.begin(ShapeType.Filled);
-			shapeRenderer.setColor(assetHolder.getBgColor().r, assetHolder.getBgColor().g, assetHolder.getBgColor().b, animationPercent);
+			//shapeRenderer.setColor(assetHolder.getBgColor().r, assetHolder.getBgColor().g, assetHolder.getBgColor().b, animationPercent);
+			shapeRenderer.setColor(1, 1, 1, animationPercent);
 			shapeRenderer.rect(0, 0, assetHolder.getPercentWidth(1f), assetHolder.getPercentHeight(1));
 			shapeRenderer.end();
 			topStage.act(Gdx.graphics.getDeltaTime());

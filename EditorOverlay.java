@@ -36,13 +36,14 @@ import com.mygdx.sheep.tiles.*;
 import com.mygdx.sheep.ui.ButtonListener;
 import com.mygdx.sheep.ui.ButtonListenBridge;
 
-public class EditorOverlay extends GameOverlay implements ButtonListener
+public class EditorOverlay extends GameOverlay 
 {
 	private PathWalker pwToEdit = null;
 	private Table bottomMenu;
-	private static final int DELETE = 1;
-	private static final int OFFSET = 2;
-	private static final int RETURN = 3;
+	private static final int DELETE = HIGHEST_ENUM+1;
+	private static final int OFFSET = HIGHEST_ENUM+2;
+	private static final int RETURN = HIGHEST_ENUM+3;
+	public boolean addingReload= false;
 
 	public EditorOverlay()
 	{
@@ -53,24 +54,36 @@ public class EditorOverlay extends GameOverlay implements ButtonListener
 		bottomMenu.center();
 		stage.addActor(bottomMenu);
 	}
-
+	@Override
+	public void addReloadButton()
+	{
+	}
+	@Override
 	public void buttonPressed(int id)
 	{
 		switch(id)
 		{
 			case OFFSET:
 				pwToEdit.addOffset();
-				break;
+				return;
 			case RETURN:
 				bottomMenu.clearChildren();
 				pwToEdit = null;
-				break;
+				return;
 			case DELETE:
 				bottomMenu.clearChildren();
 				pwToEdit.setToBeRemoved(true);
 				pwToEdit = null;
-				break;
+				return;
 		}
+		super.buttonPressed(id);
+	}
+	@Override
+	public void addLevelName(Table table)
+	{
+		Label tutorial = new Label("Use the top left to\nselect a tile and tap to\nplace tiles. Tap and\ndrag to set paths.\nDouble tap to\nremove/edit a tile.", assetHolder.labelStyle);
+		assetHolder.correctLabel(tutorial);
+		table.add(tutorial).row();
 	}
 
 	public void setPathWalker(PathWalker pw)
@@ -86,6 +99,10 @@ public class EditorOverlay extends GameOverlay implements ButtonListener
 		bottomMenu.add(returnButt).size(assetHolder.getButtonWidth(), assetHolder.getButtonHeight()).row();
 		bottomMenu.add(delete).size(assetHolder.getButtonWidth(), assetHolder.getButtonHeight()).row();
 	}
+	@Override
+	public void addRetryButtons(Table table)
+	{
+	}
 
 	public boolean isPaused()
 	{
@@ -93,7 +110,7 @@ public class EditorOverlay extends GameOverlay implements ButtonListener
 		{
 			return true;
 		}else
-			return false;
+			return super.isPaused();
 	}
 	
 	public boolean doMenu()
@@ -128,7 +145,6 @@ public class EditorOverlay extends GameOverlay implements ButtonListener
 				return this;
 			}
 		}.setSceneChanger(this));
-		table.add(new Label("double tap to\nremove/edit a tile", assetHolder.labelStyle)).row();
 		table.add(setName).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(10);
 		table.row();
 	}

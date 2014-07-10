@@ -32,7 +32,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.mygdx.sheep.ui.ButtonListener;
 import com.mygdx.sheep.ui.ButtonListenBridge;
 
-public class TabMenu
+public class TabMenu implements ButtonListener
 {
 	private sheep sheep;
 	private Stage stage;
@@ -40,6 +40,9 @@ public class TabMenu
 	private ImageButton tab1;
 	private ImageButton tab2;
 	private ImageButton tab3;
+	private Image tab1Image;
+	private Image tab2Image;
+	private Image tab3Image;
 	public final static int LEVEL_SELECT = 2;
 	public final static int ENDLESS_GAME = 3;
 	public final static int MULTI_MENU = 4;
@@ -50,6 +53,7 @@ public class TabMenu
 	private float animationSpeed = 3f;
 	private float distanceToAnimate;
 	private float bounceAmount = 0.3f;
+	private boolean created = false;
 	
 	public void setSheep(sheep s)
 	{
@@ -67,18 +71,39 @@ public class TabMenu
 		bottomTable.bottom();
 		bottomTable.setFillParent(true);
 		
-		tab1 = new ImageButton(assetHolder.playTabButtonStyle);
-		tab2 = new ImageButton(assetHolder.playTabButtonStyle);
-		tab3 = new ImageButton(assetHolder.playTabButtonStyle);
-		tab1.addListener(new ButtonListenBridge().setButtonListener(this.sheep).setId(LEVEL_SELECT));
-		tab2.addListener(new ButtonListenBridge().setButtonListener(this.sheep).setId(MULTI_MENU));
-		tab3.addListener(new ButtonListenBridge().setButtonListener(this.sheep).setId(ENDLESS_GAME));
+		tab1 = new ImageButton(assetHolder.getDrawable(assetHolder.singlePlayerTabUp), assetHolder.getDrawable(assetHolder.singlePlayerTabDown));
+		tab2 = new ImageButton(assetHolder.getDrawable(assetHolder.multiplayerTabUp), assetHolder.getDrawable(assetHolder.multiplayerTabDown));
+		tab3 = new ImageButton(assetHolder.getDrawable(assetHolder.endlessTabUp), assetHolder.getDrawable(assetHolder.endlessTabDown));
+		tab1Image = new Image(assetHolder.getDrawable(assetHolder.singlePlayerTabSelected));
+		tab2Image = new Image(assetHolder.getDrawable(assetHolder.multiplayerTabSelected));
+		tab3Image = new Image(assetHolder.getDrawable(assetHolder.endlessTabSelected));
+		tab1.addListener(new ButtonListenBridge().setButtonListener(this).setId(LEVEL_SELECT));
+		tab2.addListener(new ButtonListenBridge().setButtonListener(this).setId(MULTI_MENU));
+		tab3.addListener(new ButtonListenBridge().setButtonListener(this).setId(ENDLESS_GAME));
 		float buttonHeight = assetHolder.getPercentWidthInt(percentTabWidth*(200.0f/355.0f));
-		bottomTable.add(tab1).height(buttonHeight).width(assetHolder.getPercentWidthInt(percentTabWidth)).pad(2);
-		bottomTable.add(tab2).height(buttonHeight).width(assetHolder.getPercentWidthInt(percentTabWidth)).pad(2);
-		bottomTable.add(tab3).height(buttonHeight).width(assetHolder.getPercentWidthInt(percentTabWidth)).pad(2);
 		stage.addActor(bottomTable);
 		distanceToAnimate = -buttonHeight-2;
+		buttonPressed(LEVEL_SELECT);
+		created = true;
+	}
+	public void buttonPressed(int id)
+	{
+		float buttonHeight = assetHolder.getPercentWidthInt(percentTabWidth*(200.0f/355.0f));
+		bottomTable.clearChildren();
+		if (id == LEVEL_SELECT)
+			bottomTable.add(tab1Image).height(buttonHeight).width(assetHolder.getPercentWidthInt(percentTabWidth));
+		else
+			bottomTable.add(tab1).height(buttonHeight).width(assetHolder.getPercentWidthInt(percentTabWidth));
+		if (id == MULTI_MENU)
+			bottomTable.add(tab2Image).height(buttonHeight).width(assetHolder.getPercentWidthInt(percentTabWidth));
+		else
+			bottomTable.add(tab2).height(buttonHeight).width(assetHolder.getPercentWidthInt(percentTabWidth));
+		if (id == ENDLESS_GAME)
+			bottomTable.add(tab3Image).height(buttonHeight).width(assetHolder.getPercentWidthInt(percentTabWidth));
+		else
+			bottomTable.add(tab3).height(buttonHeight).width(assetHolder.getPercentWidthInt(percentTabWidth));
+		if (created)
+			sheep.buttonPressed(id);
 	}
 	public InputProcessor getInput()
 	{

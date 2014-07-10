@@ -41,8 +41,9 @@ public class LevelEditor extends SheepGame
 	private TestOverlay testOverlay;
 	private EditorOverlay editOver;
 	private float touchTimer;
-	private float doubleTapTime = .5f;
+	private float doubleTapTime = .3f;
 	private Vector2 removeVec = null;
+	private Vector2 firstTouch = null;
 	
 	public LevelEditor()
 	{
@@ -135,34 +136,58 @@ public class LevelEditor extends SheepGame
 		String gameStr = assetHolder.levelLoader.toString(tiles);
 		Gdx.app.log("gameStr", gameStr);
 	}
+	@Override
+	public boolean checkInBounds(Vector2 add)
+	{
+		if (add.y == 0)
+			return false;
+		if (add.y == getNumTilesY())
+			return false;
+		return super.checkInBounds(add);
+	}
 	public void startDrag(Vector2 add)
 	{
-		if (add.y < numTilesY)
+		if (!gameOverlay.isPaused() && checkInBounds(add))
 		{
+			Tile addTile = tileChooser.getSelectedTile();
 			boolean exists = false;
 			for (int i = 0; i < tiles.size; ++i)
 			{
 				Tile t = tiles.get(i);
 				if (t.checkOverlap(add))
-					exists = true;
+				{
+					if (t.getClass().equals(addTile.getClass()))
+						exists = true;
+					else
+						if (!(t instanceof BlockUp ||
+							t instanceof BlockDown ||
+							t instanceof BlockLeft ||
+							t instanceof BlockRight ||
+							addTile instanceof BlockUp ||
+							addTile instanceof BlockDown ||
+							addTile instanceof BlockLeft ||
+							addTile instanceof BlockRight))
+						{
+							exists = true;
+						}
+				}
 			}
 			if (!exists)
 			{
-				Tile t = tileChooser.getSelectedTile();
-				if (t instanceof PathWalker)
+				if (addTile instanceof PathWalker)
 				{
-					pathWalker = ((PathWalker)t);
+					pathWalker = ((PathWalker)addTile);
 					addTile(pathWalker.addPath(add.x, add.y));
 				}else
 				{
-					addTile(t.set(add.x, add.y));
+					addTile(addTile.set(add.x, add.y));
 				}
 			}
 		}
 	}
 	public void doDrag(Vector2 add)
 	{
-		if (add.y < numTilesY)
+		if (checkInBounds(add))
 		{
 			if (pathWalker != null)
 			{
@@ -190,8 +215,10 @@ public class LevelEditor extends SheepGame
 		Gdx.app.log("touchTimer", ""+touchTimer+", "+doubleTapTime);
 		if (touchTimer != 0 && touchTimer < doubleTapTime)
 		{
-			removeVec = add;
-		}
+			if (checkInBounds(add) && firstTouch != null && add.epsilonEquals(firstTouch, .1f))
+				removeVec = add;
+		}else
+			firstTouch = add;
 		touchTimer = 0;
 		if (pathWalker != null)
 		{

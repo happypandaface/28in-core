@@ -46,9 +46,11 @@ public class LevelSelect implements ButtonListener
 	private int currentPanel;
 	private int levelsPerPage = 14;
 	protected ShapeRenderer shapeRenderer;
+	private SpriteBatch batch;
 	
 	public LevelSelect()
 	{
+		batch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
 	}
 	
@@ -304,6 +306,7 @@ public class LevelSelect implements ButtonListener
 	
 	public void render ()
 	{
+		
 	/*
 		shapeRenderer.begin(ShapeType.Filled);
 		shapeRenderer.setColor(assetHolder.getBgColor().r, assetHolder.getBgColor().g, assetHolder.getBgColor().b, 1f);
@@ -318,6 +321,9 @@ public class LevelSelect implements ButtonListener
 			stage.act(Gdx.graphics.getDeltaTime());
 			stage.draw();
 		}
+		batch.begin();
+		batch.draw(assetHolder.gradient, 0, 0, assetHolder.getPercentWidth(1f), assetHolder.getPercentHeight(.5f));
+		batch.end();
 	}
 	
 	public void switchTo()

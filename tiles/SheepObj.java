@@ -80,7 +80,7 @@ public class SheepObj extends PathWalker
 				TallGrass tg = (TallGrass)t;
 				Vector2 dist = tg.getRndPos().cpy().sub(getRndPos());
 				if (tg.checkOverlap(this) &&
-					tg.getExists())
+					tg.slowsSheep())
 				{
 					moveSpeed = .5f;
 				}

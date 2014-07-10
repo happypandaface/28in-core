@@ -36,6 +36,10 @@ public class TestOverlay extends GameOverlay
 	{
 		super();
 	}
+	@Override
+	public void addReloadButton()
+	{
+	}
 	public void create()
 	{
 		super.create();

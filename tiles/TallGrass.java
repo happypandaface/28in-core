@@ -27,19 +27,46 @@ import com.mygdx.sheep.*;
 
 public class TallGrass extends Tile
 {
-	
+	private boolean slow = true;
+	private float removeAnim = 0;
+
 	public static Texture getTex(AssetHolder assetHolder)
 	{
 		return assetHolder.tallGrass1;
 	}
 	public Texture getTex()
 	{
+		if (removeAnim < .1f)
+			return assetHolder.tallGrassAnim1;
+		if (removeAnim < .2f)
+			return assetHolder.tallGrassAnim2;
+		if (removeAnim < .4f)
+			return assetHolder.tallGrassAnim3;
+		if (removeAnim < .45f)
+			return assetHolder.tallGrassAnim3;
 		return this.getTex(assetHolder);
+	}
+
+	@Override
+	public void update(float delta)
+	{
+		if (!slow)
+		{
+			removeAnim += delta;
+			if (removeAnim > .45f)
+				exists = false;
+		}
+		super.update(delta);
+	}
+
+	public boolean slowsSheep()
+	{
+		return exists;
 	}
 	
 	public boolean touchedDown()
 	{
-		if (exists)
+		if (slow)
 			return true;
 		return false;
 	}
@@ -49,7 +76,7 @@ public class TallGrass extends Tile
 		if (exists && sheepGame.cutsAvailable() > 0)
 		{
 			sheepGame.useCut();
-			exists = false;
+			slow = false;
 			return true;
 		}
 		return false;

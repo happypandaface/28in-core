@@ -29,7 +29,7 @@ public class Guard extends Enemy
 {
 	public static Texture getTex(AssetHolder assetHolder)
 	{
-		return assetHolder.guardTex1;
+		return assetHolder.newGuardTex1;
 	}
 	/*
 	public Texture getTex()

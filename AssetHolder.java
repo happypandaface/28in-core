@@ -1,5 +1,6 @@
 package com.mygdx.sheep;
 
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.ApplicationAdapter;
@@ -33,7 +34,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
 public class AssetHolder
 {
 	private AssetManager assets;
+	public Texture tallGrassAnim1;
+	public Texture tallGrassAnim2;
+	public Texture tallGrassAnim3;
+	public Texture tallGrassAnim4;
 	public Texture sheepTex;
+	public Texture gradient;
+	public Texture reloadUp;
+	public Texture reloadDown;
 	public Image sheepImg;
 	public BitmapFont fontWhite;
 	public BitmapFont fontGreen;
@@ -41,6 +49,7 @@ public class AssetHolder
 	public BitmapFont fontRed;
 	public Skin skin;
 	public LabelStyle labelStyle;
+	public LabelStyle greenLabelStyle;
 	public LabelStyle smallLabelStyle;
 	public TextButtonStyle buttonStyle;
 	public TextButtonStyle onLevelButton;
@@ -69,6 +78,7 @@ public class AssetHolder
 	public Texture boulder1;
 	public Texture tallGrass1;
 	public Texture white;
+	public Texture profileIconSmall;
 	public TextureRegionDrawable tabButtonUp;
 	public TextureRegionDrawable tabButtonDown;
 	private float fontSize = 1.0f/1600.0f;
@@ -126,6 +136,9 @@ public class AssetHolder
 	public TextureRegionDrawable popTogNew1;
 	public TextureRegionDrawable popTogNew2;
 	public NinePatch dialogueBubble;
+	public Texture greenClose;
+	public Texture newHamUp;
+	public Texture newHamDown;
 	public Texture penTex;
 	public Texture cutTex;
 	public Texture cutIcon;
@@ -140,6 +153,15 @@ public class AssetHolder
 	public LabelStyle creatorNameLabelStyle;
 	public TextureRegionDrawable searchIcon;
 	public TextureRegionDrawable closeIcon;
+	public Texture singlePlayerTabUp;
+	public Texture singlePlayerTabDown;
+	public Texture singlePlayerTabSelected;
+	public Texture multiplayerTabUp;
+	public Texture multiplayerTabDown;
+	public Texture multiplayerTabSelected;
+	public Texture endlessTabUp;
+	public Texture endlessTabDown;
+	public Texture endlessTabSelected;
 
 	public void startLoad()
 	{
@@ -148,6 +170,8 @@ public class AssetHolder
 		assets.load(fontFile, BitmapFont.class);
 		assets.load(backButton, Texture.class);
 		assets.load("popTogNew1.png", Texture.class);
+		assets.load("gradient.png", Texture.class);
+		assets.load("greenX.png", Texture.class);
 		assets.load("popTogNew2.png", Texture.class);
 		assets.load("140621-28Inches-Sprite-Sheep-Frame0.png", Texture.class);
 		assets.load("140621-28Inches-Sprite-Sheep-Frame1.png", Texture.class);
@@ -183,6 +207,7 @@ public class AssetHolder
 		assets.load("leftArrowActive.png", Texture.class);
 		assets.load("dog.png", Texture.class);
 		assets.load("profileIcon.png", Texture.class);
+		assets.load("profileIconSmall.png", Texture.class);
 		assets.load("closeIcon.png", Texture.class);
 		assets.load("01 Horizontal/140703-28Inches-RedSheep-Horizontal-1.png", Texture.class);
 		assets.load("01 Horizontal/140703-28Inches-RedSheep-Horizontal-2.png", Texture.class);
@@ -235,15 +260,52 @@ public class AssetHolder
 		assets.load("dialogueBubble.png", Texture.class);
 		assets.load("searchIcon.png", Texture.class);
 		assets.load("closeIcon.png", Texture.class);
+		assets.load("hamburgerButtonUp.png", Texture.class);
+		assets.load("hamburgerButtonDown.png", Texture.class);
+		assets.load("reloadUp.png", Texture.class);
+		assets.load("reloadDown.png", Texture.class);
+		assets.load("singlePlayerTabUp.png", Texture.class);
+		assets.load("singlePlayerTabDown.png", Texture.class);
+		assets.load("singlePlayerTabSelected.png", Texture.class);
+		assets.load("multiplayerTabUp.png", Texture.class);
+		assets.load("multiplayerTabDown.png", Texture.class);
+		assets.load("multiplayerTabSelected.png", Texture.class);
+		assets.load("endlessTabUp.png", Texture.class);
+		assets.load("endlessTabDown.png", Texture.class);
+		assets.load("endlessTabSelected.png", Texture.class);
+		assets.load("02 Tall Grass/140704-28Inches-Tiles-TallGrass-0.png", Texture.class);
+		assets.load("02 Tall Grass/140704-28Inches-Tiles-TallGrass-1.png", Texture.class);
+		assets.load("02 Tall Grass/140704-28Inches-Tiles-TallGrass-2.png", Texture.class);
+		assets.load("02 Tall Grass/140704-28Inches-Tiles-TallGrass-3.png", Texture.class);
 	}
 	public void finishLoad()
 	{
+		
 		float fontScale = getPercentWidth(fontSize);
 		float bigFontScale = getPercentWidth(bigFontSize);
 		float smallFontScale = getPercentWidth(smallFontSize);
+		tallGrassAnim1 = assets.get("02 Tall Grass/140704-28Inches-Tiles-TallGrass-0.png", Texture.class);
+		tallGrassAnim2 = assets.get("02 Tall Grass/140704-28Inches-Tiles-TallGrass-1.png", Texture.class);
+		tallGrassAnim3 = assets.get("02 Tall Grass/140704-28Inches-Tiles-TallGrass-2.png", Texture.class);
+		tallGrassAnim4 = assets.get("02 Tall Grass/140704-28Inches-Tiles-TallGrass-3.png", Texture.class);
+		singlePlayerTabUp = assets.get("singlePlayerTabUp.png", Texture.class);
+		gradient = assets.get("gradient.png", Texture.class);
+		singlePlayerTabDown = assets.get("singlePlayerTabDown.png", Texture.class);
+		singlePlayerTabSelected = assets.get("singlePlayerTabSelected.png", Texture.class);
+		multiplayerTabUp = assets.get("multiplayerTabUp.png", Texture.class);
+		multiplayerTabDown = assets.get("multiplayerTabDown.png", Texture.class);
+		multiplayerTabSelected = assets.get("multiplayerTabSelected.png", Texture.class);
+		endlessTabUp = assets.get("endlessTabUp.png", Texture.class);
+		endlessTabDown = assets.get("endlessTabDown.png", Texture.class);
+		endlessTabSelected = assets.get("endlessTabSelected.png", Texture.class);
+		
+		newHamUp = assets.get("hamburgerButtonUp.png", Texture.class);
+		newHamDown = assets.get("hamburgerButtonDown.png", Texture.class);
+		greenClose = assets.get("greenX.png", Texture.class);
 		closeIcon = new TextureRegionDrawable(new TextureRegion(assets.get("closeIcon.png", Texture.class)));
 		searchIcon = new TextureRegionDrawable(new TextureRegion(assets.get("searchIcon.png", Texture.class)));
 		onStar = assets.get("onStar.png", Texture.class);
+		profileIconSmall = assets.get("profileIconSmall.png", Texture.class);
 		offStar = assets.get("offStar.png", Texture.class);
 		dialogueBubble = new NinePatch(assets.get("dialogueBubble.png", Texture.class), 16, 16, 16, 32);
 		blockUp = assets.get("140704-28Inches-Tiles-Barbed-Wire-Top.png", Texture.class);
@@ -297,6 +359,8 @@ public class AssetHolder
 		newDogTex1 = assets.get("03 Dog/Horizontal/140703-28Inches-Dog-Horizontal-1.png", Texture.class);
 		newDogTex2 = assets.get("03 Dog/Horizontal/140703-28Inches-Dog-Horizontal-2.png", Texture.class);
 		newDogTex3 = assets.get("03 Dog/Horizontal/140703-28Inches-Dog-Horizontal-3.png", Texture.class);
+		reloadUp = assets.get("reloadUp.png", Texture.class);
+		reloadDown = assets.get("reloadDown.png", Texture.class);
 		profileIcon = new TextureRegionDrawable(new TextureRegion(assets.get("profileIcon.png", Texture.class)));
 		closeIcon = new TextureRegionDrawable(new TextureRegion(assets.get("closeIcon.png", Texture.class)));
 		smallFontWhite = assets.get(fontFile, BitmapFont.class);
@@ -388,6 +452,7 @@ public class AssetHolder
 		fontRed.setColor(1, 1, 1, 1);
 		fontRed.setScale(fontScale);
 		labelStyle = new LabelStyle();
+		greenLabelStyle = new LabelStyle(fontGreen, getBgColor());
 		levelNameLabelStyle = new LabelStyle();
 		levelNameLabelStyle.font = fontLevel;
 		creatorNameLabelStyle = new LabelStyle();
@@ -395,6 +460,7 @@ public class AssetHolder
 		smallLabelStyle = new LabelStyle();
 		smallLabelStyle.font = smallFontWhite;
 		labelStyle.font = fontWhite;
+		greenLabelStyle.font = fontGreen;
 		buttonStyle = new TextButtonStyle();
 		smallButtonStyle = new TextButtonStyle();
 		//NinePatch upPatch = new NinePatch(assets.get("140621-28Inches-Button-Normal.png", Texture.class), 128, 128, 128, 128);
@@ -410,6 +476,10 @@ public class AssetHolder
 		smallButtonStyle.fontColor = Color.valueOf(lightColorHex);
 		buttonStyle.fontColor = Color.valueOf("ffffff");
 		buttonStyle.downFontColor = Color.valueOf("ffffff");
+	}
+	public Drawable getDrawable(Texture tex)
+	{
+		return new TextureRegionDrawable(new TextureRegion(tex));
 	}
 	public void correctLabel(Label l)
 	{
