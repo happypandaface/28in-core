@@ -68,6 +68,7 @@ public class sheep extends ApplicationAdapter implements ButtonListener
 	private Texture splashTexture;
 	private Texture sheepTexture1;
 	private Texture sheepTexture2;
+	public SheepSound sounds;
 	
 	public sheep()
 	{
@@ -77,6 +78,7 @@ public class sheep extends ApplicationAdapter implements ButtonListener
 		@Override
 	public void create ()
 	{
+		sounds = new SheepSound();
 		batch = new SpriteBatch();
 		splashTexture = new Texture(Gdx.files.internal("splash.png"));
 		sheepTexture2 = new Texture(Gdx.files.internal("01 Horizontal/140703-28Inches-RedSheep-Horizontal-2.png"));
@@ -183,6 +185,7 @@ public class sheep extends ApplicationAdapter implements ButtonListener
 		gotoMenu("level");
 		
 		loaded = true;
+		sounds.loopMusic();
 	}
 	public void setSaved(String s, String put)
 	{
