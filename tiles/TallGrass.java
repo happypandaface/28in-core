@@ -66,7 +66,7 @@ public class TallGrass extends Tile
 	
 	public boolean touchedDown()
 	{
-		if (slow)
+		if (slow && sheepGame.cutsAvailable() > 0)
 			return true;
 		return false;
 	}

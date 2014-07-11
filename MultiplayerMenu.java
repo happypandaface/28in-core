@@ -157,7 +157,7 @@ public class MultiplayerMenu implements ButtonListener
 		closeButton.addListener(new ButtonListenBridge().setButtonListener(this).setId(CLOSE));
 		greenCloseIcon = new ImageButton(assetHolder.getDrawable(assetHolder.greenClose));
 		greenCloseIcon.addListener(new ButtonListenBridge().setButtonListener(this).setId(CLOSE));
-		nameLabelLogin = new Label("username:", assetHolder.labelStyle);
+		nameLabelLogin = new Label("username:", assetHolder.greenLabelStyle);
 		loginUN = new TextField("", assetHolder.textFieldStyle);
 		String un = sheep.getSaved("username", "");
 		loginUN.setText(un);
@@ -170,8 +170,8 @@ public class MultiplayerMenu implements ButtonListener
 
 		newest.addListener(new ButtonListenBridge().setButtonListener(this).setId(NEW_TAB));
 
-		passLabelLogin = new Label("password:", assetHolder.labelStyle);
-		newPassLabelLogin = new Label("new password:", assetHolder.labelStyle);
+		passLabelLogin = new Label("password:", assetHolder.greenLabelStyle);
+		newPassLabelLogin = new Label("new password:", assetHolder.greenLabelStyle);
 		levelName = new TextField("", assetHolder.textFieldStyle);
 		loginPW = new TextField("", assetHolder.textFieldStyle);
 		loginPW.setPasswordMode(true);
@@ -179,7 +179,7 @@ public class MultiplayerMenu implements ButtonListener
 		oldPass = new TextField("", assetHolder.textFieldStyle);
 		oldPass.setPasswordMode(true);
 		oldPass.setPasswordCharacter((char)42);
-		passwordLabelLogin = new Label("confirm pass:", assetHolder.labelStyle);
+		passwordLabelLogin = new Label("confirm pass:", assetHolder.greenLabelStyle);
 		createPWconfirm = new TextField("", assetHolder.textFieldStyle);
 		createPWconfirm.setPasswordMode(true);
 		createPWconfirm.setPasswordCharacter((char)42);
@@ -609,6 +609,7 @@ public class MultiplayerMenu implements ButtonListener
 	public void nameLevel()
 	{
 		currentMenu = NAME_LEVEL;
+		sheep.getTopMenu().hide();
 		clearTables();
 		loginTable.top();
 		loginTable.setY(-1*assetHolder.getPercentHeight(.2f));
@@ -969,6 +970,7 @@ public class MultiplayerMenu implements ButtonListener
 	
 	public void createUser()
 	{
+		currentMenu = CREATE_MENU;
 		String un = loginUN.getText();
 		String pass1 = loginPW.getText();
 		String pass2 = createPWconfirm.getText();
@@ -1062,6 +1064,7 @@ public class MultiplayerMenu implements ButtonListener
 	}
 	public void changePass()
 	{
+		currentMenu = CHANGE_PASS_MENU;
 		levelsNeedsUpdate = false;
 		Gdx.app.log("changePass", "going");
 		currBackMenu = MULTI_MENU;
@@ -1111,7 +1114,7 @@ public class MultiplayerMenu implements ButtonListener
 	public void render()
 	{
 		Color bgColor = assetHolder.getBgColor();
-		if (currentMenu == SEARCH)
+		if (currentMenu == SEARCH || currentMenu == CHANGE_PASS_MENU || currentMenu == NAME_LEVEL)
 			Gdx.gl.glClearColor(1, 1, 1, 1);
 		else
 			Gdx.gl.glClearColor(bgColor.r, bgColor.g, bgColor.b, 1);

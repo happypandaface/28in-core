@@ -277,6 +277,7 @@ public class AssetHolder
 		assets.load("02 Tall Grass/140704-28Inches-Tiles-TallGrass-1.png", Texture.class);
 		assets.load("02 Tall Grass/140704-28Inches-Tiles-TallGrass-2.png", Texture.class);
 		assets.load("02 Tall Grass/140704-28Inches-Tiles-TallGrass-3.png", Texture.class);
+		assets.load("textField.png", Texture.class);
 	}
 	public void finishLoad()
 	{
@@ -444,7 +445,7 @@ public class AssetHolder
 		textFieldStyle.fontColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
 		textFieldStyle.cursor = skin.newDrawable("white", Color.valueOf("ffffff"));
 		//textFieldStyle.background = new TextureRegionDrawable(new TextureRegion(assets.get("140621-28Inches-Button-Normal.png", Texture.class)));
-		textFieldStyle.background = new TextureRegionDrawable(new TextureRegion(assets.get("140621-28Inches-Button-Pressed.png", Texture.class)));
+		textFieldStyle.background = new TextureRegionDrawable(new TextureRegion(assets.get("textField.png", Texture.class)));
 		sheepTex = new Texture(Gdx.files.internal("140616_Sheep RD1-BIG-sheep.png"));
 		sheepImg = new Image(sheepTex);
 		//smallFontWhite.setScale(.1f);//fontScale);

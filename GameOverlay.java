@@ -563,6 +563,7 @@ public class GameOverlay implements ButtonListener
 			overlayMenu.clearChildren();
 			inOverlay = true;
 			paused = true;
+			sheep.getTopMenu().show();
 			addLevelName(overlayMenu);
 			addRate(overlayMenu);
 			addResumeButton(overlayMenu);

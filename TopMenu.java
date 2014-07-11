@@ -231,6 +231,7 @@ public class TopMenu implements ButtonListener
 	public void uploadLevel(String mul)
 	{
 		levelToUpload = mul;
+		centerIcon();
 		showConfirm("This will overwrite\nany level of the\nsame name and it's\nratings", CONT_UPLOAD, LEVEL_EDIT, "continue", "back");
 	}
 	public void doUpload()
