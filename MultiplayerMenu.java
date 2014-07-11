@@ -801,14 +801,14 @@ public class MultiplayerMenu implements ButtonListener
 			public void failed(Throwable t)
 			{
 				String str = t.getMessage();
-				showMessage("Failed:\n"+str, LOGIN_MENU);
+				showMessage("Failed:\n"+str, MULTI_MENU);
 				Gdx.app.log("Failed", str);
 				//do stuff here based on the failed attempt
 			}
 
 			public void cancelled()
 			{
-				showMessage("Request cancelled", LOGIN_MENU);
+				showMessage("Request cancelled", MULTI_MENU);
 				//do stuff here based on the failed attempt
 			}
 			public HttpResponseListener setup(String un, String ln)
@@ -838,13 +838,13 @@ public class MultiplayerMenu implements ButtonListener
 
 			public void failed(Throwable t)
 			{
-				showMessage("Failed:\n"+t.getMessage(), LOGIN_MENU);
+				showMessage("Failed:\n"+t.getMessage(), MULTI_MENU);
 				//do stuff here based on the failed attempt
 			}
 
 			public void cancelled()
 			{
-				showMessage("Request cancelled", LOGIN_MENU);
+				showMessage("Request cancelled", MULTI_MENU);
 				//do stuff here based on the failed attempt
 			}
 		});
