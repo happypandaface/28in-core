@@ -80,6 +80,13 @@ public class TestOverlay extends GameOverlay
 		table.add(retry).height(assetHolder.getPercentHeightInt(assetHolder.buttonHeight)).width(assetHolder.getPercentWidthInt(assetHolder.buttonWidth)).pad(10);
 		table.row();
 	}
+
+	public void retryLevel()
+	{
+		bottomMenu.clearChildren();
+		sheepGame.retryLevel();
+		sheepGame.setOverlay(this);
+	}
 	
 	public void setupWinButtons()
 	{

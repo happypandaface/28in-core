@@ -361,7 +361,7 @@ public class EndlessInches extends SheepGame
 	}
 	public String getLoseText()
 	{
-		return "You cleared:\n"+numLevels+" levels";
+		return "YOU CLEARED:\n"+numLevels+" LEVELS";
 	}
 	public Array<Vector2> makeFullPath(int numLinks, int startY, int range, int linkDist, Array<Array<Vector2>> paths)
 	{

@@ -477,14 +477,15 @@ public class SheepGame implements InputProcessor
 	
 	private String[] loseTexts =
 	{
-		"Time to get the gloves on again!",
-		"You call that drug trafficking!?",
-		"Do it again, but, um, better"
+		"YOU'VE MET WITH A TERRIBLE FATE, HAVEN'T YOU?",
+		"YOU CALL THAT SHEEP HERDING!?",
+		"DO IT AGAIN, BUT, UM, BETTER"
 	};
 	private String[] winTexts =
 	{
-		"That was pretty good!",
-		"Those coke heads can rest easy tonight"
+		"OH SHEEPS Y'ALL, 'TWAS A DREAM!",
+		"THAT WAS PRETTY GOOD!",
+		"THOSE COCONUT HEADS CAN REST EASY TONIGHT"
 	};
 	public String getLoseText()
 	{
@@ -495,7 +496,7 @@ public class SheepGame implements InputProcessor
 			if (chance < (i+1)*(eachChance))
 				return loseTexts[i];
 		}
-		return "You Lose!";
+		return "YOU LOSE!";
 	}
 	public String getWinText()
 	{
@@ -506,7 +507,7 @@ public class SheepGame implements InputProcessor
 			if (chance < (i+1)*(eachChance))
 				return winTexts[i];
 		}
-		return "You Win!";
+		return "YOU WIN!";
 	}
 	public void loseTheGame()
 	{

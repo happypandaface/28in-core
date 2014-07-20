@@ -325,8 +325,8 @@ public class LevelLoader
 		{
 			if (showHelp)
 			{
-				sheepGame.addMessage(new SheepMessage("But sometimes grass\ncan be helpful...", 0.3f));
-				sheepGame.addMessage(new SheepMessage("Grass can be used\nto close the distance\nbetween your sheep", 0.3f));
+				sheepGame.addMessage(new SheepMessage("BUT SOMETIMES GRASS\nCAN BE HELPFUL...", 0.3f));
+				sheepGame.addMessage(new SheepMessage("GRASS CAN BE USED\nTO CLOSE THE DISTANCE\nBETWEEN YOUR SHEEP", 0.3f));
 			}
 			
 			sheepGame.addTile(new Boulder().set(1, 6));
@@ -386,7 +386,10 @@ public class LevelLoader
 		if (levelName.equals("Two birds"))
 		{
 			if (showHelp)
-				sheepGame.addMessage(new SheepMessage("Your sheep move\nat the same time", 0.3f));
+			{
+				sheepGame.addMessage(new SheepMessage("YOUR SHEEP MOVE\nAT THE SAME TIME", 0.3f));
+				sheepGame.addMessage(new SheepMessage("IF YOU HAVEN'T FIGURED THAT OUT", 0.3f));
+			}
 			
 			for (int x = 0; x < 5; ++x)
 				if (x != 1)
@@ -518,8 +521,8 @@ public class LevelLoader
 		{
 			if (showHelp)
 			{
-				sheepGame.addMessage(new SheepMessage("Tall grass slows\nyou down", 0.3f));
-				sheepGame.addMessage(new SheepMessage("You can cut \ntall grass \nby tapping on it!", 0.3f));
+				sheepGame.addMessage(new SheepMessage("TALL GRASS SLOWS\nYOU DOWN", 0.3f));
+				sheepGame.addMessage(new SheepMessage("YOU CAN CUT \nTALL GRASS \nBY TAPPING ON IT!", 0.3f));
 			}
 			
 			sheepGame.addTile(new TallGrass().set(2, 4));
@@ -550,7 +553,8 @@ public class LevelLoader
 		{
 			if (showHelp)
 			{
-				sheepGame.addMessage(new SheepMessage("Don't run into\nguards or dogs!", 0.3f));
+				sheepGame.addMessage(new SheepMessage("DON'T RUN INTO\nGUARDS OR DOGS!", 0.3f));
+				sheepGame.addMessage(new SheepMessage("EVASIVE MANEUVERS!", 0.3f));
 			}
 			WalkPath path = new WalkPath();
 			path.add(4, 3);
